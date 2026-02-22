@@ -2827,12 +2827,15 @@
               "name": "keyword.other.phpdoc.php"
             }
           },
-          "end": "(?ix)(?:\\s+((\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))?(?=\\s|\\*/)",
+          "end": "(?ix)(?:\\s+((?:(&)\\s*)?(\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))?(?=\\s|\\*/)",
           "endCaptures": {
             "1": {
               "name": "meta.function.parameters.php meta.function.parameter.typehinted.php variable.other.php"
             },
             "2": {
+              "name": "storage.modifier.reference.php"
+            },
+            "3": {
               "name": "punctuation.definition.variable.php"
             }
           },
