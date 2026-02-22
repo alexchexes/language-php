@@ -2821,7 +2821,7 @@
           "match": "(@xlink)\\s+(.+)\\s*$"
         },
         {
-          "begin": "(@param)\\s+(?=[?A-Za-z_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|\")",
+          "begin": "(@param)\\s+(?=[?A-Za-z0-9_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|\")",
           "beginCaptures": {
             "1": {
               "name": "keyword.other.phpdoc.php"

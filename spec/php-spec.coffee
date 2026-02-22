@@ -3224,6 +3224,20 @@ describe 'PHP grammar', ->
         expect(tokens[12]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
         expect(tokens[13]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
 
+      it 'should tokenize a typed @param variable name after a numeric-leading mixed literal union type', ->
+        {tokens} = grammar.tokenizeLine '/** @param 123|\'a\' $foo */'
+
+        expect(tokens[2]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
+        expect(tokens[10]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[11]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
+
+      it 'should tokenize a typed @param variable name after a numeric-leading numeric union type', ->
+        {tokens} = grammar.tokenizeLine '/** @param 123|345 $foo */'
+
+        expect(tokens[2]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
+        expect(tokens[8]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[9]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
+
       it 'should tokenize a typed @var variable name', ->
         {tokens} = grammar.tokenizeLine '/** @var int $foo */'
 

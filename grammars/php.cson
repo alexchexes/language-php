@@ -2753,7 +2753,7 @@
       {
         # @param tag followed by a type expression and optional parameter name.
         # -  @param type $parameter
-        'begin': '(@param)\\s+(?=[?A-Za-z_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|")'
+        'begin': '(@param)\\s+(?=[?A-Za-z0-9_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|")'
         'beginCaptures':
           '1':
             'name': 'keyword.other.phpdoc.php'
