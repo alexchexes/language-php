@@ -3161,16 +3161,16 @@ describe 'PHP grammar', ->
         expect(tokens[3]).toEqual value: ' ', scopes: ['source.php', 'comment.block.documentation.phpdoc.php']
         expect(tokens[4]).toEqual value: 'bool', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
         expect(tokens[5]).toEqual value: ' ', scopes: ['source.php', 'comment.block.documentation.phpdoc.php']
-        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
 
       it 'should tokenize a typed @param variable name with description on an inline phpdoc', ->
         {tokens} = grammar.tokenizeLine '/** @param bool $foo description */'
 
         expect(tokens[2]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
         expect(tokens[4]).toEqual value: 'bool', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
-        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
         expect(tokens[8]).toEqual value: ' description ', scopes: ['source.php', 'comment.block.documentation.phpdoc.php']
 
       it 'should tokenize a typed @param variable name at end-of-line in multiline phpdoc', ->
@@ -3182,8 +3182,8 @@ describe 'PHP grammar', ->
 
         expect(lines[1][1]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
         expect(lines[1][3]).toEqual value: 'bool', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
-        expect(lines[1][5]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(lines[1][6]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(lines[1][5]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(lines[1][6]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
 
       it 'should tokenize a typed @param variable name after union types', ->
         lines = grammar.tokenizeLines '''
@@ -3196,8 +3196,8 @@ describe 'PHP grammar', ->
         expect(lines[1][3]).toEqual value: 'int', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
         expect(lines[1][4]).toEqual value: '|', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'punctuation.separator.delimiter.php']
         expect(lines[1][5]).toEqual value: 'Class', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'support.class.php']
-        expect(lines[1][7]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(lines[1][8]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(lines[1][7]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(lines[1][8]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
         expect(lines[1][9]).toEqual value: ' description', scopes: ['source.php', 'comment.block.documentation.phpdoc.php']
 
       it 'should tokenize a typed @param variable name with uppercase characters', ->
@@ -3205,20 +3205,28 @@ describe 'PHP grammar', ->
 
         expect(tokens[2]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
         expect(tokens[4]).toEqual value: 'bool', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
-        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(tokens[7]).toEqual value: 'fooBar', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[7]).toEqual value: 'fooBar', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
 
       it 'should tokenize a typed @param variable name after quoted literal union types', ->
         {tokens} = grammar.tokenizeLine '/** @param \'foo\'|\'bar\' $foo */'
 
         expect(tokens[2]).toEqual value: '@param', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
-        expect(tokens[12]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
-        expect(tokens[13]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+        expect(tokens[12]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[13]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.function.parameters.php', 'meta.function.parameter.typehinted.php', 'variable.other.php']
 
       it 'should tokenize a typed @var variable name', ->
         {tokens} = grammar.tokenizeLine '/** @var int $foo */'
 
         expect(tokens[2]).toEqual value: '@var', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
+        expect(tokens[4]).toEqual value: 'int', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
+        expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
+
+      it 'should tokenize a typed @property variable name without function-parameter meta scopes', ->
+        {tokens} = grammar.tokenizeLine '/** @property int $foo */'
+
+        expect(tokens[2]).toEqual value: '@property', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'keyword.other.phpdoc.php']
         expect(tokens[4]).toEqual value: 'int', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'meta.other.type.phpdoc.php', 'keyword.other.type.php']
         expect(tokens[6]).toEqual value: '$', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php', 'punctuation.definition.variable.php']
         expect(tokens[7]).toEqual value: 'foo', scopes: ['source.php', 'comment.block.documentation.phpdoc.php', 'variable.other.php']
