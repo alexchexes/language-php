@@ -2757,7 +2757,12 @@
         'beginCaptures':
           '1':
             'name': 'keyword.other.phpdoc.php'
-        'end': '(?=\\s|\\*/)'
+        'end': '(?x)(?:\\s+((\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))?(?=\\s|\\*/)'
+        'endCaptures':
+          '1':
+            'name': 'variable.other.php'
+          '2':
+            'name': 'punctuation.definition.variable.php'
         'contentName': 'meta.other.type.phpdoc.php'
         'patterns': [
           {
