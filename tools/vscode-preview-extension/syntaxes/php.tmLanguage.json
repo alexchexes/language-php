@@ -2821,41 +2821,62 @@
           "match": "(@xlink)\\s+(.+)\\s*$"
         },
         {
+          "match": "(?x)\n(@param)\\s+\n((?:(&)\\s*)?(\\.\\.\\.)(\\$)[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*) # Variable name with possible reference\n(?=\\s|\\*/)",
           "captures": {
             "1": {
               "name": "keyword.other.phpdoc.php"
             },
             "2": {
-              "name": "meta.function.parameters.php meta.function.parameter.variadic.php variable.other.php"
-            },
-            "3": {
-              "name": "storage.modifier.reference.php"
-            },
-            "4": {
-              "name": "keyword.operator.variadic.php"
-            },
-            "5": {
-              "name": "punctuation.definition.variable.php"
+              "name": "meta.function.parameters.php",
+              "patterns": [
+                {
+                  "match": "(?x)\n(?:(&)\\s*)?\n(\\.\\.\\.)\n(\\$)\n[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*",
+                  "name": "meta.function.parameter.variadic.php",
+                  "captures": {
+                    "0": {
+                      "name": "variable.other.php"
+                    },
+                    "1": {
+                      "name": "storage.modifier.reference.php"
+                    },
+                    "2": {
+                      "name": "keyword.operator.variadic.php"
+                    },
+                    "3": {
+                      "name": "punctuation.definition.variable.php"
+                    }
+                  }
+                }
+              ]
             }
-          },
-          "match": "(@param)\\s+((?:(&)\\s*)?(\\.\\.\\.)\\s*(\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)(?=\\s|\\*/)"
+          }
         },
         {
+          "match": "(?x)\n(@param)\\s+\n((?:(&)\\s*)?(\\$)[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*) # Variable name with possible reference\n(?=\\s|\\*/)",
           "captures": {
             "1": {
               "name": "keyword.other.phpdoc.php"
             },
             "2": {
-              "name": "meta.function.parameters.php variable.other.php"
-            },
-            "3": {
-              "name": "storage.modifier.reference.php"
-            },
-            "4": {
-              "name": "punctuation.definition.variable.php"
+              "name": "meta.function.parameters.php",
+              "patterns": [
+                {
+                  "match": "(?x)\n(?:(&)\\s*)?\n(\\$)\n[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*",
+                  "captures": {
+                    "0": {
+                      "name": "variable.other.php"
+                    },
+                    "1": {
+                      "name": "storage.modifier.reference.php"
+                    },
+                    "2": {
+                      "name": "punctuation.definition.variable.php"
+                    }
+                  }
+                }
+              ]
             }
-          },
-          "match": "(@param)\\s+((?:(&)\\s*)?(\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)(?=\\s|\\*/)"
+          }
         },
         {
           "begin": "(@param)\\s+(?=[?A-Za-z0-9_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|\")",
@@ -2864,28 +2885,50 @@
               "name": "keyword.other.phpdoc.php"
             }
           },
-          "end": "(?ix)(?:\\s+(?:((?:(&)\\s*)?(\\.\\.\\.)\\s*(\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)|((?:(&)\\s*)?(\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)))?(?=\\s|\\*/)",
+          "end": "(?ix)\n(?:\\s+\n  (?:\n    # variadic parameter\n    (\n      (?:(&)\\s*)?          # reference operator\n      (\\.\\.\\.)           # variadic operator\n      (\\$)                 # variable sigil\n      [a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*\n    )|\n    # non-variadic parameter\n    (\n      (?:(&)\\s*)?          # reference operator\n      (\\$)                 # variable sigil\n      [a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*\n    )\n  )\n)?\n(?=\\s|\\*/)",
           "endCaptures": {
             "1": {
-              "name": "meta.function.parameters.php meta.function.parameter.variadic.php variable.other.php"
-            },
-            "2": {
-              "name": "storage.modifier.reference.php"
-            },
-            "3": {
-              "name": "keyword.operator.variadic.php"
-            },
-            "4": {
-              "name": "punctuation.definition.variable.php"
+              "name": "meta.function.parameters.php",
+              "patterns": [
+                {
+                  "match": "(?x)\n(?:(&)\\s*)?\n(\\.\\.\\.)\n(\\$)\n[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*",
+                  "name": "meta.function.parameter.variadic.php",
+                  "captures": {
+                    "0": {
+                      "name": "variable.other.php"
+                    },
+                    "1": {
+                      "name": "storage.modifier.reference.php"
+                    },
+                    "2": {
+                      "name": "keyword.operator.variadic.php"
+                    },
+                    "3": {
+                      "name": "punctuation.definition.variable.php"
+                    }
+                  }
+                }
+              ]
             },
             "5": {
-              "name": "meta.function.parameters.php meta.function.parameter.typehinted.php variable.other.php"
-            },
-            "6": {
-              "name": "storage.modifier.reference.php"
-            },
-            "7": {
-              "name": "punctuation.definition.variable.php"
+              "name": "meta.function.parameters.php",
+              "patterns": [
+                {
+                  "match": "(?x)\n(?:(&)\\s*)?\n(\\$)\n[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*",
+                  "name": "meta.function.parameter.typehinted.php",
+                  "captures": {
+                    "0": {
+                      "name": "variable.other.php"
+                    },
+                    "1": {
+                      "name": "storage.modifier.reference.php"
+                    },
+                    "2": {
+                      "name": "punctuation.definition.variable.php"
+                    }
+                  }
+                }
+              ]
             }
           },
           "contentName": "meta.other.type.phpdoc.php",
@@ -2906,6 +2949,7 @@
           ]
         },
         {
+          "match": "(?x)\n(@(?:global|property(?:-(?:read|write))?|var))\\s+\n((\\$)[A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)\n(?=\\s|\\*/)",
           "captures": {
             "1": {
               "name": "keyword.other.phpdoc.php"
@@ -2916,17 +2960,16 @@
             "3": {
               "name": "punctuation.definition.variable.php"
             }
-          },
-          "match": "(@var)\\s+((\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)(?=\\s|\\*/)"
+          }
         },
         {
-          "begin": "(@(?:global|property(-(read|write))?|var))\\s+(?=[?A-Za-z_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|\")",
+          "begin": "(?x)\n(@(?:global|property(-(read|write))?|var))\\s+(?=[?A-Za-z_\\x{7f}-\\x{10ffff}\\\\]|\\(|\\x27|\")",
           "beginCaptures": {
             "1": {
               "name": "keyword.other.phpdoc.php"
             }
           },
-          "end": "(?ix)(?:\\s+((\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))?(?=\\s|\\*/)",
+          "end": "(?ix)\n(?:\\s+\n  ((\\$)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)\n)?\n(?=\\s|\\*/)",
           "endCaptures": {
             "1": {
               "name": "variable.other.php"

@@ -7,40 +7,40 @@ class Bar {}
 /**
  * @access private
  * 
- * @param int $foo
- * @param int $foo descr
+ * @param int $fooBar
+ * @param int $fooBar descr
  * 
- * @param positive-int $foo
- * @param positive-int $foo descr
+ * @param positive-int $fooBar
+ * @param positive-int $fooBar descr
  * 
- * @param int|'b' $foo
- * @param int|'b' $foo descr
- * @param 'a'|'b' $foo
- * @param 'a'|'b' $foo descr
- * @param 'a'|123 $foo
- * @param 'a'|123 $foo descr
- * @param 123|'a' $foo
- * @param 123|'a' $foo descr
- * @param 123|345 $foo
- * @param 123|345 $foo descr
+ * @param int|'b' $fooBar
+ * @param int|'b' $fooBar descr
+ * @param 'a'|'b' $fooBar
+ * @param 'a'|'b' $fooBar descr
+ * @param 'a'|123 $fooBar
+ * @param 'a'|123 $fooBar descr
+ * @param 123|'a' $fooBar
+ * @param 123|'a' $fooBar descr
+ * @param 123|345 $fooBar
+ * @param 123|345 $fooBar descr
  * 
- * @param 'a'|Foo\Bar|int[] &$bar
- * @param 'a'|Foo\Bar|int[] &$bar descr
+ * @param 'a'|Foo\Bar|int[] &$fooBar2
+ * @param 'a'|Foo\Bar|int[] &$fooBar2 descr
  * 
- * @param int[]|'blog' $foo
- * @param int[]|'blog' $foo descr
+ * @param int[]|'blog' $fooBar
+ * @param int[]|'blog' $fooBar descr
  * 
- * @param \Some\Foo\Bar $bar
- * @param \Some\Foo\Bar $bar descr
+ * @param \Some\Foo\Bar $fooBar2
+ * @param \Some\Foo\Bar $fooBar2 descr
  * 
- * @param \Some\Foo\Bar &$bar
- * @param \Some\Foo\Bar &$bar descr
+ * @param \Some\Foo\Bar &$fooBar2
+ * @param \Some\Foo\Bar &$fooBar2 descr
  * 
- * @var int[] $foo
- * @var int[] $foo descr
+ * @var int[] $fooBar
+ * @var int[] $fooBar descr
  * 
- * @property int $foo
- * @property int $foo descr
+ * @property int $fooBar
+ * @property int $fooBar descr
  * 
  * @throws \Some\Foo\FooException $foo
  * @throws \Some\Foo\FooException $foo descr
@@ -49,11 +49,11 @@ class Bar {}
  * 
  * @someTag int $foo descr
  */
-function foo(?int $foo = 123, \Some\Foo\Bar &$bar, ?string $baz = 'xyz'): int
+function foo(?int $fooBar = 123, \Some\Foo\Bar &$fooBar2, ?string $baz = 'xyz'): int
 {
-    print_r($foo);
+    print_r($fooBar);
 
-    \print_r($bar);
+    \print_r($fooBar2);
 
     /** @var class-string<\Some\Foo\Bar> */
     \Some\Foo\Bar::class;
@@ -63,35 +63,35 @@ function foo(?int $foo = 123, \Some\Foo\Bar &$bar, ?string $baz = 'xyz'): int
 
 $a = static fn() => null;
 
-/** @param 123|345 $foo descr */
-/** @var int $a */
-/** @var $a */
+/** @param 123|345 $fooBar descr */
+/** @var int $fooBar */
+/** @var $fooBar */
 
 /** 
- * @param int $a1
- * @param int &$a2
- * @param $a5
- * @param &$a6
- * @param int ...$a3
- * @param int ...$a9 description
- * @param int &...$a4
- * @param ...$a7
- * @param &...$a8
+ * @param int $fooBar1
+ * @param int &$fooBar2
+ * @param $fooBar5
+ * @param &$fooBar6
+ * @param int ...$fooBar3
+ * @param int ...$fooBar9 description
+ * @param int &...$fooBar4
+ * @param ...$fooBar7
+ * @param &...$fooBar8
  * @param int description
  */
 function foo1(
-    int $a1,
-    int &$a2,
-    $a5,
-    &$a6,
-    int &...$a4,
+    int $fooBar1,
+    int &$fooBar2,
+    $fooBar5,
+    &$fooBar6,
+    int &...$fooBar4,
 ): void
 {
     func_get_args();
 }
-function foo2(int ...$a3) {}
-function foo3(...$a7) {}
-function foo4(&...$a8) {}
+function foo2(int ...$fooBar3) {}
+function foo3(...$fooBar7) {}
+function foo4(&...$fooBar8) {}
 
 /*----------------------*
 *         Short         *
@@ -100,22 +100,22 @@ function foo4(&...$a8) {}
 namespace App\Service;
 
 /**
- * @property string $status
+ * @property string $fooBar
  */
 abstract class ExampleClass
 {
-    protected string $status;
+    protected string $fooBar;
 
     /**
-     * @param int $limit
-     * @param ?array &$ids Description
-     * @param Status $status description
-     * @param 'json'|123 $format (literal unions aren't really handled)
-     * @param list<int> &...$list Variadic + by-reference
+     * @param int $fooBar1
+     * @param ?array &$fooBar2 Description
+     * @param Status $fooBar3 description
+     * @param 'json'|123 $fooBar4 (literal unions aren't really handled)
+     * @param list<int> &...$fooBar5 Variadic + by-reference
      *
      * @throws \RuntimeException $notTokenized as expected
      * @return array $notTokenized as expected
      */
 
-    abstract public function exmpl(int $limit, ?array &$ids, int $status, string $format, ?array &...$list): array;
+    abstract public function exmpl(int $fooBar1, ?array &$fooBar2, int $fooBar3, string $fooBar4, ?array &...$fooBar5): array;
 }
