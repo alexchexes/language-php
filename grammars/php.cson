@@ -931,8 +931,12 @@
     'name': 'keyword.operator.arithmetic.php'
   }
   {
-    'match': '(?i)(!|&&|\\|\\|)|\\b(and|or|xor|as)\\b'
+    'match': '(?i)(!|&&|\\|\\|)|\\b(and|or|xor)\\b'
     'name': 'keyword.operator.logical.php'
+  }
+  {
+    'match': '(?i)\\bas\\b',
+    'name': 'keyword.operator.as.php'
   }
   {
     'include': '#function-call'
@@ -2428,7 +2432,7 @@
             ]
           '3':
             'name': 'punctuation.definition.arguments.begin.bracket.round.php'
-        'end': '\\)'
+        'end': '\\)|(?=\\?>)'
         'endCaptures':
           '0':
             'name': 'punctuation.definition.arguments.end.bracket.round.php'
