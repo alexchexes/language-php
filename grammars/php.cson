@@ -2984,6 +2984,12 @@
             'include': '#php_doc_types_array_single'
           }
           {
+            "include": "#php_doc_types_array_with_key_type"
+          }
+          {
+            "include": "#php_doc_types_array_shape"
+          }
+          {
             'include': '#php_doc_types'
           }
           {
