@@ -4192,7 +4192,7 @@
             connect(_poll)?|
             convert|
             copy_(from|to)|
-            client_encoding|close|cancel_query|tty|transaction_status|
+            client_?encoding|close|cancel_query|tty|transaction_status|
             change_password|cmdtuples|errormessage|jit|
             trace|insert|options|delete|dbname|untrace|unescape_bytea|
             update|pconnect|ping|port|
