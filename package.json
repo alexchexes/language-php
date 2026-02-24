@@ -14,10 +14,10 @@
   "scripts": {
     "lint": "coffeelint --ext=cson grammars spec",
     "test": "mocha",
-    "preview:sync": "node ./tools/vscode-preview-extension/scripts/build-full-grammars.mjs",
-    "preview:host": "pnpm run preview:sync && code --extensionDevelopmentPath ./tools/vscode-preview-extension",
-    "preview:vsix": "pnpm run preview:sync && cd ./tools/vscode-preview-extension && pnpm dlx @vscode/vsce package --allow-missing-repository --out ./language-php-preview.vsix",
-    "preview:install": "code --install-extension ./tools/vscode-preview-extension/language-php-preview.vsix --force"
+    "preview:sync": "node ./tools/preview-vsix/scripts/build-full-grammars.mjs",
+    "preview:host": "pnpm run preview:sync && code --extensionDevelopmentPath ./tools/preview-vsix",
+    "preview:vsix": "pnpm run preview:sync && cd ./tools/preview-vsix && pnpm dlx @vscode/vsce package --allow-missing-repository --out ./language-php-preview.vsix",
+    "preview:install": "code --install-extension ./tools/preview-vsix/language-php-preview.vsix --force"
   },
   "devDependencies": {
     "@coffeelint/cli": "^5.2.11",

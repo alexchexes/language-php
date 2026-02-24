@@ -162,3 +162,25 @@ abstract class ExampleClass
  */
 
 $foo = 1;
+
+/*---------------------------*
+*         ARRAY KEYS         *
+*----------------------------*/
+
+$a = [
+    "key" => 'value',
+    'key' => 'value',
+    2 => 'value',
+];
+
+function FunctionName($a) { 
+    foreach ($a as $key => $value) {
+        yield "key" => 'value';
+        yield 'key' => 'value';
+        yield 2 => 'value';
+        yield 2 => 456;
+        yield $key => $value;
+    }
+}
+
+fn() => null;
