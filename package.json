@@ -13,7 +13,10 @@
   },
   "scripts": {
     "lint": "coffeelint --ext=cson grammars spec",
-    "test": "mocha"
+    "test": "mocha",
+    "regex-builder": "node ./tools/regex-builder/regex-builder.mjs",
+    "test:regex-builder": "node --test ./tools/regex-builder/test/regex-builder.test.mjs",
+    "test:regex-builder:update": "node ./tools/regex-builder/test/update-fixtures.mjs && npm run -s test:regex-builder"
   },
   "devDependencies": {
     "@coffeelint/cli": "^5.2.11",
