@@ -5,6 +5,10 @@ import {
   literalNode,
   optionalNode,
 } from "../node-utils.mjs";
+import {
+  evaluateLiteralSplit,
+  SPLIT_BOUNDARY_KINDS,
+} from "../../policy/split-engine.mjs";
 
 /**
  * Structural regrouping pass.
@@ -18,24 +22,22 @@ import {
  *
  * @param {import("../types.mjs").RegexIR} node
  * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>,
- *   enableSuffixGrouping?: boolean
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
  * }} opts
  * @returns {import("../types.mjs").RegexIR}
  */
-export function applyPrefixGroupingTransform(node, opts = {}) {
+export function applyPrefixGroupingTransform(node, opts) {
   return visit(node, opts);
 }
 
 /**
  * @param {import("../types.mjs").RegexIR} node
  * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>,
- *   enableSuffixGrouping?: boolean
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
  * }} opts
  * @returns {import("../types.mjs").RegexIR}
  */
@@ -53,10 +55,7 @@ function visit(node, opts) {
     case IR_NODE_KINDS.altGroup: {
       const visitedAlts = node.alternatives.map((alt) => visit(alt, opts));
       const byPrefix = regroupByUnderscorePrefix(visitedAlts, opts);
-      const withSuffixGrouping =
-        opts.enableSuffixGrouping === false
-          ? byPrefix
-          : regroupBySuffix(byPrefix, opts);
+      const withSuffixGrouping = regroupBySuffix(byPrefix, opts);
       const withBridgeOptional = collapseBoundaryBridgeAlternatives(
         withSuffixGrouping,
       );
@@ -75,9 +74,9 @@ function visit(node, opts) {
 /**
  * @param {import("../types.mjs").RegexIR[]} alternatives
  * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
  * }} opts
  * @returns {import("../types.mjs").RegexIR[]}
  */
@@ -157,9 +156,9 @@ function canGroupAtPrefix(prefix) {
  * Reverse-order grouping by common suffix for plain literal alternatives.
  * @param {import("../types.mjs").RegexIR[]} alternatives
  * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
  * }} opts
  * @returns {import("../types.mjs").RegexIR[]}
  */
@@ -169,77 +168,67 @@ function regroupBySuffix(alternatives, opts) {
     alt,
     value: getWholeLiteralValue(alt),
   }));
-  const literalValues = new Set(meta.map((entry) => entry.value).filter(Boolean));
-
-  const candidateMap = new Map();
-  for (const entry of meta) {
-    if (entry.value == null) continue;
-
-    for (let splitPos = 1; splitPos < entry.value.length; splitPos += 1) {
-      if (!isReverseSplitAllowed(entry.value, splitPos, opts)) continue;
-      const suffix = entry.value.slice(splitPos);
-      const prefix = entry.value.slice(0, splitPos);
-      if (prefix.length === 0 || suffix.length === 0) continue;
-
-      const arr = candidateMap.get(suffix) ?? [];
-      arr.push({ index: entry.index, splitPos });
-      candidateMap.set(suffix, arr);
-    }
-  }
-
-  const candidateProfiles = new Map();
-  for (const [suffix, members] of candidateMap.entries()) {
-    candidateProfiles.set(
-      suffix,
-      buildSuffixCandidateProfile(suffix, members, meta, literalValues),
-    );
-  }
-
-  const suffixes = [...candidateMap.keys()]
-    .filter((suffix) => {
-      const uniqueCount = new Set(candidateMap.get(suffix).map((m) => m.index))
-        .size;
-      const minMembers = candidateProfiles.get(suffix)?.minMembers ?? 3;
-      return uniqueCount >= minMembers;
-    })
-    .sort((a, b) => {
-      const aPriority = candidateProfiles.get(a)?.priority ?? 0;
-      const bPriority = candidateProfiles.get(b)?.priority ?? 0;
-      if (bPriority !== aPriority) return bPriority - aPriority;
-
-      const aCount = new Set(candidateMap.get(a).map((m) => m.index)).size;
-      const bCount = new Set(candidateMap.get(b).map((m) => m.index)).size;
-      return bCount - aCount || b.length - a.length || a.localeCompare(b);
-    });
-
-  if (suffixes.length === 0) return alternatives;
+  const literalValues = new Set(
+    meta.map((entry) => entry.value).filter((value) => value != null),
+  );
+  const candidates = collectSuffixCandidates(meta, literalValues, opts);
+  if (candidates.length === 0) return alternatives;
 
   const used = new Set();
   const groupsByStartIndex = new Map();
 
-  for (const suffix of suffixes) {
-    const minMembers = candidateProfiles.get(suffix)?.minMembers ?? 3;
-    const rawMembers = candidateMap.get(suffix) ?? [];
-    const members = rawMembers.filter((m) => !used.has(m.index));
-    const uniqueIndexes = [...new Set(members.map((m) => m.index))].sort(
-      (a, b) => a - b,
-    );
-    if (uniqueIndexes.length < minMembers) continue;
+  for (const candidate of candidates) {
+    if (candidate.type === "bridge") {
+      const baseIndex = candidate.baseIndexes.find((idx) => !used.has(idx));
+      if (baseIndex == null) continue;
 
-    // This transform only regroups plain literal alts.
-    const memberDefs = uniqueIndexes.map((idx) =>
-      members.find((m) => m.index === idx),
-    );
-    if (memberDefs.some((m) => !m)) continue;
+      const availableMembers = candidate.members.filter(
+        (member) => !used.has(member.index),
+      );
+      const members = dedupeMembersByIndex(availableMembers);
+      if (members.length === 0) continue;
+      if (estimateBoundaryBridgeGain(members, meta, candidate.base) <= 0) {
+        continue;
+      }
 
-    for (const idx of uniqueIndexes) used.add(idx);
-    const startIndex = uniqueIndexes[0];
+      const startIndex = Math.min(baseIndex, members[0].index);
+      if (groupsByStartIndex.has(startIndex)) continue;
+
+      groupsByStartIndex.set(startIndex, {
+        type: "bridge",
+        base: candidate.base,
+        baseIndex,
+        members,
+      });
+
+      used.add(baseIndex);
+      for (const member of members) {
+        used.add(member.index);
+      }
+      continue;
+    }
+
+    const availableMembers = candidate.members.filter(
+      (member) => !used.has(member.index),
+    );
+    const members = dedupeMembersByIndex(availableMembers);
+    if (members.length < 2) continue;
+
+    const startIndex = members[0].index;
     if (groupsByStartIndex.has(startIndex)) continue;
+    if (estimateSuffixGroupingGain(members, meta, candidate.suffix) <= 0) {
+      continue;
+    }
 
     groupsByStartIndex.set(startIndex, {
-      suffix,
-      members: memberDefs,
+      type: "suffix",
+      suffix: candidate.suffix,
+      members,
     });
+
+    for (const member of members) {
+      used.add(member.index);
+    }
   }
 
   if (groupsByStartIndex.size === 0) return alternatives;
@@ -248,17 +237,38 @@ function regroupBySuffix(alternatives, opts) {
   for (let i = 0; i < alternatives.length; i += 1) {
     const group = groupsByStartIndex.get(i);
     if (group) {
-      const groupedPrefixes = group.members.map((member) => {
-        const value = /** @type {string} */ (meta[member.index].value);
-        return literalNode(value.slice(0, member.splitPos));
-      });
+      if (group.type === "bridge") {
+        const groupedPrefixes = group.members.map((member) => {
+          const value = /** @type {string} */ (meta[member.index].value);
+          return literalNode(value.slice(0, member.splitPos));
+        });
+        const prefixExpr =
+          groupedPrefixes.length === 1
+            ? concatNode([groupedPrefixes[0], literalNode("_")])
+            : concatNode([
+                altGroupNode(groupedPrefixes, { force: true }),
+                literalNode("_"),
+              ]);
 
-      out.push(
-        concatNode([
-          altGroupNode(groupedPrefixes, { force: true }),
-          literalNode(group.suffix),
-        ]),
-      );
+        out.push(
+          concatNode([
+            optionalNode(prefixExpr),
+            literalNode(group.base),
+          ]),
+        );
+      } else {
+        const groupedPrefixes = group.members.map((member) => {
+          const value = /** @type {string} */ (meta[member.index].value);
+          return literalNode(value.slice(0, member.splitPos));
+        });
+
+        out.push(
+          concatNode([
+            altGroupNode(groupedPrefixes, { force: true }),
+            literalNode(group.suffix),
+          ]),
+        );
+      }
       continue;
     }
 
@@ -270,59 +280,326 @@ function regroupBySuffix(alternatives, opts) {
 }
 
 /**
- * @param {string} suffix
- * @param {Array<{ index: number, splitPos: number }>} members
  * @param {Array<{ value: string | null }>} meta
  * @param {Set<string>} literalValues
- * @returns {{ minMembers: number, priority: number }}
+ * @param {{
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
+ * }} opts
+ * @returns {Array<{
+ *   type: "suffix" | "bridge",
+ *   suffix: string,
+ *   kind: "boundary-bridge" | "boundary" | "midword",
+ *   affixLen: number,
+ *   gain: number,
+ *   startIndex: number,
+ *   members: Array<{
+ *     index: number,
+ *     splitPos: number,
+ *     boundaryKind: "underscore" | "digit" | "camel" | "midword"
+ *   }>,
+ *   base?: string,
+ *   baseIndexes?: number[]
+ * }>}
  */
-function buildSuffixCandidateProfile(suffix, members, meta, literalValues) {
-  if (isBoundaryBridgeSuffix(suffix, literalValues)) {
-    return { minMembers: 2, priority: 2 };
+function collectSuffixCandidates(meta, literalValues, opts) {
+  /** @type {Map<string, Array<{
+   *   index: number,
+   *   splitPos: number,
+   *   boundaryKind: "underscore" | "digit" | "camel" | "midword"
+   * }>>} */
+  const candidateMap = new Map();
+
+  for (const entry of meta) {
+    if (entry.value == null) continue;
+
+    for (let splitPos = 1; splitPos < entry.value.length; splitPos += 1) {
+      const evaluation = evaluateLiteralSplit(entry.value, splitPos, opts);
+      if (!evaluation.allowed) continue;
+
+      const suffix = entry.value.slice(splitPos);
+      const prefix = entry.value.slice(0, splitPos);
+      if (suffix.length === 0 || prefix.length === 0) continue;
+
+      const members = candidateMap.get(suffix) ?? [];
+      members.push({
+        index: entry.index,
+        splitPos,
+        boundaryKind: evaluation.boundaryKind,
+      });
+      candidateMap.set(suffix, members);
+    }
   }
 
-  if (isCleanUnderscoreSuffixPairing(suffix, members, meta)) {
-    return { minMembers: 2, priority: 1 };
+  /** @type {Array<{
+   *   type: "suffix" | "bridge",
+   *   suffix: string,
+   *   kind: "boundary-bridge" | "boundary" | "midword",
+   *   affixLen: number,
+   *   gain: number,
+   *   startIndex: number,
+   *   members: Array<{
+   *     index: number,
+   *     splitPos: number,
+   *     boundaryKind: "underscore" | "digit" | "camel" | "midword"
+   *   }>,
+   *   base?: string,
+   *   baseIndexes?: number[]
+   * }>} */
+  const out = [];
+
+  for (const [suffix, rawMembers] of candidateMap.entries()) {
+    const members = dedupeMembersByIndex(rawMembers);
+    if (members.length < 2) continue;
+
+    const gain = estimateSuffixGroupingGain(members, meta, suffix);
+    if (gain <= 0) continue;
+
+    out.push({
+      type: "suffix",
+      suffix,
+      kind: classifySuffixCandidateKind(suffix, members, literalValues),
+      affixLen: suffix.length,
+      gain,
+      startIndex: members[0].index,
+      members,
+    });
   }
 
-  return { minMembers: 3, priority: 0 };
+  const bridgeCandidates = collectBoundaryBridgeCandidates(meta, literalValues, opts);
+  out.push(...bridgeCandidates);
+
+  return out.sort(compareSuffixCandidates);
 }
 
 /**
- * Allow 2-member underscore-suffix grouping when all grouped prefixes are
- * clean single-token fragments (no underscore in the grouped prefix).
- *
- * Examples:
- *   ACTUAL_LOCALE|VALID_LOCALE -> (ACTUAL|VALID)_LOCALE
- *   MAJOR_VERSION|MINOR_VERSION -> (MAJOR|MINOR)_VERSION
- *
- * @param {string} suffix
- * @param {Array<{ index: number, splitPos: number }>} members
  * @param {Array<{ value: string | null }>} meta
- * @returns {boolean}
+ * @param {Set<string>} literalValues
+ * @param {{
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
+ * }} opts
+ * @returns {Array<{
+ *   type: "bridge",
+ *   suffix: string,
+ *   base: string,
+ *   baseIndexes: number[],
+ *   kind: "boundary-bridge",
+ *   affixLen: number,
+ *   gain: number,
+ *   startIndex: number,
+ *   members: Array<{
+ *     index: number,
+ *     splitPos: number,
+ *     boundaryKind: "underscore" | "digit" | "camel" | "midword"
+ *   }>
+ * }>}
  */
-function isCleanUnderscoreSuffixPairing(suffix, members, meta) {
-  if (!suffix.startsWith("_")) return false;
+function collectBoundaryBridgeCandidates(meta, literalValues, opts) {
+  /** @type {Map<string, Array<{
+   *   index: number,
+   *   splitPos: number,
+   *   boundaryKind: "underscore" | "digit" | "camel" | "midword"
+   * }>>} */
+  const membersByBase = new Map();
+  /** @type {Map<string, number[]>} */
+  const baseIndexes = new Map();
 
+  for (let index = 0; index < meta.length; index += 1) {
+    const value = meta[index].value;
+    if (value == null) continue;
+
+    const arr = baseIndexes.get(value) ?? [];
+    arr.push(index);
+    baseIndexes.set(value, arr);
+
+    for (let splitPos = 1; splitPos < value.length; splitPos += 1) {
+      if (value[splitPos] !== "_") continue;
+
+      const base = value.slice(splitPos + 1);
+      if (base.length === 0 || !literalValues.has(base)) continue;
+
+      const evaluation = evaluateLiteralSplit(value, splitPos, opts);
+      if (!evaluation.allowed) continue;
+
+      const members = membersByBase.get(base) ?? [];
+      members.push({
+        index,
+        splitPos,
+        boundaryKind: evaluation.boundaryKind,
+      });
+      membersByBase.set(base, members);
+    }
+  }
+
+  /** @type {Array<{
+   *   type: "bridge",
+   *   suffix: string,
+   *   base: string,
+   *   baseIndexes: number[],
+   *   kind: "boundary-bridge",
+   *   affixLen: number,
+   *   gain: number,
+   *   startIndex: number,
+   *   members: Array<{
+   *     index: number,
+   *     splitPos: number,
+   *     boundaryKind: "underscore" | "digit" | "camel" | "midword"
+   *   }>
+   * }>} */
+  const out = [];
+
+  for (const [base, rawMembers] of membersByBase.entries()) {
+    const indexes = baseIndexes.get(base) ?? [];
+    if (indexes.length === 0) continue;
+
+    const members = dedupeMembersByIndex(rawMembers);
+    if (members.length === 0) continue;
+
+    const gain = estimateBoundaryBridgeGain(members, meta, base);
+    if (gain <= 0) continue;
+
+    out.push({
+      type: "bridge",
+      suffix: `_${base}`,
+      base,
+      baseIndexes: indexes,
+      kind: "boundary-bridge",
+      affixLen: base.length + 1,
+      gain,
+      startIndex: Math.min(indexes[0], members[0].index),
+      members,
+    });
+  }
+
+  return out;
+}
+
+/**
+ * @param {Array<{ index: number, splitPos: number, boundaryKind: "underscore" | "digit" | "camel" | "midword" }>} members
+ * @returns {Array<{ index: number, splitPos: number, boundaryKind: "underscore" | "digit" | "camel" | "midword" }>}
+ */
+function dedupeMembersByIndex(members) {
   const byIndex = new Map();
+
   for (const member of members) {
     if (!byIndex.has(member.index)) {
       byIndex.set(member.index, member);
     }
   }
 
-  if (byIndex.size < 2) return false;
+  return [...byIndex.values()].sort((a, b) => a.index - b.index);
+}
 
-  for (const member of byIndex.values()) {
-    const value = meta[member.index]?.value;
-    if (value == null) return false;
-
-    const prefix = value.slice(0, member.splitPos);
-    if (prefix.length === 0) return false;
-    if (prefix.includes("_")) return false;
+/**
+ * @param {string} suffix
+ * @param {Array<{ index: number, splitPos: number, boundaryKind: "underscore" | "digit" | "camel" | "midword" }>} members
+ * @param {Set<string>} literalValues
+ * @returns {"boundary-bridge" | "boundary" | "midword"}
+ */
+function classifySuffixCandidateKind(suffix, members, literalValues) {
+  if (isBoundaryBridgeSuffix(suffix, literalValues)) {
+    return "boundary-bridge";
   }
 
-  return true;
+  const allBoundary = members.every(
+    (member) => member.boundaryKind !== SPLIT_BOUNDARY_KINDS.midword,
+  );
+  if (allBoundary) return "boundary";
+  return "midword";
+}
+
+/**
+ * @param {{
+ *   kind: "boundary-bridge" | "boundary" | "midword",
+ *   affixLen: number,
+ *   gain: number,
+ *   startIndex: number,
+ *   suffix: string,
+ *   members: Array<{ index: number }>
+ * }} a
+ * @param {{
+ *   kind: "boundary-bridge" | "boundary" | "midword",
+ *   affixLen: number,
+ *   gain: number,
+ *   startIndex: number,
+ *   suffix: string,
+ *   members: Array<{ index: number }>
+ * }} b
+ * @returns {number}
+ */
+function compareSuffixCandidates(a, b) {
+  const kindCmp = getCandidateKindPriority(b.kind) - getCandidateKindPriority(a.kind);
+  if (kindCmp !== 0) return kindCmp;
+  if (b.affixLen !== a.affixLen) return b.affixLen - a.affixLen;
+  if (b.gain !== a.gain) return b.gain - a.gain;
+  if (b.members.length !== a.members.length) {
+    return b.members.length - a.members.length;
+  }
+  if (a.startIndex !== b.startIndex) return a.startIndex - b.startIndex;
+  return a.suffix.localeCompare(b.suffix);
+}
+
+/**
+ * @param {"boundary-bridge" | "boundary" | "midword"} kind
+ * @returns {number}
+ */
+function getCandidateKindPriority(kind) {
+  if (kind === "boundary-bridge") return 3;
+  if (kind === "boundary") return 2;
+  return 1;
+}
+
+/**
+ * @param {Array<{ index: number, splitPos: number }>} members
+ * @param {Array<{ value: string | null }>} meta
+ * @param {string} suffix
+ * @returns {number}
+ */
+function estimateSuffixGroupingGain(members, meta, suffix) {
+  const values = members.map((member) => meta[member.index]?.value).filter(Boolean);
+  if (values.length !== members.length) return Number.NEGATIVE_INFINITY;
+
+  const originalLen =
+    values.reduce((sum, value) => sum + value.length, 0) + (values.length - 1);
+
+  const groupedPrefixesLen = members.reduce((sum, member, idx) => {
+    const value = /** @type {string} */ (values[idx]);
+    return sum + value.slice(0, member.splitPos).length;
+  }, 0);
+  const groupedLen = groupedPrefixesLen + (members.length - 1) + 2 + suffix.length;
+
+  return originalLen - groupedLen;
+}
+
+/**
+ * @param {Array<{ index: number, splitPos: number }>} members
+ * @param {Array<{ value: string | null }>} meta
+ * @param {string} base
+ * @returns {number}
+ */
+function estimateBoundaryBridgeGain(members, meta, base) {
+  const values = members.map((member) => meta[member.index]?.value).filter(Boolean);
+  if (values.length !== members.length) return Number.NEGATIVE_INFINITY;
+
+  const originalLen =
+    base.length +
+    values.reduce((sum, value) => sum + value.length, 0) +
+    members.length;
+
+  const prefixLengths = members.map((member, idx) => {
+    const value = /** @type {string} */ (values[idx]);
+    return value.slice(0, member.splitPos).length;
+  });
+  const prefixExprLen =
+    prefixLengths.length === 1
+      ? prefixLengths[0] + 1
+      : 2 + prefixLengths.reduce((sum, len) => sum + len, 0) + (prefixLengths.length - 1) + 1;
+  const groupedLen = prefixExprLen + 3 + base.length;
+
+  return originalLen - groupedLen;
 }
 
 /**
@@ -424,9 +701,9 @@ function splitBridgeSuffixAlternative(alt) {
  *
  * @param {import("../types.mjs").RegexIR[]} alternatives
  * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>
+ *   minWordSplitLen: number,
+ *   forbidSplitWords: Set<string>,
+ *   forceSplitWords: Set<string>
  * }} opts
  * @returns {import("../types.mjs").RegexIR[]}
  */
@@ -449,7 +726,7 @@ function regroupByForcedNestedPrefix(alternatives, opts) {
 
 /**
  * @param {import("../types.mjs").RegexIR} alt
- * @param {{ forbidSplitWords?: Set<string>, forceSplitWords?: Set<string> }} opts
+ * @param {{ forbidSplitWords: Set<string>, forceSplitWords: Set<string> }} opts
  * @returns {{ parent: import("../types.mjs").RegexIR, sibling: import("../types.mjs").RegexIR } | null}
  */
 function tryExtractForcedNestedPrefix(alt, opts) {
@@ -478,7 +755,7 @@ function tryExtractForcedNestedPrefix(alt, opts) {
       const lit = getWholeLiteralValue(nestedAlt);
       if (
         lit != null &&
-        opts.forbidSplitWords?.has(`${nestedPrefix}${lit}`)
+        opts.forbidSplitWords.has(`${nestedPrefix}${lit}`)
       ) {
         keepInParent.push(literalNode(`${nestedPrefix}${lit}`));
       } else {
@@ -519,7 +796,7 @@ function tryExtractForcedNestedPrefix(alt, opts) {
         lit.startsWith(nestedPrefix) &&
         lit.length > nestedPrefix.length
       ) {
-        if (opts.forbidSplitWords?.has(lit)) {
+        if (opts.forbidSplitWords.has(lit)) {
           parentAlts.push(candidate);
         } else {
           moveToSibling.push(literalNode(lit.slice(nestedPrefix.length)));
@@ -570,7 +847,7 @@ function splitGroupedConcat(node) {
 /**
  * @param {import("../types.mjs").RegexIR[]} outerAlts
  * @param {string} outerPrefix
- * @param {{ forceSplitWords?: Set<string> }} opts
+ * @param {{ forceSplitWords: Set<string> }} opts
  * @returns {string[]}
  */
 function collectForcedNestedPrefixes(outerAlts, outerPrefix, opts) {
@@ -591,64 +868,16 @@ function collectForcedNestedPrefixes(outerAlts, outerPrefix, opts) {
 }
 
 /**
- * @param {Set<string> | undefined} forceSet
+ * @param {Set<string>} forceSet
  * @param {string} suffix
  * @returns {boolean}
  */
 function hasForcedSuffix(forceSet, suffix) {
-  if (!forceSet || forceSet.size === 0) return false;
+  if (forceSet.size === 0) return false;
   for (const word of forceSet) {
     if (word.endsWith(suffix)) return true;
   }
   return false;
-}
-
-/**
- * Split policy for reverse-order (suffix) grouping.
- *
- * We apply the same core constraints, but at the split before the suffix:
- * - allow underscore boundary (suffix starts with "_")
- * - allow digit boundary (suffix starts with digit)
- * - obey --no-split
- * - enforce --min-word-split against the suffix-side local segment
- *
- * @param {string} value
- * @param {number} splitPos
- * @param {{
- *   minWordSplitLen?: number,
- *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>
- * }} opts
- * @returns {boolean}
- */
-function isReverseSplitAllowed(value, splitPos, opts) {
-  const minWordSplitLen = opts.minWordSplitLen ?? 3;
-  const splitFragment = value.slice(0, splitPos);
-  const forced = isForcedReverseSplit(value, splitPos, opts);
-  const suffix = value.slice(splitPos);
-  if (suffix.length === 0) return false;
-
-  const blockedByNoSplit = isForbiddenMidwordSplitByWordBlacklist(
-    value,
-    splitPos,
-    opts,
-  );
-  if (
-    blockedByNoSplit &&
-    !(forced && hasExactNoSplitConflict(splitFragment, opts))
-  ) {
-    return false;
-  }
-
-  if (forced) return true;
-  if (suffix.startsWith("_")) return true;
-  if (/^[0-9]/.test(suffix)) return true;
-
-  if (minWordSplitLen <= 0) return true;
-
-  // Reverse-order min-word-split uses suffix-side local segment length.
-  const localSuffixLen = suffix.split("_", 1)[0].length;
-  return localSuffixLen >= minWordSplitLen;
 }
 
 /**
@@ -669,62 +898,6 @@ function isBoundaryBridgeSuffix(suffix, literalValues) {
   const base = suffix.slice(1);
   if (base.length === 0) return false;
   return literalValues.has(base);
-}
-
-/**
- * @param {string} value
- * @param {number} splitPos
- * @param {{ forceSplitWords?: Set<string> }} opts
- * @returns {boolean}
- */
-function isForcedReverseSplit(value, splitPos, opts) {
-  const forceSet = opts.forceSplitWords;
-  if (!forceSet || forceSet.size === 0) return false;
-  return forceSet.has(value.slice(0, splitPos));
-}
-
-/**
- * @param {string} splitFragment
- * @param {{ forbidSplitWords?: Set<string> }} opts
- * @returns {boolean}
- */
-function hasExactNoSplitConflict(splitFragment, opts) {
-  const forbidSet = opts.forbidSplitWords;
-  if (!forbidSet || forbidSet.size === 0) return false;
-  return forbidSet.has(splitFragment);
-}
-
-/**
- * Mid-word split blacklist check at literal split point.
- * @param {string} value
- * @param {number} splitPos
- * @param {{ forbidSplitWords?: Set<string> }} opts
- * @returns {boolean}
- */
-function isForbiddenMidwordSplitByWordBlacklist(value, splitPos, opts) {
-  const forbidSet = opts.forbidSplitWords;
-  if (!forbidSet || forbidSet.size === 0) return false;
-
-  const suffix = value.slice(splitPos);
-  if (suffix.startsWith("_")) return false;
-
-  const lastUnderscore = value.lastIndexOf("_", splitPos - 1);
-  const prefixTail = value.slice(lastUnderscore + 1, splitPos);
-  if (prefixTail.length === 0) return false;
-
-  for (const frag of forbidSet) {
-    const maxPrefixLen = Math.min(prefixTail.length, frag.length - 1);
-
-    for (let prefixLen = maxPrefixLen; prefixLen >= 1; prefixLen -= 1) {
-      const fragmentPrefix = frag.slice(0, prefixLen);
-      if (!prefixTail.endsWith(fragmentPrefix)) continue;
-
-      const remainder = frag.slice(prefixLen);
-      if (suffix.startsWith(remainder)) return true;
-    }
-  }
-
-  return false;
 }
 
 /**

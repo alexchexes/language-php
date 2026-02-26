@@ -11,15 +11,8 @@ function addCsvWordsToSet(set, raw) {
 export function parseArgs(argv) {
   const args = {
     file: null,
-    pretty: true,
-    json: false,
-    groupStyle: "capturing",
-    indent: "auto",
-    wrap: 100,
-    minWordSplitLen: 3,
     forbidSplitWords: new Set(),
     forceSplitWords: new Set(),
-    enableSuffixGrouping: true,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -35,7 +28,6 @@ export function parseArgs(argv) {
     else if (arg === "--json") args.json = true;
     else if (arg === "--capturing") args.groupStyle = "capturing";
     else if (arg === "--noncapturing") args.groupStyle = "noncapturing";
-    else if (arg === "--no-prefix-grouping") args.enableSuffixGrouping = false;
     else if (arg === "--indent") {
       const raw = argv[++i];
       if (raw == null) throw new Error("Missing value for --indent");
@@ -93,7 +85,6 @@ Options:
   --json                     Print compressed trie as JSON instead of regex
   --capturing                Use (...) groups (default)
   --noncapturing             Use (?:...) groups
-  --no-prefix-grouping       Disable suffix regrouping pass
   --indent N|auto            Pretty-print indentation width, or continuation-column alignment (default: auto)
   --wrap N                   Maximum emitted line length in pretty mode (default: 100)
   --min-word-split N         Minimum chars in local split prefix before mid-word factoring (default: 3)

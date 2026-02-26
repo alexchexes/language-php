@@ -3,25 +3,27 @@ import {
   createInitialSplitContext,
 } from "../policy/split-context.mjs";
 import {
-  canFactorAfterPrefix,
   directAltCount,
-  isForceSplitPoint,
 } from "../policy/split-policy.mjs";
+import {
+  evaluateTrieSplitForDef,
+  listDirectAltDefs,
+} from "../policy/split-engine.mjs";
 import { altGroupNode, concatNode, literalNode } from "./node-utils.mjs";
 
 /**
  * Build formatting-agnostic IR from compressed trie.
  * @param {{ terminal: boolean, edges: Array<{ label: string, node: any }> }} node
- * @param {{ minWordSplitLen?: number, forbidSplitWords?: Set<string>, forceSplitWords?: Set<string> }} opts
+ * @param {{ minWordSplitLen: number, forbidSplitWords: Set<string>, forceSplitWords: Set<string> }} opts
  * @returns {import("./types.mjs").RegexIR}
  */
-export function buildStructureFromCompTrie(node, opts = {}) {
+export function buildStructureFromCompTrie(node, opts) {
   return buildNode(node, opts, createInitialSplitContext());
 }
 
 /**
  * @param {{ terminal: boolean, edges: Array<{ label: string, node: any }> }} node
- * @param {{ minWordSplitLen?: number, forbidSplitWords?: Set<string>, forceSplitWords?: Set<string> }} opts
+ * @param {{ minWordSplitLen: number, forbidSplitWords: Set<string>, forceSplitWords: Set<string> }} opts
  * @param {{ fullTail: string, wordTail: string, lastChar: string | null, localPrefixLen: number }} state
  * @returns {import("./types.mjs").RegexIR}
  */
@@ -34,7 +36,7 @@ function buildNode(node, opts, state) {
 
 /**
  * @param {{ terminal: boolean, edges: Array<{ label: string, node: any }> }} node
- * @param {{ minWordSplitLen?: number, forbidSplitWords?: Set<string>, forceSplitWords?: Set<string> }} opts
+ * @param {{ minWordSplitLen: number, forbidSplitWords: Set<string>, forceSplitWords: Set<string> }} opts
  * @param {{ fullTail: string, wordTail: string, lastChar: string | null, localPrefixLen: number }} state
  * @returns {import("./types.mjs").RegexIR[]}
  */
@@ -57,52 +59,10 @@ function buildNodeAlternatives(node, opts, state) {
       continue;
     }
 
-    const canFactorGlobally = canFactorAfterPrefix(edge.node, nextState, opts);
-    if (!canFactorGlobally) {
-      const childAlts = buildNodeAlternatives(edge.node, opts, nextState);
-      for (const childAlt of childAlts) {
-        alts.push(concatNode([edgeLiteral, childAlt]));
-      }
-      continue;
-    }
-
-    if (isForceSplitPoint(nextState, opts)) {
-      const factorState = { ...nextState, localPrefixLen: 0 };
-      const childExpr = buildNode(edge.node, opts, factorState);
-      alts.push(concatNode([edgeLiteral, childExpr]));
-      continue;
-    }
-
-    const minWordSplitLen = opts.minWordSplitLen ?? 3;
-    const isExceptionDrivenDigitSplit =
-      nextState.lastChar !== "_" &&
-      minWordSplitLen > 0 &&
-      nextState.localPrefixLen < minWordSplitLen;
-
-    if (!isExceptionDrivenDigitSplit) {
-      const factorState = { ...nextState, localPrefixLen: 0 };
-      const childExpr = buildNode(edge.node, opts, factorState);
-      alts.push(concatNode([edgeLiteral, childExpr]));
-      continue;
-    }
-
     const directDefs = listDirectAltDefs(edge.node);
-    const hasBlockedWordEdge = directDefs.some(
-      (def) => def.kind === "edge" && !/^[0-9_]/.test(def.edge.label),
-    );
-
-    if (!hasBlockedWordEdge) {
-      const factorState = { ...nextState, localPrefixLen: 0 };
-      const childExpr = buildNode(edge.node, opts, factorState);
-      alts.push(concatNode([edgeLiteral, childExpr]));
-      continue;
-    }
-
     const chunks = buildDirectAltChunksByPredicate(
       directDefs,
-      (def) =>
-        def.kind === "terminal" ||
-        (def.kind === "edge" && /^[0-9_]/.test(def.edge.label)),
+      (def) => evaluateTrieSplitForDef(nextState, def, opts).allowed,
     );
 
     for (const chunk of chunks) {
@@ -122,25 +82,6 @@ function buildNodeAlternatives(node, opts, state) {
   }
 
   return alts;
-}
-
-/**
- * @param {{ terminal: boolean, edges: Array<{ label: string, node: any }> }} node
- * @returns {Array<{ kind: "terminal" } | { kind: "edge", edge: { label: string, node: any } }>}
- */
-function listDirectAltDefs(node) {
-  /** @type {Array<{ kind: "terminal" } | { kind: "edge", edge: { label: string, node: any } }>} */
-  const defs = [];
-
-  if (node.terminal) {
-    defs.push({ kind: "terminal" });
-  }
-
-  for (const edge of node.edges) {
-    defs.push({ kind: "edge", edge });
-  }
-
-  return defs;
 }
 
 /**

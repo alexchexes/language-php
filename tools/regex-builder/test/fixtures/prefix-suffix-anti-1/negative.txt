@@ -1,0 +1,6 @@
+LEFT
+LONG
+LEFTB
+LONGA
+A
+B

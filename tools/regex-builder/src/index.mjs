@@ -1,3 +1,4 @@
+import { resolveOptions } from "./config/resolve-options.mjs";
 import { buildStructureFromCompTrie } from "./ir/build-structure.mjs";
 import { applyPrefixGroupingTransform } from "./ir/transforms/prefix-grouping.mjs";
 import { applyOptionalEmptyAltTransform } from "./ir/transforms/optional-empty-alt.mjs";
@@ -16,35 +17,38 @@ import { buildTrie, compressTrie } from "./trie.mjs";
  *   groupStyle?: "capturing" | "noncapturing",
  *   minWordSplitLen?: number,
  *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>,
- *   enableSuffixGrouping?: boolean
+ *   forceSplitWords?: Set<string>
  * }} opts
  * @returns {string}
  */
 export function buildRegexFromCompTrie(compTrie, opts = {}) {
+  const resolved = resolveOptions(opts);
   let ir = buildStructureFromCompTrie(compTrie, {
-    minWordSplitLen: opts.minWordSplitLen,
-    forbidSplitWords: opts.forbidSplitWords,
-    forceSplitWords: opts.forceSplitWords,
+    minWordSplitLen: resolved.minWordSplitLen,
+    forbidSplitWords: resolved.forbidSplitWords,
+    forceSplitWords: resolved.forceSplitWords,
   });
 
   ir = applyOptionalEmptyAltTransform(ir);
   ir = applyPrefixGroupingTransform(ir, {
-    minWordSplitLen: opts.minWordSplitLen,
-    forbidSplitWords: opts.forbidSplitWords,
-    forceSplitWords: opts.forceSplitWords,
-    enableSuffixGrouping: opts.enableSuffixGrouping,
+    minWordSplitLen: resolved.minWordSplitLen,
+    forbidSplitWords: resolved.forbidSplitWords,
+    forceSplitWords: resolved.forceSplitWords,
   });
   ir = applyOptionalEmptyAltTransform(ir);
 
-  if (opts.pretty === false) {
-    return renderCompact(ir, { groupStyle: opts.groupStyle });
+  if (!resolved.pretty) {
+    return renderCompact(ir, {
+      indent: resolved.indent,
+      wrap: resolved.wrap,
+      groupStyle: resolved.groupStyle,
+    });
   }
 
   return renderPretty(ir, {
-    indent: opts.indent,
-    wrap: opts.wrap,
-    groupStyle: opts.groupStyle,
+    indent: resolved.indent,
+    wrap: resolved.wrap,
+    groupStyle: resolved.groupStyle,
   });
 }
 
@@ -58,8 +62,7 @@ export function buildRegexFromCompTrie(compTrie, opts = {}) {
  *   groupStyle?: "capturing" | "noncapturing",
  *   minWordSplitLen?: number,
  *   forbidSplitWords?: Set<string>,
- *   forceSplitWords?: Set<string>,
- *   enableSuffixGrouping?: boolean
+ *   forceSplitWords?: Set<string>
  * }} opts
  * @returns {string}
  */

@@ -8,10 +8,10 @@ import { parseArgs, printHelpAndExit } from "./parse-args.mjs";
  * @param {string[]} [argv]
  */
 export async function main(argv = process.argv.slice(2)) {
-  const args = parseArgs(argv);
-  if (!args.file) printHelpAndExit(1);
+  const parsed = parseArgs(argv);
+  if (!parsed.file) printHelpAndExit(1);
 
-  const text = await fs.readFile(args.file, "utf8");
+  const text = await fs.readFile(parsed.file, "utf8");
   const strings = parseInputLines(text);
   if (strings.length === 0) {
     throw new Error("No input strings found.");
@@ -20,11 +20,11 @@ export async function main(argv = process.argv.slice(2)) {
   const trie = buildTrie(uniqueStable(strings));
   const comp = compressTrie(trie);
 
-  if (args.json) {
+  if (parsed.json === true) {
     console.log(JSON.stringify(compTrieToObject(comp), null, 2));
     return;
   }
 
-  const rendered = buildRegexFromCompTrie(comp, args);
+  const rendered = buildRegexFromCompTrie(comp, parsed);
   console.log(rendered);
 }

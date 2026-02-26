@@ -15,7 +15,7 @@
     "lint": "coffeelint --ext=cson grammars spec",
     "test": "mocha",
     "regex-builder": "node ./tools/regex-builder/regex-builder.mjs",
-    "test:regex-builder": "node --test ./tools/regex-builder/test/regex-builder.test.mjs ./tools/regex-builder/test/regex-builder.invariants.test.mjs",
+    "test:regex-builder": "node --test ./tools/regex-builder/test/regex-builder.test.mjs ./tools/regex-builder/test/regex-builder.invariants.test.mjs ./tools/regex-builder/test/regex-builder.split-engine.test.mjs",
     "test:regex-builder:update": "node ./tools/regex-builder/test/update-fixtures.mjs && npm run -s test:regex-builder"
   },
   "devDependencies": {

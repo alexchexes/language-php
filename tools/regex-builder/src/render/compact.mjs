@@ -11,13 +11,13 @@ import { escapeRegexLiteral, groupOpen, isAutoIndentMode } from "./shared.mjs";
  *
  * @param {import("../ir/types.mjs").RegexIR} node
  * @param {{
- *   indent?: number | "auto",
- *   wrap?: number,
- *   groupStyle?: "capturing" | "noncapturing"
+ *   indent: number | "auto",
+ *   wrap: number,
+ *   groupStyle: "capturing" | "noncapturing"
  * }} opts
  * @returns {string}
  */
-export function renderCompact(node, opts = {}) {
+export function renderCompact(node, opts) {
   return emitNode(node, opts, {
     col: 0,
     lineCol: 0,
@@ -65,9 +65,9 @@ function emitNode(node, opts, ctx) {
 /**
  * @param {{ kind: "concat", parts: import("../ir/types.mjs").RegexIR[] }} node
  * @param {{
- *   indent?: number | "auto",
- *   wrap?: number,
- *   groupStyle?: "capturing" | "noncapturing"
+ *   indent: number | "auto",
+ *   wrap: number,
+ *   groupStyle: "capturing" | "noncapturing"
  * }} opts
  * @param {RenderContext} ctx
  * @returns {{ text: string, hasGroup: boolean }}
@@ -101,18 +101,18 @@ function emitConcat(node, opts, ctx) {
 /**
  * @param {{ kind: "altGroup", alternatives: import("../ir/types.mjs").RegexIR[] }} node
  * @param {{
- *   indent?: number | "auto",
- *   wrap?: number,
- *   groupStyle?: "capturing" | "noncapturing"
+ *   indent: number | "auto",
+ *   wrap: number,
+ *   groupStyle: "capturing" | "noncapturing"
  * }} opts
  * @param {RenderContext} ctx
  * @param {boolean} forceGroup
  * @returns {{ text: string, hasGroup: boolean }}
  */
 function emitAltGroup(node, opts, ctx, forceGroup) {
-  const indent = opts.indent ?? "auto";
-  const wrapCol = opts.wrap ?? 100;
-  const groupStyle = opts.groupStyle ?? "capturing";
+  const indent = opts.indent;
+  const wrapCol = opts.wrap;
+  const groupStyle = opts.groupStyle;
   const autoIndent = isAutoIndentMode(indent);
   const indentSize = autoIndent ? 0 : indent;
   const innerCol = autoIndent ? ctx.col : ctx.lineCol + indentSize;
@@ -134,8 +134,6 @@ function emitAltGroup(node, opts, ctx, forceGroup) {
       singleLine: true,
       hasGroup: alt.hasGroup,
     })),
-    effectiveWrapCol,
-    innerCol,
   );
   const arranged = flattenAltBlocksToTexts(arrangedBlocks);
 
@@ -148,9 +146,9 @@ function emitAltGroup(node, opts, ctx, forceGroup) {
 /**
  * @param {{ kind: "optional", child: import("../ir/types.mjs").RegexIR }} node
  * @param {{
- *   indent?: number | "auto",
- *   wrap?: number,
- *   groupStyle?: "capturing" | "noncapturing"
+ *   indent: number | "auto",
+ *   wrap: number,
+ *   groupStyle: "capturing" | "noncapturing"
  * }} opts
  * @param {RenderContext} ctx
  * @returns {{ text: string, hasGroup: boolean }}
