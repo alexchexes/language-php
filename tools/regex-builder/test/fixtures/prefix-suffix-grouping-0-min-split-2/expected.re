@@ -5,8 +5,8 @@ FEATURE(
          |(A|B)_
         )(DISA|ENA)BLED
         |(
-          (ADI|BDI)S
-          |AEN|BEN
+          (AD|BD)IS
+          |(AE|BE)N
         )ABLED
        )
        |(
@@ -14,7 +14,7 @@ FEATURE(
          |(A|B)_
        )(DISA|ENA)BLED
        |(
-         (ADI|BDI)S
-         |AEN|BEN
+         (AD|BD)IS
+         |(AE|BE)N
        )ABLED
 )

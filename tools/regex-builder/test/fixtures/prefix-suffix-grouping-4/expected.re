@@ -1,8 +1,7 @@
 FEATURE(
-       1(DISA|ENA)BLED
-       |2(DISA|ENA)BLED
-       |(ADI|BDI)SABLED
-       |(AEN|BEN)ABLED
-       |BAR(DISA|ENA)BLED
-       |FOO(DISA|ENA)BLED
+       (1|2|BAR|FOO)(DISA|ENA)BLED
+       |(
+         (ADI|BDI)S
+         |AEN|BEN
+       )ABLED
 )

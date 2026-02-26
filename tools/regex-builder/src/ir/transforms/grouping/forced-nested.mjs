@@ -57,14 +57,43 @@ function tryExtractForcedNestedPrefix(alt, opts) {
 
     const nestedAlts = nested.group.alternatives;
     const keepInParent = [];
+    const keepLiteralSet = new Set();
     const moveToSibling = [];
+    const moveOuterIndexes = new Set();
 
     for (const nestedAlt of nestedAlts) {
       const lit = getWholeLiteralValue(nestedAlt);
       if (lit != null && opts.forbidSplitWords.has(`${nestedPrefix}${lit}`)) {
-        keepInParent.push(literalNode(`${nestedPrefix}${lit}`));
+        const keep = `${nestedPrefix}${lit}`;
+        if (!keepLiteralSet.has(keep)) {
+          keepLiteralSet.add(keep);
+          keepInParent.push(literalNode(keep));
+        }
       } else {
         moveToSibling.push(nestedAlt);
+      }
+    }
+
+    for (let j = 0; j < outerAlts.length; j += 1) {
+      if (j === i) continue;
+      const outerLit = getWholeLiteralValue(outerAlts[j]);
+      if (
+        outerLit == null ||
+        !outerLit.startsWith(nestedPrefix) ||
+        outerLit.length <= nestedPrefix.length
+      ) {
+        continue;
+      }
+
+      if (opts.forbidSplitWords.has(outerLit)) {
+        if (!keepLiteralSet.has(outerLit)) {
+          keepLiteralSet.add(outerLit);
+          keepInParent.push(literalNode(outerLit));
+        }
+        moveOuterIndexes.add(j);
+      } else {
+        moveToSibling.push(literalNode(outerLit.slice(nestedPrefix.length)));
+        moveOuterIndexes.add(j);
       }
     }
 
@@ -72,7 +101,8 @@ function tryExtractForcedNestedPrefix(alt, opts) {
 
     const parentAlts = [];
     for (let j = 0; j < outerAlts.length; j += 1) {
-      if (j !== i) parentAlts.push(outerAlts[j]);
+      if (j === i || moveOuterIndexes.has(j)) continue;
+      parentAlts.push(outerAlts[j]);
     }
     parentAlts.push(...keepInParent);
 
@@ -188,4 +218,3 @@ function hasForcedSuffix(forceSet, suffix) {
   }
   return false;
 }
-

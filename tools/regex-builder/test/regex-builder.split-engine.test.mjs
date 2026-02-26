@@ -31,7 +31,7 @@ test("split-engine: underscore/digit/camel boundaries bypass threshold", () => {
   assert.equal(camel.reason, "boundary");
 });
 
-test("split-engine: --split exact match overrides --no-split", () => {
+test("split-engine: --split does not bypass unrelated --no-split fragments", () => {
   const blocked = evaluateLiteralSplit(
     "STANDARD",
     3,
@@ -43,7 +43,7 @@ test("split-engine: --split exact match overrides --no-split", () => {
   assert.equal(blocked.allowed, false);
   assert.equal(blocked.reason, "no-split");
 
-  const forced = evaluateLiteralSplit(
+  const stillBlocked = evaluateLiteralSplit(
     "STANDARD",
     3,
     opts({
@@ -52,6 +52,17 @@ test("split-engine: --split exact match overrides --no-split", () => {
       forceSplitWords: new Set(["STA"]),
     }),
   );
-  assert.equal(forced.allowed, true);
-  assert.equal(forced.reason, "forced");
+  assert.equal(stillBlocked.allowed, false);
+  assert.equal(stillBlocked.reason, "no-split");
+
+  const forcedSameFragment = evaluateLiteralSplit(
+    "TTY",
+    1,
+    opts({
+      minWordSplitLen: 1,
+      forbidSplitWords: new Set(["TTY"]),
+      forceSplitWords: new Set(["TTY"]),
+    }),
+  );
+  assert.equal(forcedSameFragment.allowed, true);
 });

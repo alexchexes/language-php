@@ -22,6 +22,15 @@ export function applyAffixGroupingPlanner(alternatives, opts) {
   let current = groupByUnderscoreLeadingPrefix(alternatives);
 
   while (true) {
+    const concatSuffixCandidate = pickBestConcatSuffixCandidate(current);
+    if (concatSuffixCandidate) {
+      const next = applyConcatSuffixCandidate(current, concatSuffixCandidate);
+      if (next !== current) {
+        current = next;
+        continue;
+      }
+    }
+
     const candidate = pickBestLiteralCandidate(current, opts);
     if (!candidate) break;
 
@@ -31,6 +40,265 @@ export function applyAffixGroupingPlanner(alternatives, opts) {
   }
 
   return current;
+}
+
+/**
+ * @typedef {{
+ *   type: "suffix" | "suffixBridge",
+ *   key: string,
+ *   suffixParts: import("../../types.mjs").RegexIR[],
+ *   members: Array<{ index: number, prefix: import("../../types.mjs").RegexIR }>,
+ *   coverage: number,
+  *   startIndex: number,
+ *   suffixWeight: number,
+ *   baseIndex?: number
+ * }} ConcatSuffixCandidate
+ */
+
+/**
+ * @param {import("../../types.mjs").RegexIR[]} alternatives
+ * @returns {ConcatSuffixCandidate | null}
+ */
+function pickBestConcatSuffixCandidate(alternatives) {
+  /** @type {Map<string, { key: string, suffixParts: import("../../types.mjs").RegexIR[], members: Array<{ index: number, prefix: import("../../types.mjs").RegexIR }>, suffixWeight: number }>} */
+  const map = new Map();
+  /** @type {Map<string, number>} */
+  const literalKeyToFirstIndex = new Map();
+
+  for (let index = 0; index < alternatives.length; index += 1) {
+    const fullKey = nodeListKey(asConcatParts(alternatives[index]));
+    if (!literalKeyToFirstIndex.has(fullKey)) {
+      literalKeyToFirstIndex.set(fullKey, index);
+    }
+  }
+
+  for (let index = 0; index < alternatives.length; index += 1) {
+    const parts = asConcatParts(alternatives[index]);
+    if (parts.length < 2) continue;
+
+    for (let splitPos = 1; splitPos < parts.length; splitPos += 1) {
+      const suffixParts = parts.slice(splitPos);
+      if (!hasNonLiteralPart(suffixParts)) continue;
+
+      const key = nodeListKey(suffixParts);
+      const entry =
+        map.get(key) ??
+        {
+          key,
+          suffixParts,
+          members: [],
+          suffixWeight: computeNodeListWeight(suffixParts),
+        };
+
+      entry.members.push({
+        index,
+        prefix: concatNode(parts.slice(0, splitPos)),
+      });
+      map.set(key, entry);
+    }
+  }
+
+  /** @type {ConcatSuffixCandidate[]} */
+  const candidates = [];
+  for (const entry of map.values()) {
+    const members = entry.members.sort((a, b) => a.index - b.index);
+    const baseIndex = literalKeyToFirstIndex.get(entry.key);
+
+    if (members.length >= 2) {
+      candidates.push({
+        type: "suffix",
+        key: entry.key,
+        suffixParts: entry.suffixParts,
+        members,
+        coverage: members.length,
+        startIndex: members[0].index,
+        suffixWeight: entry.suffixWeight,
+      });
+    }
+
+    if (baseIndex != null && members.length >= 1 && !members.some((m) => m.index === baseIndex)) {
+      candidates.push({
+        type: "suffixBridge",
+        key: entry.key,
+        suffixParts: entry.suffixParts,
+        members,
+        coverage: members.length + 1,
+        startIndex: Math.min(baseIndex, members[0].index),
+        suffixWeight: entry.suffixWeight,
+        baseIndex,
+      });
+    }
+  }
+
+  if (candidates.length === 0) return null;
+
+  candidates.sort(compareConcatSuffixCandidates);
+  return candidates[0];
+}
+
+/**
+ * @param {ConcatSuffixCandidate} a
+ * @param {ConcatSuffixCandidate} b
+ * @returns {number}
+ */
+function compareConcatSuffixCandidates(a, b) {
+  const typeCmp = getConcatSuffixTypePriority(b.type) - getConcatSuffixTypePriority(a.type);
+  if (typeCmp !== 0) {
+    return typeCmp;
+  }
+
+  if (b.coverage !== a.coverage) {
+    return b.coverage - a.coverage;
+  }
+
+  if (b.suffixWeight !== a.suffixWeight) {
+    return b.suffixWeight - a.suffixWeight;
+  }
+
+  if (b.suffixParts.length !== a.suffixParts.length) {
+    return b.suffixParts.length - a.suffixParts.length;
+  }
+
+  if (a.startIndex !== b.startIndex) {
+    return a.startIndex - b.startIndex;
+  }
+
+  return a.key.localeCompare(b.key);
+}
+
+/**
+ * @param {"suffix" | "suffixBridge"} type
+ * @returns {number}
+ */
+function getConcatSuffixTypePriority(type) {
+  return type === "suffix" ? 2 : 1;
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR} node
+ * @returns {import("../../types.mjs").RegexIR[]}
+ */
+function asConcatParts(node) {
+  if (node.kind === "concat") return node.parts;
+  return [node];
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR[]} parts
+ * @returns {boolean}
+ */
+function hasNonLiteralPart(parts) {
+  return parts.some((part) => part.kind !== "literal");
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR[]} nodes
+ * @returns {string}
+ */
+function nodeListKey(nodes) {
+  return nodes.map((node) => nodeKey(node)).join("||");
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR} node
+ * @returns {string}
+ */
+function nodeKey(node) {
+  switch (node.kind) {
+    case "literal":
+      return `L:${node.value}`;
+
+    case "concat":
+      return `C(${node.parts.map((part) => nodeKey(part)).join(",")})`;
+
+    case "altGroup":
+      return `A(${node.alternatives.map((alt) => nodeKey(alt)).join("|")})`;
+
+    case "optional":
+      return `O(${nodeKey(node.child)})`;
+
+    default:
+      return "UNK";
+  }
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR[]} nodes
+ * @returns {number}
+ */
+function computeNodeListWeight(nodes) {
+  return nodes.reduce((sum, node) => sum + computeNodeWeight(node), 0);
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR} node
+ * @returns {number}
+ */
+function computeNodeWeight(node) {
+  switch (node.kind) {
+    case "literal":
+      return Math.max(1, node.value.length);
+
+    case "concat":
+      return node.parts.reduce((sum, part) => sum + computeNodeWeight(part), 0);
+
+    case "altGroup":
+      return (
+        2 +
+        node.alternatives.reduce((sum, alt) => sum + computeNodeWeight(alt), 0)
+      );
+
+    case "optional":
+      return 1 + computeNodeWeight(node.child);
+
+    default:
+      return 1;
+  }
+}
+
+/**
+ * @param {import("../../types.mjs").RegexIR[]} alternatives
+ * @param {ConcatSuffixCandidate} candidate
+ * @returns {import("../../types.mjs").RegexIR[]}
+ */
+function applyConcatSuffixCandidate(alternatives, candidate) {
+  const memberSet = new Set(candidate.members.map((member) => member.index));
+  const groupedPrefixes = candidate.members.map((member) => member.prefix);
+  const replacement = buildConcatSuffixReplacement(candidate, groupedPrefixes);
+
+  /** @type {import("../../types.mjs").RegexIR[]} */
+  const out = [];
+  for (let i = 0; i < alternatives.length; i += 1) {
+    if (i === candidate.startIndex) {
+      out.push(replacement);
+      continue;
+    }
+    if (candidate.baseIndex === i) continue;
+    if (memberSet.has(i)) continue;
+    out.push(alternatives[i]);
+  }
+
+  return out;
+}
+
+/**
+ * @param {ConcatSuffixCandidate} candidate
+ * @param {import("../../types.mjs").RegexIR[]} groupedPrefixes
+ * @returns {import("../../types.mjs").RegexIR}
+ */
+function buildConcatSuffixReplacement(candidate, groupedPrefixes) {
+  if (candidate.type === "suffixBridge") {
+    const prefixExpr =
+      groupedPrefixes.length === 1
+        ? groupedPrefixes[0]
+        : altGroupNode(groupedPrefixes, { force: true });
+    return concatNode([optionalNode(prefixExpr), ...candidate.suffixParts]);
+  }
+
+  return concatNode([
+    altGroupNode(groupedPrefixes, { force: true }),
+    ...candidate.suffixParts,
+  ]);
 }
 
 /**

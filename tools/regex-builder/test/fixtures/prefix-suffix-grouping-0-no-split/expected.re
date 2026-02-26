@@ -1,0 +1,14 @@
+FEATURE(
+       _(
+        (
+         (1|2|BAR|FOO)(_)?
+         |(A|B)_
+        )(DISABL|ENABL)ED
+        |(ADISABL|AENABL|BDISABL|BENABL)ED
+       )
+       |(
+         (1|2|BAR|FOO)(_)?
+         |(A|B)_
+       )(DISABL|ENABL)ED
+       |(ADISABL|AENABL|BDISABL|BENABL)ED
+)

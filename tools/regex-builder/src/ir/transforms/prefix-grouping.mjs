@@ -42,11 +42,11 @@ function visit(node, opts) {
       const visitedAlts = node.alternatives.map((alt) => visit(alt, opts));
       const grouped = applyAffixGroupingPlanner(visitedAlts, opts);
       const withForcedNested = regroupByForcedNestedPrefix(grouped, opts);
-      return altGroupNode(withForcedNested, { force: true });
+      const revisited = withForcedNested.map((alt) => visit(alt, opts));
+      return altGroupNode(revisited);
     }
 
     default:
       return node;
   }
 }
-

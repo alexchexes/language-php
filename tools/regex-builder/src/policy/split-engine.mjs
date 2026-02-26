@@ -171,15 +171,13 @@ export function listDirectAltDefs(node) {
  */
 function evaluateSplit(context, opts) {
   const forced = opts.forceSplitWords.has(context.splitFragment);
+  const blockingFragment = findBlockingForbiddenFragment(
+    context.blacklistSource,
+    context.hasRemainderPath,
+    opts.forbidSplitWords,
+  );
 
-  if (
-    !forced &&
-    isForbiddenSplitByBlacklist(
-      context.blacklistSource,
-      context.hasRemainderPath,
-      opts.forbidSplitWords,
-    )
-  ) {
+  if (blockingFragment != null && !opts.forceSplitWords.has(blockingFragment)) {
     return { allowed: false, reason: "no-split", boundaryKind: context.boundaryKind };
   }
 
@@ -202,11 +200,11 @@ function evaluateSplit(context, opts) {
  * @param {string} splitFragment
  * @param {(remainder: string) => boolean} hasRemainderPath
  * @param {Set<string>} forbidSet
- * @returns {boolean}
+ * @returns {string | null}
  */
-function isForbiddenSplitByBlacklist(splitFragment, hasRemainderPath, forbidSet) {
-  if (forbidSet.size === 0) return false;
-  if (splitFragment.length === 0) return false;
+function findBlockingForbiddenFragment(splitFragment, hasRemainderPath, forbidSet) {
+  if (forbidSet.size === 0) return null;
+  if (splitFragment.length === 0) return null;
 
   for (const frag of forbidSet) {
     const maxPrefixLen = Math.min(splitFragment.length, frag.length - 1);
@@ -217,11 +215,11 @@ function isForbiddenSplitByBlacklist(splitFragment, hasRemainderPath, forbidSet)
 
       const remainder = frag.slice(prefixLen);
       if (remainder.length === 0) continue;
-      if (hasRemainderPath(remainder)) return true;
+      if (hasRemainderPath(remainder)) return frag;
     }
   }
 
-  return false;
+  return null;
 }
 
 /**
