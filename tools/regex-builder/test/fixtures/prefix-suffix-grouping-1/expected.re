@@ -1,8 +1,8 @@
 FEATURE_(
-        1_(DISABLED|ENABLED)
-        |2_(DISABLED|ENABLED)
-        |A_(DISABLED|ENABLED)
-        |B_(DISABLED|ENABLED)
-        |BAR_(DISABLED|ENABLED)
-        |FOO_(DISABLED|ENABLED)
+        1_(DISA|ENA)BLED
+        |2_(DISA|ENA)BLED
+        |A_(DISA|ENA)BLED
+        |B_(DISA|ENA)BLED
+        |BAR_(DISA|ENA)BLED
+        |FOO_(DISA|ENA)BLED
 )

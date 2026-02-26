@@ -1,30 +1,44 @@
 FEATURE(
        _(
-        1_(DISABLED|ENABLED)
-        |(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
-        |2_(DISABLED|ENABLED)
-        |A_(DISABLED|ENABLED)
-        |B_(DISABLED|ENABLED)
+        1(
+         _(DISA|ENA)BLED
+         |(DISA|ENA)BLED
+        )
+        |2(
+          _(DISA|ENA)BLED
+          |(DISA|ENA)BLED
+        )
+        |A_(DISA|ENA)BLED
+        |(ADI|BDI)SABLED
+        |(AEN|BEN)ABLED
+        |B_(DISA|ENA)BLED
         |BAR(
-            _(DISABLED|ENABLED)
-            |DISABLED|ENABLED
+            _(DISA|ENA)BLED
+            |(DISA|ENA)BLED
         )
         |FOO(
-            _(DISABLED|ENABLED)
-            |DISABLED|ENABLED
+            _(DISA|ENA)BLED
+            |(DISA|ENA)BLED
         )
        )
-       |1_(DISABLED|ENABLED)
-       |(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
-       |2_(DISABLED|ENABLED)
-       |A_(DISABLED|ENABLED)
-       |B_(DISABLED|ENABLED)
+       |1(
+         _(DISA|ENA)BLED
+         |(DISA|ENA)BLED
+       )
+       |2(
+         _(DISA|ENA)BLED
+         |(DISA|ENA)BLED
+       )
+       |A_(DISA|ENA)BLED
+       |(ADI|BDI)SABLED
+       |(AEN|BEN)ABLED
+       |B_(DISA|ENA)BLED
        |BAR(
-           _(DISABLED|ENABLED)
-           |DISABLED|ENABLED
+           _(DISA|ENA)BLED
+           |(DISA|ENA)BLED
        )
        |FOO(
-           _(DISABLED|ENABLED)
-           |DISABLED|ENABLED
+           _(DISA|ENA)BLED
+           |(DISA|ENA)BLED
        )
 )

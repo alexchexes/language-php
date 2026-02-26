@@ -1,0 +1,1 @@
+(A_STA|B_STO|C_STU)NDARQ

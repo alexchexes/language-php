@@ -11,6 +11,24 @@ export function isSimpleInlineAlt(alt) {
  * @returns {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>}
  */
 export function arrangePrettyAltBlocks(alts) {
+  let blocks = buildPrettyAltBlocks(alts);
+  const hasSimpleBlock = blocks.some(
+    (block) => block.type === "simple" && block.tokens.length > 0,
+  );
+  const hasComplexBlock = blocks.some((block) => block.type === "complex");
+
+  if (hasSimpleBlock && hasComplexBlock) {
+    blocks = rebalanceSingletonSimpleBlocks(blocks);
+  }
+
+  return blocks;
+}
+
+/**
+ * @param {Array<{ text: string, singleLine: boolean, hasGroup: boolean }>} alts
+ * @returns {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>}
+ */
+function buildPrettyAltBlocks(alts) {
   /** @type {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>} */
   const blocks = [];
 
@@ -29,6 +47,67 @@ export function arrangePrettyAltBlocks(alts) {
   }
 
   return blocks;
+}
+
+/**
+ * Move singleton simple blocks into nearby simple blocks.
+ * This keeps compact/pretty structural ordering deterministic and
+ * independent from wrap/indent settings.
+ *
+ * @param {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>} blocks
+ * @returns {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>}
+ */
+function rebalanceSingletonSimpleBlocks(blocks) {
+  for (let i = 0; i < blocks.length; i += 1) {
+    const block = blocks[i];
+    if (block.type !== "simple" || block.tokens.length !== 1) continue;
+
+    const token = block.tokens[0];
+    const prevSimpleIndex = findPrevSimpleBlockIndex(blocks, i);
+    if (prevSimpleIndex !== -1) {
+      blocks[prevSimpleIndex].tokens.push(token);
+      blocks.splice(i, 1);
+      i -= 1;
+      continue;
+    }
+
+    const nextSimpleIndex = findNextSimpleBlockIndex(blocks, i);
+    if (nextSimpleIndex !== -1) {
+      blocks[nextSimpleIndex].tokens.unshift(token);
+      blocks.splice(i, 1);
+      i -= 1;
+    }
+  }
+
+  return blocks;
+}
+
+/**
+ * @param {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>} blocks
+ * @param {number} index
+ * @returns {number}
+ */
+function findPrevSimpleBlockIndex(blocks, index) {
+  for (let i = index - 1; i >= 0; i -= 1) {
+    const block = blocks[i];
+    if (block.type === "simple" && block.tokens.length > 0) return i;
+  }
+
+  return -1;
+}
+
+/**
+ * @param {Array<{ type: "complex", alt: any } | { type: "simple", tokens: string[] }>} blocks
+ * @param {number} index
+ * @returns {number}
+ */
+function findNextSimpleBlockIndex(blocks, index) {
+  for (let i = index + 1; i < blocks.length; i += 1) {
+    const block = blocks[i];
+    if (block.type === "simple" && block.tokens.length > 0) return i;
+  }
+
+  return -1;
 }
 
 /**
@@ -92,4 +171,3 @@ export function flattenAltBlocksToTexts(blocks) {
 
   return out;
 }
-
