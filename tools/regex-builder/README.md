@@ -39,6 +39,7 @@ Then you can inspect or edit the output in an editor with dedicated regex syntax
 - `--wrap N`: max pretty line length (default: `100`)
 - `--min-word-split N`: minimum chars before mid-word factoring. Default `3`.
 - `--no-split W1[,...W2]`: comma-separated list of words that should not be factored (example: use `--no-split STANDARD` to avoid `STA(NDARD|TUS)` instead of `STANDARD|STATUS`)
+- `--split W1[,...W2]`: comma-separated list of exact split fragments to allow even when `--min-word-split` / `--no-split` would block (`--split` wins on conflicts)
 
 ## Architecture
 The tool is split into independent passes under `tools/regex-builder/src`:

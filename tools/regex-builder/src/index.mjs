@@ -16,6 +16,7 @@ import { buildTrie, compressTrie } from "./trie.mjs";
  *   groupStyle?: "capturing" | "noncapturing",
  *   minWordSplitLen?: number,
  *   forbidSplitWords?: Set<string>,
+ *   forceSplitWords?: Set<string>,
  *   enableSuffixGrouping?: boolean
  * }} opts
  * @returns {string}
@@ -24,12 +25,14 @@ export function buildRegexFromCompTrie(compTrie, opts = {}) {
   let ir = buildStructureFromCompTrie(compTrie, {
     minWordSplitLen: opts.minWordSplitLen,
     forbidSplitWords: opts.forbidSplitWords,
+    forceSplitWords: opts.forceSplitWords,
   });
 
   ir = applyOptionalEmptyAltTransform(ir);
   ir = applyPrefixGroupingTransform(ir, {
     minWordSplitLen: opts.minWordSplitLen,
     forbidSplitWords: opts.forbidSplitWords,
+    forceSplitWords: opts.forceSplitWords,
     enableSuffixGrouping: opts.enableSuffixGrouping,
   });
   ir = applyOptionalEmptyAltTransform(ir);
@@ -55,6 +58,7 @@ export function buildRegexFromCompTrie(compTrie, opts = {}) {
  *   groupStyle?: "capturing" | "noncapturing",
  *   minWordSplitLen?: number,
  *   forbidSplitWords?: Set<string>,
+ *   forceSplitWords?: Set<string>,
  *   enableSuffixGrouping?: boolean
  * }} opts
  * @returns {string}

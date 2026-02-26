@@ -1,0 +1,11 @@
+(
+P(
+ _(
+  1|2|3|ALL|PGID
+  |PID(FD)?
+ )
+ |1|2|3
+)
+|POLL_(ERR|HUP)
+|PRIO_PROCESS
+)

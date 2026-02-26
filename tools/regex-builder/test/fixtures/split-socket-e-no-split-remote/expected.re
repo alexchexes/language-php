@@ -1,0 +1,7 @@
+(
+SOCK_(DGRAM|STREAM)
+|SOCKET_E(
+         2BIG|ACCES|REMCHG
+         |REMOTE(IO)?
+)
+)

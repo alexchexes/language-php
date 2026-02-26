@@ -18,6 +18,7 @@ export function parseArgs(argv) {
     wrap: 100,
     minWordSplitLen: 3,
     forbidSplitWords: new Set(),
+    forceSplitWords: new Set(),
     enableSuffixGrouping: true,
   };
 
@@ -68,6 +69,11 @@ export function parseArgs(argv) {
 
       if (raw == null) throw new Error("Missing value for --no-split");
       addCsvWordsToSet(args.forbidSplitWords, raw);
+    } else if (arg === "--split" || arg.startsWith("--split=")) {
+      const raw = arg === "--split" ? argv[++i] : arg.slice("--split=".length);
+
+      if (raw == null) throw new Error("Missing value for --split");
+      addCsvWordsToSet(args.forceSplitWords, raw);
     } else {
       throw new Error(`Unknown argument: ${arg}`);
     }
@@ -92,6 +98,7 @@ Options:
   --wrap N                   Maximum emitted line length in pretty mode (default: 100)
   --min-word-split N         Minimum chars in local split prefix before mid-word factoring (default: 3)
   --no-split W1[,...W2]      Forbid mid-word splitting before completing these fragments (exact, case-sensitive)
+  --split W1[,...W2]         Allow exact split points even when min-word-split / no-split would block
   -h, --help                 Show this help
 
 Input:

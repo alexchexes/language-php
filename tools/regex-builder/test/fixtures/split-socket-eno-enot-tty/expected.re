@@ -1,0 +1,5 @@
+SOCKET_E(
+        ANO|BUFS
+        |NO(SYS|TTY)
+        |NOT(BLK|CONN|DIR|EMPTY|SOCK|UNIQ)
+)

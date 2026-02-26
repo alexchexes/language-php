@@ -1,0 +1,4 @@
+--no-split
+SOCKET,TTY
+--split
+SOCKET_E,SOCKET_ENO,SOCKET_ENOT

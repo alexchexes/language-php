@@ -1,0 +1,328 @@
+diff --git a/tools/regex-builder/src/ir/transforms/prefix-grouping.mjs b/tools/regex-builder/src/ir/transforms/prefix-grouping.mjs
+index 1321b12..de4d699 100644
+--- a/tools/regex-builder/src/ir/transforms/prefix-grouping.mjs
++++ b/tools/regex-builder/src/ir/transforms/prefix-grouping.mjs
+@@ -285,7 +285,7 @@ function buildSuffixCandidateProfile(suffix, members, meta, literalValues) {
+     return { minMembers: 2, priority: 1 };
+   }
+ 
+-  return { minMembers: 3, priority: 0 };
++  return { minMembers: 2, priority: 0 };
+ }
+ 
+ /**
+diff --git a/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected-compact.re b/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected-compact.re
+index 7c5f1d2..da5bb17 100644
+--- a/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected-compact.re
+@@ -1 +1 @@
+-(A_STANDARQ|B_STONDARQ|C_STUNDARQ)
++(A_STANDARQ|(B_STO|C_STU)NDARQ)
+diff --git a/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected.re b/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected.re
+index 7c5f1d2..38c04fb 100644
+--- a/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected.re
++++ b/tools/regex-builder/test/fixtures/common-suffix-no-split-fragment/expected.re
+@@ -1 +1,4 @@
+-(A_STANDARQ|B_STONDARQ|C_STUNDARQ)
++(
++A_STANDARQ
++|(B_STO|C_STU)NDARQ
++)
+diff --git a/tools/regex-builder/test/fixtures/ext-imap-characterization/expected-compact.re b/tools/regex-builder/test/fixtures/ext-imap-characterization/expected-compact.re
+index b5a13ef..ba6702f 100644
+--- a/tools/regex-builder/test/fixtures/ext-imap-characterization/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/ext-imap-characterization/expected-compact.re
+@@ -1 +1 @@
+-(CP_(MOVE|UID)|ENC(7BIT|8BIT|BASE64|BINARY|OTHER|QUOTEDPRINTABLE)|FT_(INTERNAL|NOT|PEEK|PREFETCHTEXT|UID)|IMAP_((CLOSE|OPEN|READ|WRITE)TIMEOUT|GC_(ELT|ENV|TEXTS))|LATT_(HAS(CHILDREN|NOCHILDREN)|MARKED|NOINFERIORS|NOSELECT|REFERRAL|UNMARKED)|CL_EXPUNGE|NIL|OP_(ANONYMOUS|DEBUG|EXPUNGE|HALFOPEN|PROTOTYPE|READONLY|SECURE|SHORTCACHE|SILENT)|SA_(ALL|MESSAGES|RECENT|UNSEEN|UID(NEXT|VALIDITY))|SE_(FREE|NOPREFETCH|UID)|SO_(FREE|NOSERVER)|SORT(ARRIVAL|CC|DATE|FROM|SIZE|SUBJECT|TO)|ST_(SET|SILENT|UID)|TYPE(APPLICATION|AUDIO|IMAGE|MESSAGE|MODEL|MULTIPART|OTHER|TEXT|VIDEO))
++(CP_(MOVE|UID)|ENC((7|8)BIT|BASE64|BINARY|OTHER|QUOTEDPRINTABLE)|FT_(INTERNAL|NOT|PEEK|PREFETCHTEXT|UID)|IMAP_((CLOSE|OPEN|READ|WRITE)TIMEOUT|GC_(ELT|ENV|TEXTS))|LATT_(HAS(C|NOC)HILDREN|(M|UNM)ARKED|NOINFERIORS|NOSELECT|REFERRAL)|CL_EXPUNGE|NIL|OP_(ANONYMOUS|DEBUG|EXPUNGE|HALFOPEN|PROTOTYPE|READONLY|SECURE|SHORTCACHE|SILENT)|SA_(ALL|MESSAGES|RECENT|UNSEEN|UID(NEXT|VALIDITY))|SE_(FREE|NOPREFETCH|UID)|SO_(FREE|NOSERVER)|SORT(ARRIVAL|CC|DATE|FROM|SIZE|SUBJECT|TO)|ST_(SET|SILENT|UID)|TYPE(APPLICATION|AUDIO|(IM|MESS)AGE|MODEL|MULTIPART|OTHER|TEXT|VIDEO))
+diff --git a/tools/regex-builder/test/fixtures/ext-imap-characterization/expected.re b/tools/regex-builder/test/fixtures/ext-imap-characterization/expected.re
+index 310ede1..31b81ad 100644
+--- a/tools/regex-builder/test/fixtures/ext-imap-characterization/expected.re
++++ b/tools/regex-builder/test/fixtures/ext-imap-characterization/expected.re
+@@ -1,14 +1,18 @@
+ (
+ CP_(MOVE|UID)
+-|ENC(7BIT|8BIT|BASE64|BINARY|OTHER|QUOTEDPRINTABLE)
++|ENC(
++    (7|8)BIT
++    |BASE64|BINARY|OTHER|QUOTEDPRINTABLE
++)
+ |FT_(INTERNAL|NOT|PEEK|PREFETCHTEXT|UID)
+ |IMAP_(
+       (CLOSE|OPEN|READ|WRITE)TIMEOUT
+       |GC_(ELT|ENV|TEXTS)
+ )
+ |LATT_(
+-      HAS(CHILDREN|NOCHILDREN)
+-      |MARKED|NOINFERIORS|NOSELECT|REFERRAL|UNMARKED
++      HAS(C|NOC)HILDREN
++      |(M|UNM)ARKED
++      |NOINFERIORS|NOSELECT|REFERRAL
+ )
+ |CL_EXPUNGE|NIL
+ |OP_(ANONYMOUS|DEBUG|EXPUNGE|HALFOPEN|PROTOTYPE|READONLY|SECURE|SHORTCACHE|SILENT)
+@@ -20,5 +24,9 @@ CP_(MOVE|UID)
+ |SO_(FREE|NOSERVER)
+ |SORT(ARRIVAL|CC|DATE|FROM|SIZE|SUBJECT|TO)
+ |ST_(SET|SILENT|UID)
+-|TYPE(APPLICATION|AUDIO|IMAGE|MESSAGE|MODEL|MULTIPART|OTHER|TEXT|VIDEO)
++|TYPE(
++     APPLICATION|AUDIO
++     |(IM|MESS)AGE
++     |MODEL|MULTIPART|OTHER|TEXT|VIDEO
++)
+ )
+diff --git a/tools/regex-builder/test/fixtures/indent-auto/expected-compact.re b/tools/regex-builder/test/fixtures/indent-auto/expected-compact.re
+index 3a91b61..e592ae6 100644
+--- a/tools/regex-builder/test/fixtures/indent-auto/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/indent-auto/expected-compact.re
+@@ -1 +1 @@
+-(IDNA_(CHECK_(BIDI|CONTEXTJ)|ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES|ERROR_(BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|EMPTY_LABEL|HYPHEN_3_4|LABEL_(HAS_DOT|TOO_LONG)|LEADING_(COMBINING_MARK|HYPHEN)|INVALID_ACE_LABEL|PUNYCODE|TRAILING_HYPHEN)|NONTRANSITIONAL_TO_(ASCII|UNICODE))|INTL_(ICU_(DATA_VERSION|VERSION)|IDNA_VARIANT_UTS46|MAX_LOCALE_LEN))
++(IDNA_(CHECK_(BIDI|CONTEXTJ)|ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES|ERROR_(BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|HYPHEN_3_4|(EMPTY|INVALID_ACE)_LABEL|LABEL_(HAS_DOT|TOO_LONG)|LEADING_(COMBINING_MARK|HYPHEN)|PUNYCODE|TRAILING_HYPHEN)|NONTRANSITIONAL_TO_(ASCII|UNICODE))|INTL_(ICU_(DATA_V|V)ERSION|IDNA_VARIANT_UTS46|MAX_LOCALE_LEN))
+diff --git a/tools/regex-builder/test/fixtures/indent-auto/expected.re b/tools/regex-builder/test/fixtures/indent-auto/expected.re
+index 09e0fda..2e2f487 100644
+--- a/tools/regex-builder/test/fixtures/indent-auto/expected.re
++++ b/tools/regex-builder/test/fixtures/indent-auto/expected.re
+@@ -3,15 +3,16 @@ IDNA_(
+      CHECK_(BIDI|CONTEXTJ)
+      |ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES
+      |ERROR_(
+-            BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|EMPTY_LABEL|HYPHEN_3_4
++            BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|HYPHEN_3_4
++            |(EMPTY|INVALID_ACE)_LABEL
+             |LABEL_(HAS_DOT|TOO_LONG)
+             |LEADING_(COMBINING_MARK|HYPHEN)
+-            |INVALID_ACE_LABEL|PUNYCODE|TRAILING_HYPHEN
++            |PUNYCODE|TRAILING_HYPHEN
+      )
+      |NONTRANSITIONAL_TO_(ASCII|UNICODE)
+ )
+ |INTL_(
+-      ICU_(DATA_VERSION|VERSION)
++      ICU_(DATA_V|V)ERSION
+       |IDNA_VARIANT_UTS46|MAX_LOCALE_LEN
+ )
+ )
+diff --git a/tools/regex-builder/test/fixtures/indent-fixed/expected-compact.re b/tools/regex-builder/test/fixtures/indent-fixed/expected-compact.re
+index 3a91b61..e592ae6 100644
+--- a/tools/regex-builder/test/fixtures/indent-fixed/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/indent-fixed/expected-compact.re
+@@ -1 +1 @@
+-(IDNA_(CHECK_(BIDI|CONTEXTJ)|ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES|ERROR_(BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|EMPTY_LABEL|HYPHEN_3_4|LABEL_(HAS_DOT|TOO_LONG)|LEADING_(COMBINING_MARK|HYPHEN)|INVALID_ACE_LABEL|PUNYCODE|TRAILING_HYPHEN)|NONTRANSITIONAL_TO_(ASCII|UNICODE))|INTL_(ICU_(DATA_VERSION|VERSION)|IDNA_VARIANT_UTS46|MAX_LOCALE_LEN))
++(IDNA_(CHECK_(BIDI|CONTEXTJ)|ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES|ERROR_(BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|HYPHEN_3_4|(EMPTY|INVALID_ACE)_LABEL|LABEL_(HAS_DOT|TOO_LONG)|LEADING_(COMBINING_MARK|HYPHEN)|PUNYCODE|TRAILING_HYPHEN)|NONTRANSITIONAL_TO_(ASCII|UNICODE))|INTL_(ICU_(DATA_V|V)ERSION|IDNA_VARIANT_UTS46|MAX_LOCALE_LEN))
+diff --git a/tools/regex-builder/test/fixtures/indent-fixed/expected.re b/tools/regex-builder/test/fixtures/indent-fixed/expected.re
+index 5e01a4f..e372cd8 100644
+--- a/tools/regex-builder/test/fixtures/indent-fixed/expected.re
++++ b/tools/regex-builder/test/fixtures/indent-fixed/expected.re
+@@ -3,15 +3,16 @@
+     CHECK_(BIDI|CONTEXTJ)
+     |ALLOW_UNASSIGNED|DEFAULT|USE_STD3_RULES
+     |ERROR_(
+-      BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|EMPTY_LABEL|HYPHEN_3_4
++      BIDI|CONTEXTJ|DISALLOWED|DOMAIN_NAME_TOO_LONG|HYPHEN_3_4
++      |(EMPTY|INVALID_ACE)_LABEL
+       |LABEL_(HAS_DOT|TOO_LONG)
+       |LEADING_(COMBINING_MARK|HYPHEN)
+-      |INVALID_ACE_LABEL|PUNYCODE|TRAILING_HYPHEN
++      |PUNYCODE|TRAILING_HYPHEN
+     )
+     |NONTRANSITIONAL_TO_(ASCII|UNICODE)
+   )
+   |INTL_(
+-    ICU_(DATA_VERSION|VERSION)
++    ICU_(DATA_V|V)ERSION
+     |IDNA_VARIANT_UTS46|MAX_LOCALE_LEN
+   )
+ )
+diff --git a/tools/regex-builder/test/fixtures/mixed-format-wrap/expected-compact.re b/tools/regex-builder/test/fixtures/mixed-format-wrap/expected-compact.re
+index 00a59ad..8d5b2f1 100644
+--- a/tools/regex-builder/test/fixtures/mixed-format-wrap/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/mixed-format-wrap/expected-compact.re
+@@ -1 +1 @@
+-(TEST_(BAD(1|2|3)|BAATHISISAVERYLONGBRANCHTEXTTHATWILLMAKETHELINEGOOVERTHEWRAPLENGTHLIMITIFNOTHANDLEDPROPER|BAE|BAF|BAG|BAH|BAI|BAR(1|2|3)|FOO|ZAA|ZAB|ZAC|ZAD|ZAE|ZAF|ZAG|ZAH|ZAI)|U_(PARSE_ERROR(_(LIMIT|START))?|(PATTERN_SYNTAX|PRIMARY_TOO_LONG|RULE_MASK)_ERROR|REGEX_(BAD_(ESCAPE_SEQUENCE|INTERVAL)|ERROR_(LIMIT|START)|INVALID_(BACK_REF|FLAG|STATE)|INTERNAL_ERROR|LOOK_BEHIND_LIMIT|MAX_LT_MIN|MISMATCHED_PAREN|NUMBER_TOO_BIG|(PROPERTY|RULE)_SYNTAX|SET_CONTAINS_STRING|UNIMPLEMENTED)|RESOURCE_TYPE_MISMATCH|SAFECLONE_ALLOCATED_WARNING|SORT_KEY_TOO_SHORT_WARNING|STANDARD_ERROR_LIMIT|STATE_(OLD_WARNING|TOO_OLD_ERROR)))
++(TEST_(BAD(1|2|3)|BAATHISISAVERYLONGBRANCHTEXTTHATWILLMAKETHELINEGOOVERTHEWRAPLENGTHLIMITIFNOTHANDLEDPROPER|BAE|BAF|BAG|BAH|BAI|BAR(1|2|3)|FOO|ZAA|ZAB|ZAC|ZAD|ZAE|ZAF|ZAG|ZAH|ZAI)|U_(PARSE_ERROR(_(LIMIT|START))?|(PATTERN_SYNTAX|PRIMARY_TOO_LONG|RULE_MASK)_ERROR|REGEX_(BAD_(ESCAPE_SEQUENCE|INTERVAL)|ERROR_(LIMIT|START)|INVALID_(BACK_REF|FLAG|STATE)|INTERNAL_ERROR|LOOK_BEHIND_LIMIT|MAX_LT_MIN|MISMATCHED_PAREN|NUMBER_TOO_BIG|(PROPERTY|RULE)_SYNTAX|SET_CONTAINS_STRING|UNIMPLEMENTED)|(SAFECLONE_ALLOCATED|SORT_KEY_TOO_SHORT)_WARNING|RESOURCE_TYPE_MISMATCH|STANDARD_ERROR_LIMIT|STATE_(OLD_WARNING|TOO_OLD_ERROR)))
+diff --git a/tools/regex-builder/test/fixtures/mixed-format-wrap/expected.re b/tools/regex-builder/test/fixtures/mixed-format-wrap/expected.re
+index 9c03b37..eeef002 100644
+--- a/tools/regex-builder/test/fixtures/mixed-format-wrap/expected.re
++++ b/tools/regex-builder/test/fixtures/mixed-format-wrap/expected.re
+@@ -17,8 +17,8 @@ TEST_(
+           |(PROPERTY|RULE)_SYNTAX
+           |SET_CONTAINS_STRING|UNIMPLEMENTED
+    )
+-   |RESOURCE_TYPE_MISMATCH|SAFECLONE_ALLOCATED_WARNING|SORT_KEY_TOO_SHORT_WARNING
+-   |STANDARD_ERROR_LIMIT
++   |(SAFECLONE_ALLOCATED|SORT_KEY_TOO_SHORT)_WARNING
++   |RESOURCE_TYPE_MISMATCH|STANDARD_ERROR_LIMIT
+    |STATE_(OLD_WARNING|TOO_OLD_ERROR)
+ )
+ )
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected-compact.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected-compact.re
+index ce20851..59f8ac9 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected-compact.re
+@@ -1 +1 @@
+-FEATURE_(1_(DISABLED|ENABLED)|2_(DISABLED|ENABLED)|A_(DISABLED|ENABLED)|B_(DISABLED|ENABLED)|BAR_(DISABLED|ENABLED)|FOO_(DISABLED|ENABLED))
++FEATURE_(1_(DIS|EN)ABLED|2_(DIS|EN)ABLED|A_(DIS|EN)ABLED|B_(DIS|EN)ABLED|BAR_(DIS|EN)ABLED|FOO_(DIS|EN)ABLED)
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected.re
+index 58e7b40..a311a1e 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-1/expected.re
+@@ -1,8 +1,8 @@
+ FEATURE_(
+-        1_(DISABLED|ENABLED)
+-        |2_(DISABLED|ENABLED)
+-        |A_(DISABLED|ENABLED)
+-        |B_(DISABLED|ENABLED)
+-        |BAR_(DISABLED|ENABLED)
+-        |FOO_(DISABLED|ENABLED)
++        1_(DIS|EN)ABLED
++        |2_(DIS|EN)ABLED
++        |A_(DIS|EN)ABLED
++        |B_(DIS|EN)ABLED
++        |BAR_(DIS|EN)ABLED
++        |FOO_(DIS|EN)ABLED
+ )
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected-compact.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected-compact.re
+index ec41555..06f215f 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected-compact.re
+@@ -1 +1 @@
+-FEATURE(1_(DISABLED|ENABLED)|2_(DISABLED|ENABLED)|A_(DISABLED|ENABLED)|B_(DISABLED|ENABLED)|BAR_(DISABLED|ENABLED)|FOO_(DISABLED|ENABLED))
++FEATURE(1_(DIS|EN)ABLED|2_(DIS|EN)ABLED|A_(DIS|EN)ABLED|B_(DIS|EN)ABLED|BAR_(DIS|EN)ABLED|FOO_(DIS|EN)ABLED)
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected.re
+index b5b8741..e336ae1 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-2/expected.re
+@@ -1,8 +1,8 @@
+ FEATURE(
+-       1_(DISABLED|ENABLED)
+-       |2_(DISABLED|ENABLED)
+-       |A_(DISABLED|ENABLED)
+-       |B_(DISABLED|ENABLED)
+-       |BAR_(DISABLED|ENABLED)
+-       |FOO_(DISABLED|ENABLED)
++       1_(DIS|EN)ABLED
++       |2_(DIS|EN)ABLED
++       |A_(DIS|EN)ABLED
++       |B_(DIS|EN)ABLED
++       |BAR_(DIS|EN)ABLED
++       |FOO_(DIS|EN)ABLED
+ )
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected-compact.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected-compact.re
+index b48d370..6142a58 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected-compact.re
+@@ -1 +1 @@
+-FEATURE_((1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|BAR(DISABLED|ENABLED)|FOO(DISABLED|ENABLED))
++FEATURE_((1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|BAR(DIS|EN)ABLED|FOO(DIS|EN)ABLED)
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected.re
+index b59ee7b..c00be33 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-3/expected.re
+@@ -1,5 +1,5 @@
+ FEATURE_(
+         (1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
+-        |BAR(DISABLED|ENABLED)
+-        |FOO(DISABLED|ENABLED)
++        |BAR(DIS|EN)ABLED
++        |FOO(DIS|EN)ABLED
+ )
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected-compact.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected-compact.re
+index 4d3f2dc..91d2a00 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected-compact.re
+@@ -1 +1 @@
+-FEATURE((1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|BAR(DISABLED|ENABLED)|FOO(DISABLED|ENABLED))
++FEATURE((1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|BAR(DIS|EN)ABLED|FOO(DIS|EN)ABLED)
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected.re
+index 1988397..570c028 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping-4/expected.re
+@@ -1,5 +1,5 @@
+ FEATURE(
+        (1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
+-       |BAR(DISABLED|ENABLED)
+-       |FOO(DISABLED|ENABLED)
++       |BAR(DIS|EN)ABLED
++       |FOO(DIS|EN)ABLED
+ )
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected-compact.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected-compact.re
+index b1d6fa2..6ea95ef 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected-compact.re
+@@ -1 +1 @@
+-FEATURE(_(1_(DISABLED|ENABLED)|(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|2_(DISABLED|ENABLED)|A_(DISABLED|ENABLED)|B_(DISABLED|ENABLED)|BAR(_(DISABLED|ENABLED)|DISABLED|ENABLED)|FOO(_(DISABLED|ENABLED)|DISABLED|ENABLED))|1_(DISABLED|ENABLED)|(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|2_(DISABLED|ENABLED)|A_(DISABLED|ENABLED)|B_(DISABLED|ENABLED)|BAR(_(DISABLED|ENABLED)|DISABLED|ENABLED)|FOO(_(DISABLED|ENABLED)|DISABLED|ENABLED))
++FEATURE(_(1_(DIS|EN)ABLED|(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|2_(DIS|EN)ABLED|A_(DIS|EN)ABLED|B_(DIS|EN)ABLED|BAR(_(DIS|EN)ABLED|(DIS|EN)ABLED)|FOO(_(DIS|EN)ABLED|(DIS|EN)ABLED))|1_(DIS|EN)ABLED|(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED|2_(DIS|EN)ABLED|A_(DIS|EN)ABLED|B_(DIS|EN)ABLED|BAR(_(DIS|EN)ABLED|(DIS|EN)ABLED)|FOO(_(DIS|EN)ABLED|(DIS|EN)ABLED))
+diff --git a/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected.re b/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected.re
+index 1b129c5..f70aee8 100644
+--- a/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected.re
++++ b/tools/regex-builder/test/fixtures/prefix-suffix-grouping/expected.re
+@@ -1,30 +1,30 @@
+ FEATURE(
+        _(
+-        1_(DISABLED|ENABLED)
++        1_(DIS|EN)ABLED
+         |(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
+-        |2_(DISABLED|ENABLED)
+-        |A_(DISABLED|ENABLED)
+-        |B_(DISABLED|ENABLED)
++        |2_(DIS|EN)ABLED
++        |A_(DIS|EN)ABLED
++        |B_(DIS|EN)ABLED
+         |BAR(
+-            _(DISABLED|ENABLED)
+-            |DISABLED|ENABLED
++            _(DIS|EN)ABLED
++            |(DIS|EN)ABLED
+         )
+         |FOO(
+-            _(DISABLED|ENABLED)
+-            |DISABLED|ENABLED
++            _(DIS|EN)ABLED
++            |(DIS|EN)ABLED
+         )
+        )
+-       |1_(DISABLED|ENABLED)
++       |1_(DIS|EN)ABLED
+        |(1DIS|1EN|2DIS|2EN|ADIS|AEN|BDIS|BEN)ABLED
+-       |2_(DISABLED|ENABLED)
+-       |A_(DISABLED|ENABLED)
+-       |B_(DISABLED|ENABLED)
++       |2_(DIS|EN)ABLED
++       |A_(DIS|EN)ABLED
++       |B_(DIS|EN)ABLED
+        |BAR(
+-           _(DISABLED|ENABLED)
+-           |DISABLED|ENABLED
++           _(DIS|EN)ABLED
++           |(DIS|EN)ABLED
+        )
+        |FOO(
+-           _(DISABLED|ENABLED)
+-           |DISABLED|ENABLED
++           _(DIS|EN)ABLED
++           |(DIS|EN)ABLED
+        )
+ )
+diff --git a/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected-compact.re b/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected-compact.re
+index aeab02e..3276694 100644
+--- a/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected-compact.re
++++ b/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected-compact.re
+@@ -1 +1 @@
+-SOCKET_E(ANO|BUFS|NO(SYS|TTY)|NOT(BLK|CONN|DIR|EMPTY|SOCK|UNIQ))
++SOCKET_E(ANO|BUFS|NO(SYS|TTY)|NOT(BLK|CONN|DIR|EMPTY|SOCK|UNIQ))
+diff --git a/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected.re b/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected.re
+index 09d1e5b..57623f7 100644
+--- a/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected.re
++++ b/tools/regex-builder/test/fixtures/split-socket-eno-enot-tty/expected.re
+@@ -1,5 +1,5 @@
+-SOCKET_E(
+-        ANO|BUFS
+-        |NO(SYS|TTY)
+-        |NOT(BLK|CONN|DIR|EMPTY|SOCK|UNIQ)
+-)
++SOCKET_E(
++        ANO|BUFS
++        |NO(SYS|TTY)
++        |NOT(BLK|CONN|DIR|EMPTY|SOCK|UNIQ)
++)

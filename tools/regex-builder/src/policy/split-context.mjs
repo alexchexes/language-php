@@ -1,5 +1,6 @@
 /**
  * @typedef {{
+ *   fullTail: string,
  *   wordTail: string,
  *   lastChar: string | null,
  *   localPrefixLen: number
@@ -11,6 +12,7 @@
  */
 export function createInitialSplitContext() {
   return {
+    fullTail: "",
     wordTail: "",
     lastChar: null,
     localPrefixLen: 0,
@@ -24,11 +26,13 @@ export function createInitialSplitContext() {
  * @returns {SplitContext}
  */
 export function advanceSplitContext(state, rawLabel) {
+  let fullTail = state.fullTail;
   let wordTail = state.wordTail;
   let lastChar = state.lastChar;
   let localPrefixLen = state.localPrefixLen;
 
   for (const ch of rawLabel) {
+    fullTail += ch;
     lastChar = ch;
 
     if (ch === "_") {
@@ -41,5 +45,5 @@ export function advanceSplitContext(state, rawLabel) {
     localPrefixLen += 1;
   }
 
-  return { wordTail, lastChar, localPrefixLen };
+  return { fullTail, wordTail, lastChar, localPrefixLen };
 }
