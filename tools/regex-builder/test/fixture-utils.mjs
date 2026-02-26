@@ -89,23 +89,29 @@ export function formatSpawnFailure(label, result, command) {
   return parts.join("\n");
 }
 
-export function runRegexBuilder({ inputPath, args, compact = false }) {
+export function runRegexBuilder({ inputPath, args, compact = false, env = {} }) {
   const argv = [CLI_PATH, inputPath, ...args];
   if (compact) argv.push("--compact");
 
   return spawnSync(process.execPath, argv, {
     cwd: REPO_DIR,
     encoding: "utf8",
+    env: {
+      ...process.env,
+      ...env,
+    },
     windowsHide: true,
   });
 }
 
-export async function listFixtureDirs() {
-  const entries = await fs.readdir(FIXTURES_DIR, { withFileTypes: true });
+export async function listFixtureDirs(baseDir = FIXTURES_DIR) {
+  if (!(await pathExists(baseDir))) return [];
+
+  const entries = await fs.readdir(baseDir, { withFileTypes: true });
 
   return entries
     .filter((entry) => entry.isDirectory())
-    .map((entry) => path.join(FIXTURES_DIR, entry.name))
+    .map((entry) => path.join(baseDir, entry.name))
     .sort((a, b) => path.basename(a).localeCompare(path.basename(b)));
 }
 

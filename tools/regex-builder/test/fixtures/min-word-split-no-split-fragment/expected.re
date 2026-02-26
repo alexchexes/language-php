@@ -1,0 +1,4 @@
+(
+STANDAR(D|X)
+|STAPLE|STATUS
+)

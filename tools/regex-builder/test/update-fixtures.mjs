@@ -11,6 +11,7 @@ import {
 
 async function main() {
   const fixtureDirs = await listFixtureDirs();
+
   if (fixtureDirs.length === 0) {
     throw new Error(
       "No fixtures found. Add fixture directories under tools/regex-builder/test/fixtures.",
@@ -20,8 +21,16 @@ async function main() {
   for (const fixtureDir of fixtureDirs) {
     const fixture = await loadFixture(fixtureDir, { requireExpected: false });
 
-    const prettyCommand = formatCliCommand(fixture.inputPath, fixture.args, false);
-    const compactCommand = formatCliCommand(fixture.inputPath, fixture.args, true);
+    const prettyCommand = formatCliCommand(
+      fixture.inputPath,
+      fixture.args,
+      false,
+    );
+    const compactCommand = formatCliCommand(
+      fixture.inputPath,
+      fixture.args,
+      true,
+    );
 
     const prettyRun = runRegexBuilder({
       inputPath: fixture.inputPath,
@@ -29,7 +38,11 @@ async function main() {
     });
     if (prettyRun.status !== 0) {
       throw new Error(
-        formatSpawnFailure(`[${fixture.id}] pretty CLI`, prettyRun, prettyCommand),
+        formatSpawnFailure(
+          `[${fixture.id}] pretty CLI`,
+          prettyRun,
+          prettyCommand,
+        ),
       );
     }
 

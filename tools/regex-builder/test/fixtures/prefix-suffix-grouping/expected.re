@@ -1,0 +1,36 @@
+FEATURE(
+       _(
+        1_(DISABLED|ENABLED)
+        |1DISABLED|1ENABLED
+        |2_(DISABLED|ENABLED)
+        |2DISABLED|2ENABLED
+        |A_(DISABLED|ENABLED)
+        |ADISABLED|AENABLED
+        |B_(DISABLED|ENABLED)
+        |BAR(
+            _(DISABLED|ENABLED)
+            |DISABLED|ENABLED
+        )
+        |BDISABLED|BENABLED
+        |FOO(
+            _(DISABLED|ENABLED)
+            |DISABLED|ENABLED
+        )
+       )
+       |1_(DISABLED|ENABLED)
+       |1DISABLED|1ENABLED
+       |2_(DISABLED|ENABLED)
+       |2DISABLED|2ENABLED
+       |A_(DISABLED|ENABLED)
+       |ADISABLED|AENABLED
+       |B_(DISABLED|ENABLED)
+       |BAR(
+           _(DISABLED|ENABLED)
+           |DISABLED|ENABLED
+       )
+       |BDISABLED|BENABLED
+       |FOO(
+           _(DISABLED|ENABLED)
+           |DISABLED|ENABLED
+       )
+)

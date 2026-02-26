@@ -34,11 +34,32 @@ Then you can inspect or edit the output in an editor with dedicated regex syntax
 - `--compact`: don't prettify, print on one-line
 - `--json`: print compressed trie JSON
 - `--capturing` / `--noncapturing`: group style
+- `--no-prefix-grouping`: disable optional suffix regrouping pass
 - `--indent N|auto`: pretty indentation mode
 - `--wrap N`: max pretty line length (default: `100`)
 - `--min-word-split N`: minimum chars before mid-word factoring. Default `3`.
 - `--no-split W1[,...W2]`: comma-separated list of words that should not be factored (example: use `--no-split STANDARD` to avoid `STA(NDARD|TUS)` instead of `STANDARD|STATUS`)
 
+## Architecture
+The tool is split into independent passes under `tools/regex-builder/src`:
+
+1. `input.mjs`: input parsing and stable deduplication.
+2. `trie.mjs`: trie build/compress and JSON debug shape.
+3. `policy/`: split context + exact split-policy decisions.
+4. `ir/build-structure.mjs`: build formatting-agnostic IR.
+5. `ir/transforms/`: normalization/optimization passes.
+6. `render/`: compact and pretty rendering from IR only.
+7. `cli/`: argument parsing and CLI entry.
+
+Pass order:
+
+```txt
+input -> trie -> structure -> transforms -> render
+```
+
+This keeps readability/compression policy independent from formatting.
+Underscore-boundary regrouping is part of the default structural pass.
+Suffix regrouping is optional and can be disabled with `--no-prefix-grouping`.
 
 ## Testing
 Run fixture tests:
@@ -53,6 +74,14 @@ Update fixture expected outputs, then run tests:
 npm run -s test:regex-builder:update
 ```
 
+The test suite includes:
+
+1. CLI fixture goldens (`expected.re`, `expected-compact.re`).
+2. Structural invariant: compact output equals pretty output with whitespace removed.
+3. Boundary semantics checks (`\b(?:...)\b`) against positives/negatives.
+4. Metamorphic checks (permutation/duplicates, compact stability across wrap+indent).
+5. Prefix/suffix grouping coverage in regular fixtures.
+
 ### Fixture authoring
 Tests auto-scan immediate subdirectories of `tools/regex-builder/test/fixtures`.
 
@@ -64,6 +93,9 @@ Each fixture directory uses these file names:
 - `expected-compact.re` (required in test mode): expected compact output
 - `positive.txt` (optional): explicit positives; if omitted, `input.txt` values are used
 - `negative.txt` (required): values that must not match
+
+Use `args.txt` to disable default grouping for explicit edge-case fixtures:
+- `--no-prefix-grouping`
 
 Regex semantic assertions are evaluated with boundary usage:
 
