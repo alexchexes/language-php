@@ -82,19 +82,6 @@ __COMPILER_HALT_OFFSET__
 |NAN|NEGATIVE_SIGN|NO(EXPR|STR)
 |P_(CS_PRECEDES|SEP_BY_SPACE|SIGN_POSN)
 |PM_STR|POSITIVE_SIGN
-|PASSWORD_(
-          ARGON2(
-              I(D)?
-              |_DEFAULT_(
-                        MEMORY_COST
-                        |THREADS
-                        |TIME_COST
-              )
-              |_PROVIDER
-          )
-          |BCRYPT(_DEFAULT_COST)?
-          |DEFAULT
-)
 |PATH(
       _SEPARATOR
       |INFO_(
