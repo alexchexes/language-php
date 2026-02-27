@@ -1,0 +1,12 @@
+PASSWORD_(
+          ARGON2(
+              I(D)?
+              |_DEFAULT_(
+                        (MEMORY|TIME)_COST
+                        |THREADS
+              )
+              |_PROVIDER
+          )
+          |BCRYPT(_DEFAULT_COST)?
+          |DEFAULT
+)

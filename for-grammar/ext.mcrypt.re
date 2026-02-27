@@ -1,0 +1,18 @@
+MCRYPT_(
+        RC(2|6)
+        |RIJNDAEL_(128|192|256)
+        |RAND|GOST|XTEA
+        |MODE_(STREAM|NOFB|CBC|CFB|OFB|ECB)
+        |MARS
+        |BLOWFISH(_COMPAT)?
+        |SERPENT|SKIPJACK
+        |SAFER(64|128|PLUS)
+        |CRYPT
+        |CAST_(128|256)
+        |TRIPLEDES|THREEWAY|TWOFISH|IDEA
+        |(3)?DES
+        |DECRYPT
+        |DEV_(U)?RANDOM
+        |PANAMA|ENCRYPT|ENIGNA|WAKE|LOKI97
+        |ARCFOUR(_IV)?
+)

@@ -4,11 +4,9 @@ Existing function scopes, to align constants scopes with
 support.function.magic.php
 support.function.apc.php
 support.function.array.php
-support.function.basic_functions.php
 support.function.bcmath.php
 support.function.blenc.php
 support.function.bz2.php
-support.function.calendar.php
 support.function.classobj.php
 support.function.com.php
 support.function.ctype.php
@@ -25,45 +23,35 @@ support.function.exif.php
 support.function.fann.php
 support.function.file.php
 support.function.fileinfo.php
-support.function.filter.php
 support.function.fpm.php
 support.function.funchand.php
 support.function.gettext.php
 support.function.gmp.php
 support.function.hash.php
 support.function.http.php
-support.function.iconv.php
 support.function.iisfunc.php
-support.function.image.php
 support.function.info.php
 support.function.interbase.php
 support.function.ldap.php
 support.function.mail.php
 support.function.math.php
-support.function.mcrypt.php
 support.function.memcache.php
-support.function.mhash.php
 support.function.mongo.php
 support.function.network.php
 support.function.nsapi.php
 support.function.oci8.php
 support.function.opcache.php
-support.function.openssl.php
 support.function.output.php
 support.function.password.php
+
 support.function.php_apache.php
-support.function.php_dom.php
-support.function.php_ftp.php
-support.function.php_imap.php
 support.function.php_mssql.php
 support.function.php_odbc.php
-support.function.php_pcre.php
 support.function.php_spl.php
 support.function.php_zip.php
-support.function.posix.php
+
 support.function.proctitle.php
 support.function.pspell.php
-support.function.readline.php
 support.function.recode.php
 support.function.rrd.php
 support.function.sem.php
@@ -73,7 +61,6 @@ support.function.soap.php
 support.function.sqlite.php
 support.function.sqlsrv.php
 support.function.stats.php
-support.function.streamsfuncs.php
 support.function.string.php
 support.function.sybase.php
 support.function.taint.php
@@ -90,22 +77,40 @@ support.function.xmlwriter.php
 
 <!-- NO CONSTANTS -->
 support.function.constructor.php
+support.function.basic_functions.php
 support.function.construct.php
 support.function.simplexml.php
 
 
 <!-- INTENTIONALLY DIFFERENT -->
 support.function.tokenizer.php
+support.function.streamsfuncs.php
+support.function.readline.php
+
+
+<!-- ALIGNED, BUILT-IN EXTENSIONS (ADD PREFIX?) -->
+support.function.php_dom.php
+support.function.php_ftp.php
+support.function.php_imap.php
+support.function.php_pcre.php
 
 
 <!-- ALIGNED -->
+support.function.calendar.php
 support.function.curl.php
+support.function.filter.php
+support.function.posix.php
+support.function.iconv.php
+support.function.image.php
 support.function.intl.php
 support.function.json.php
 support.function.libxml.php
 support.function.mbstring.php
+support.function.mcrypt.php
+support.function.mhash.php
 support.function.mysql.php
 support.function.mysqli.php
+support.function.openssl.php
 support.function.pcntl.php
 support.function.pgsql.php
 support.function.session.php
