@@ -1,6 +1,0 @@
-MB_(
-   CASE_(
-        (FOLD|LOWER|TITLE|UPPER)(_SIMPLE)?
-   )
-   |ONIGURUMA_VERSION
-)

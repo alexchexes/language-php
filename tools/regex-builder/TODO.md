@@ -136,6 +136,9 @@ even if we add --no-split=FUNC, it doesn't gives expected result and instead bec
 
 # TODO:
 
+##
+When sorting members, sort 8 before 16, and 8FOO before 16BAR ("numeric-prefix"-aware sorting)
+
 ## 
 Sort groups after or during rebalancing / any other structural changes. For groups like |(...) take first member letter for sort purpose
 So that this
@@ -171,12 +174,17 @@ allow providing `--no-split-end=ED` so that `CLOSED FAILED REJECTED` not factore
 replace 0|1|2|3 with [0-3]
 
 ## 
-allow passing a word, like `CWD`, in a way so that as a result we allow splitting CWD even if `--min-word-split` disslows, like here: `MULTICWD|NOCWD` even though `NO` violates `--min-word-split 3`.
-This is similar to --split= except that --split (we need to rename it) targets end of the string (where --split value ends - split allowed) and the new option will do on both ends, so, to produce the same results with both (`MULTICWD|NOCWD` -> `(MULTI|NO)CWD`):
+allow passing a word, like `CWD`, in a way so that as a result we allow splitting CWD even if such split would normally violate `--min-word-split` threshold. Like here: `MULTICWD|NOCWD` even though `NO` violates `--min-word-split 3`.
+This is similar to --split= except that --split (we need to rename it!) targets end of the string (where --split value ends - split is allowed) and the new option will do on both ends, so, to produce the same results with both (`MULTICWD|NOCWD` -> `(MULTI|NO)CWD`):
 with current --split: `--split=NO`
 with new option: `--new-flag=CWD`
 result would be identical. possible name for split: `--split-after` (natural hah? `--split-after=_NO`, clear intent).
 And yep, current internal name `forceSplitWords` is misleading anyway.
+
+##
+also sometimes we need to specify word that must not be split, but it may be found inside may other words. For example, we're running with --min-word-split 2, and we don't want to factor SET SECURE as SE(T|CURE). But we DO want to still allow factor words CLOSETIME OPENTIME, but with --no-split=SET it becomes impossible since CLOSETIME has SET in it. 
+So we come to a conclusion that we need another option that will forbid word to be split if it is "standalone" word like in ST_SET / SET1 / 1SET / noSET or is it mid-word like CLOSETIME.
+Actually we instead of adding new option for that, we could simply allow passing regexes, like --no-split='\bSET\b'.
 
 ##
 Allow providing a dict for those split/no-split flags

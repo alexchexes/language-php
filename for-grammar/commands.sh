@@ -12,7 +12,11 @@ pnpm run -s regex-builder for-grammar/input/ext.curl.txt --no-split=VERSION,LIMI
 
 pnpm run -s regex-builder for-grammar/input/ext.gd.txt --no-split=MAJOR,VERTICAL,CHORD,EDGED,BELL,MITCHEL,GAUSSIAN,HERMITE,ROTATE,TRIANGLE,TILED,EMBOSS,NEGATE,SCALE,PIXELATE,CUBIC,JPEG > for-grammar/ext.gd.re
 
-pnpm run -s regex-builder for-grammar/input/ext.imap.txt --no-split=CHILDREN,SECURE,TYPE,IMAGE,SET,7BIT,SORT,MARKED,TIMEOUT --min-word-split=2 > for-grammar/ext.imap.re
+pnpm run -s regex-builder for-grammar/input/ext.imap.txt --no-split=CHILDREN,SECURE,TYPE,IMAGE,7BIT,SORT,MARKED,SILENT,TIMEOUT --min-word-split=2 > for-grammar/ext.imap.re
+
+pnpm run -s regex-builder for-grammar/input/ext.json.txt --no-split=NONE,PRETTY > for-grammar/ext.json.re
+
+pnpm run -s regex-builder for-grammar/input/ext.openssl.txt --no-split=SIGS,128,224,RSA,SERVER --min-word-split=2 > for-grammar/ext.openssl.re
 
 # Compact mode:
 
@@ -29,3 +33,7 @@ pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.curl.txt --no-spl
 pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.gd.txt --no-split=MAJOR,VERTICAL,CHORD,EDGED,BELL,MITCHEL,GAUSSIAN,HERMITE,ROTATE,TRIANGLE,TILED,EMBOSS,NEGATE,SCALE,PIXELATE,CUBIC,JPEG > for-grammar/ext.gd.COMPACT.re
 
 pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.imap.txt --no-split=CHILDREN,SECURE,TYPE,IMAGE,SET,7BIT,SORT,MARKED,TIMEOUT --min-word-split=2 > for-grammar/ext.imap.COMPACT.re
+
+pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.json.txt --no-split=NONE,PRETTY > for-grammar/ext.json.COMPACT.re
+
+pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.openssl.txt --no-split=SIGS,128,224,RSA,SERVER --min-word-split=2 > for-grammar/ext.openssl.COMPACT.re
