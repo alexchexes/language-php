@@ -1,6 +1,6 @@
 Existing function scopes, to align constants scopes with
 
-<!-- TODO: -->
+<!-- TO VERIFY -->
 support.function.magic.php
 support.function.apc.php
 support.function.array.php
