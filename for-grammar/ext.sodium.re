@@ -1,57 +1,56 @@
 SODIUM_(
-       BASE64_VARIANT_(
-                      ORIGINAL(_NO_PADDING)?
-                      |URLSAFE(_NO_PADDING)?
-       )
+       BASE64_VARIANT_(ORIGINAL|URLSAFE)(_NO_PADDING)?
        |CRYPTO_(
                AEAD_(
-                    AES256GCM_(A|KEY|NPUB|NSEC)BYTES
-                    |CHACHA20POLY1305_(
-                                      (A|KEY|NPUB|NSEC)BYTES
-                                      |IETF_(A|KEY|NPUB|NSEC)BYTES
+                    (AES256GCM|XCHACHA20POLY1305_IETF)_(
+                                                       ABYTES
+                                                       |(KEY|NPUB|NSEC)BYTES
                     )
-                    |XCHACHA20POLY1305_IETF_(A|KEY|NPUB|NSEC)BYTES
+                    |CHACHA20POLY1305_(
+                                      ABYTES
+                                      |IETF_(
+                                            ABYTES
+                                            |(KEY|NPUB|NSEC)BYTES
+                                      )
+                                      |(KEY|NPUB|NSEC)BYTES
+                    )
                )
-               |AUTH_(BYTES|KEYBYTES)
+               |(AUTH|SHORTHASH)_(KEY)?BYTES
                |BOX_(KEYPAIR|MAC|NONCE|PUBLICKEY|SEAL|SECRETKEY|SEED)BYTES
-               |CORE_RISTRETTO255_(B|HASHB|NONREDUCEDSCALARB|SCALARB)YTES
-               |GENERICHASH_(
-                            BYTES(_(MAX|MIN))?
-                            |KEYBYTES(_(MAX|MIN))?
-               )
+               |CORE_RISTRETTO255_(
+                                  HASH
+                                  |(NONREDUCED)?SCALAR
+               )?BYTES
+               |GENERICHASH_(KEY)?BYTES(_(MAX|MIN))?
                |KDF_(
                     BYTES_(MAX|MIN)
                     |CONTEXTBYTES|KEYBYTES
                )
-               |KX_(KEYPAIR|PUBLICKEY|SECRETKEY|SEED|SESSIONKEY)BYTES
+               |KX_(
+                   (PUBLIC|SECRET|SESSION)KEY
+                   |KEYPAIR|SEED
+               )BYTES
                |PWHASH_(
                        ALG_(
-                           ARGON2I(13|D13)
+                           ARGON2I(D)?13
                            |DEFAULT
                        )
-                       |MEMLIMIT_(INTERACTIVE|MODERATE|SENSITIVE)
-                       |OPSLIMIT_(INTERACTIVE|MODERATE|SENSITIVE)
+                       |(MEMLIMIT|OPSLIMIT)_(INTERACTIVE|MODERATE|SENSITIVE)
                        |SCRYPTSALSA208SHA256_(
-                                             MEMLIMIT_(INTERACTIVE|SENSITIVE)
-                                             |OPSLIMIT_(INTERACTIVE|SENSITIVE)
+                                             (MEMLIMIT|OPSLIMIT)_(INTERACTIVE|SENSITIVE)
                                              |SALTBYTES|STRPREFIX
                        )
                        |SALTBYTES|STRPREFIX
                )
-               |SCALARMULT_(
-                           RISTRETTO255_(BYTES|SCALARBYTES)
-                           |BYTES|SCALARBYTES
-               )
+               |SCALARMULT_(RISTRETTO255_)?(SCALAR)?BYTES
                |SECRET(
                       BOX_(KEY|MAC|NONCE)BYTES
                       |STREAM_XCHACHA20POLY1305_(
-                                                (A|HEADER|KEY)BYTES
-                                                |MESSAGEBYTES_MAX
+                                                ABYTES|HEADERBYTES|KEYBYTES|MESSAGEBYTES_MAX
                                                 |TAG_(FINAL|MESSAGE|PUSH|REKEY)
                       )
                )
-               |SHORTHASH_(BYTES|KEYBYTES)
-               |SIGN_(B|KEYPAIRB|PUBLICKEYB|SECRETKEYB|SEEDB)YTES
+               |SIGN_(KEYPAIR|PUBLICKEY|SECRETKEY|SEED)?BYTES
                |STREAM_(
                        KEYBYTES|NONCEBYTES
                        |XCHACHA20_(KEYBYTES|NONCEBYTES)
