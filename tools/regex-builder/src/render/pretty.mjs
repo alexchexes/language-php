@@ -1,16 +1,13 @@
-import { IR_NODE_KINDS } from "../ir/types.mjs";
+import { makeRenderer } from "./engine.mjs";
 import {
   arrangePrettyAltBlocks,
   flattenAltBlocksToTexts,
   isSimpleInlineAlt,
   packSimpleAltTokens,
 } from "./layout.mjs";
-import {
-  escapeRegexLiteral,
-  groupOpen,
-  isAutoIndentMode,
-  makeEmitted,
-} from "./shared.mjs";
+import { groupOpen, isAutoIndentMode, makeEmitted } from "./shared.mjs";
+
+const { render } = makeRenderer(emitAltGroup);
 
 /**
  * Render IR to pretty multiline regex.
@@ -23,96 +20,7 @@ import {
  * @returns {string}
  */
 export function renderPretty(node, opts) {
-  return emitNode(node, opts, {
-    col: 0,
-    lineCol: 0,
-    wrapShift: 0,
-  }).text;
-}
-
-/**
- * @typedef {{
- *   col: number,
- *   lineCol: number,
- *   wrapShift: number
- * }} RenderContext
- */
-
-/**
- * @param {import("../ir/types.mjs").RegexIR} node
- * @param {{
- *   indent?: number | "auto",
- *   wrap?: number,
- *   groupStyle?: "capturing" | "noncapturing"
- * }} opts
- * @param {RenderContext} ctx
- * @returns {{ text: string, singleLine: boolean, hasGroup: boolean }}
- */
-function emitNode(node, opts, ctx) {
-  switch (node.kind) {
-    case IR_NODE_KINDS.literal:
-      return makeEmitted(escapeRegexLiteral(node.value), false);
-
-    case IR_NODE_KINDS.concat:
-      return emitConcat(node, opts, ctx);
-
-    case IR_NODE_KINDS.altGroup:
-      return emitAltGroup(node, opts, ctx, false);
-
-    case IR_NODE_KINDS.optional:
-      return emitOptional(node, opts, ctx);
-
-    default:
-      return makeEmitted("", false);
-  }
-}
-
-/**
- * @param {{ kind: "concat", parts: import("../ir/types.mjs").RegexIR[] }} node
- * @param {{
- *   indent: number | "auto",
- *   wrap: number,
- *   groupStyle: "capturing" | "noncapturing"
- * }} opts
- * @param {RenderContext} ctx
- * @returns {{ text: string, singleLine: boolean, hasGroup: boolean }}
- */
-function emitConcat(node, opts, ctx) {
-  let text = "";
-  let hasGroup = false;
-  let currentCol = ctx.col;
-  let currentLineCol = ctx.lineCol;
-
-  for (const part of node.parts) {
-    if (part.kind === IR_NODE_KINDS.literal) {
-      const escaped = escapeRegexLiteral(part.value);
-      text += escaped;
-      currentCol += escaped.length;
-      continue;
-    }
-
-    const child = emitNode(part, opts, {
-      col: currentCol,
-      lineCol: currentLineCol,
-      wrapShift: ctx.wrapShift + 1,
-    });
-
-    text += child.text;
-    hasGroup = hasGroup || child.hasGroup;
-
-    if (child.singleLine) {
-      currentCol += child.text.length;
-      continue;
-    }
-
-    const lines = child.text.split("\n");
-    const lastLine = lines[lines.length - 1];
-    currentCol = lastLine.length;
-    const lineStartMatch = /^\s*/.exec(lastLine);
-    currentLineCol = lineStartMatch ? lineStartMatch[0].length : 0;
-  }
-
-  return makeEmitted(text, hasGroup);
+  return render(node, opts);
 }
 
 /**
@@ -122,11 +30,18 @@ function emitConcat(node, opts, ctx) {
  *   wrap: number,
  *   groupStyle: "capturing" | "noncapturing"
  * }} opts
- * @param {RenderContext} ctx
+ * @param {{ col: number, lineCol: number, wrapShift: number }} ctx
  * @param {boolean} forceGroup
+ * @param {(node: import("../ir/types.mjs").RegexIR, opts: {
+ *   indent?: number | "auto",
+ *   wrap?: number,
+ *   groupStyle?: "capturing" | "noncapturing"
+ * }, ctx: { col: number, lineCol: number, wrapShift: number }) => {
+ *   text: string, singleLine: boolean, hasGroup: boolean
+ * }} emitNode
  * @returns {{ text: string, singleLine: boolean, hasGroup: boolean }}
  */
-function emitAltGroup(node, opts, ctx, forceGroup) {
+function emitAltGroup(node, opts, ctx, forceGroup, emitNode) {
   const indent = opts.indent;
   const wrapCol = opts.wrap;
   const groupStyle = opts.groupStyle;
@@ -166,7 +81,7 @@ function emitAltGroup(node, opts, ctx, forceGroup) {
   }
 
   const base = " ".repeat(ctx.lineCol);
-  const inner = autoIndent ? " ".repeat(innerCol) : " ".repeat(innerCol);
+  const inner = " ".repeat(innerCol);
 
   /** @type {string[]} */
   const lines = [open];
@@ -197,29 +112,6 @@ function emitAltGroup(node, opts, ctx, forceGroup) {
 
   lines.push(base + ")");
   return makeEmitted(lines.join("\n"), true);
-}
-
-/**
- * @param {{ kind: "optional", child: import("../ir/types.mjs").RegexIR }} node
- * @param {{
- *   indent: number | "auto",
- *   wrap: number,
- *   groupStyle: "capturing" | "noncapturing"
- * }} opts
- * @param {RenderContext} ctx
- * @returns {{ text: string, singleLine: boolean, hasGroup: boolean }}
- */
-function emitOptional(node, opts, ctx) {
-  const groupNode =
-    node.child.kind === IR_NODE_KINDS.altGroup
-      ? node.child
-      : {
-          kind: IR_NODE_KINDS.altGroup,
-          alternatives: [node.child],
-        };
-
-  const child = emitAltGroup(groupNode, opts, ctx, true);
-  return makeEmitted(`${child.text}?`, true);
 }
 
 /**

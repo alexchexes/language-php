@@ -3,6 +3,7 @@ import { buildStructureFromCompTrie } from "./ir/build-structure.mjs";
 import { applyPrefixGroupingTransform } from "./ir/transforms/prefix-grouping.mjs";
 import { applyOptionalEmptyAltTransform } from "./ir/transforms/optional-empty-alt.mjs";
 import { parseInputLines, uniqueStable } from "./input.mjs";
+import { renderBalanced } from "./render/balanced.mjs";
 import { renderCompact } from "./render/compact.mjs";
 import { renderPretty } from "./render/pretty.mjs";
 import { buildTrie, compressTrie } from "./trie.mjs";
@@ -12,6 +13,7 @@ import { buildTrie, compressTrie } from "./trie.mjs";
  * @param {{ terminal: boolean, edges: Array<{ label: string, node: any }> }} compTrie
  * @param {{
  *   pretty?: boolean,
+ *   format?: "pretty" | "compact" | "balanced",
  *   indent?: number | "auto",
  *   wrap?: number,
  *   groupStyle?: "capturing" | "noncapturing",
@@ -37,8 +39,16 @@ export function buildRegexFromCompTrie(compTrie, opts = {}) {
   });
   ir = applyOptionalEmptyAltTransform(ir);
 
-  if (!resolved.pretty) {
+  if (resolved.format === "compact") {
     return renderCompact(ir, {
+      indent: resolved.indent,
+      wrap: resolved.wrap,
+      groupStyle: resolved.groupStyle,
+    });
+  }
+
+  if (resolved.format === "balanced") {
+    return renderBalanced(ir, {
       indent: resolved.indent,
       wrap: resolved.wrap,
       groupStyle: resolved.groupStyle,
@@ -57,6 +67,7 @@ export function buildRegexFromCompTrie(compTrie, opts = {}) {
  * @param {string[]} strings
  * @param {{
  *   pretty?: boolean,
+ *   format?: "pretty" | "compact" | "balanced",
  *   indent?: number | "auto",
  *   wrap?: number,
  *   groupStyle?: "capturing" | "noncapturing",

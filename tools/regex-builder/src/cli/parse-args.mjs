@@ -8,6 +8,59 @@ function addCsvWordsToSet(set, raw) {
   }
 }
 
+function isOptionToken(raw) {
+  return raw === "-h" || raw.startsWith("--");
+}
+
+function readOptionValue(argv, index, optionName, config = {}) {
+  const { optional = false, defaultValue = null } = config;
+  const arg = argv[index];
+  const eqPrefix = `${optionName}=`;
+
+  if (arg.startsWith(eqPrefix)) {
+    const raw = arg.slice(eqPrefix.length);
+    if (raw === "") {
+      if (optional) return { raw: defaultValue, nextIndex: index };
+      throw new Error(`Missing value for ${optionName}`);
+    }
+    return { raw, nextIndex: index };
+  }
+
+  if (arg !== optionName) return null;
+
+  const next = argv[index + 1];
+  if (next == null) {
+    if (optional) return { raw: defaultValue, nextIndex: index };
+    throw new Error(`Missing value for ${optionName}`);
+  }
+
+  if (isOptionToken(next)) {
+    if (optional) return { raw: defaultValue, nextIndex: index };
+    throw new Error(`Missing value for ${optionName}`);
+  }
+
+  return { raw: next, nextIndex: index + 1 };
+}
+
+function readNumber(raw, optionName, min = null) {
+  const value = Number(raw);
+  if (!Number.isFinite(value)) {
+    throw new Error(`Invalid ${optionName} value: ${raw}`);
+  }
+  if (min != null && value < min) {
+    throw new Error(`Invalid ${optionName} value: ${raw}`);
+  }
+  return value;
+}
+
+function readPositiveNumber(raw, optionName) {
+  const value = readNumber(raw, optionName, 0);
+  if (value <= 0) {
+    throw new Error(`Invalid ${optionName} value: ${raw}`);
+  }
+  return value;
+}
+
 export function parseArgs(argv) {
   const args = {
     file: null,
@@ -23,52 +76,90 @@ export function parseArgs(argv) {
       continue;
     }
 
-    if (arg === "--compact") args.pretty = false;
-    else if (arg === "--pretty") args.pretty = true;
-    else if (arg === "--json") args.json = true;
-    else if (arg === "--capturing") args.groupStyle = "capturing";
-    else if (arg === "--noncapturing") args.groupStyle = "noncapturing";
-    else if (arg === "--indent") {
-      const raw = argv[++i];
-      if (raw == null) throw new Error("Missing value for --indent");
+    if (arg === "--compact") {
+      args.pretty = false;
+      args.format = "compact";
+      continue;
+    }
 
+    if (arg === "--pretty") {
+      args.pretty = true;
+      args.format = "pretty";
+      continue;
+    }
+
+    if (arg === "--json") {
+      args.json = true;
+      continue;
+    }
+
+    if (arg === "--capturing") {
+      args.groupStyle = "capturing";
+      continue;
+    }
+
+    if (arg === "--noncapturing") {
+      args.groupStyle = "noncapturing";
+      continue;
+    }
+
+    if (arg === "--help" || arg === "-h") {
+      printHelpAndExit(0);
+    }
+
+    const balancedOpt = readOptionValue(argv, i, "--balanced", {
+      optional: true,
+      defaultValue: "100",
+    });
+    if (balancedOpt) {
+      args.pretty = true;
+      args.format = "balanced";
+      args.wrap = readPositiveNumber(balancedOpt.raw, "--balanced");
+      i = balancedOpt.nextIndex;
+      continue;
+    }
+
+    const indentOpt = readOptionValue(argv, i, "--indent");
+    if (indentOpt) {
+      const raw = indentOpt.raw;
       if (raw === "auto") {
         args.indent = "auto";
       } else {
-        const value = Number(raw);
-        if (!Number.isFinite(value) || value < 0) {
-          throw new Error(`Invalid --indent value: ${raw}`);
-        }
-        args.indent = value;
+        args.indent = readNumber(raw, "--indent", 0);
       }
-    } else if (arg === "--help" || arg === "-h") {
-      printHelpAndExit(0);
-    } else if (arg === "--wrap") {
-      const value = Number(argv[++i]);
-      if (!Number.isFinite(value) || value <= 0) {
-        throw new Error(`Invalid --wrap value: ${value}`);
-      }
-      args.wrap = value;
-    } else if (arg === "--min-word-split") {
-      const value = Number(argv[++i]);
-      if (!Number.isFinite(value) || value < 0) {
-        throw new Error(`Invalid --min-word-split value: ${value}`);
-      }
-      args.minWordSplitLen = value;
-    } else if (arg === "--no-split" || arg.startsWith("--no-split=")) {
-      const raw =
-        arg === "--no-split" ? argv[++i] : arg.slice("--no-split=".length);
-
-      if (raw == null) throw new Error("Missing value for --no-split");
-      addCsvWordsToSet(args.forbidSplitWords, raw);
-    } else if (arg === "--split" || arg.startsWith("--split=")) {
-      const raw = arg === "--split" ? argv[++i] : arg.slice("--split=".length);
-
-      if (raw == null) throw new Error("Missing value for --split");
-      addCsvWordsToSet(args.forceSplitWords, raw);
-    } else {
-      throw new Error(`Unknown argument: ${arg}`);
+      i = indentOpt.nextIndex;
+      continue;
     }
+
+    const wrapOpt = readOptionValue(argv, i, "--wrap");
+    if (wrapOpt) {
+      args.wrap = readPositiveNumber(wrapOpt.raw, "--wrap");
+      i = wrapOpt.nextIndex;
+      continue;
+    }
+
+    const minSplitOpt = readOptionValue(argv, i, "--min-word-split");
+    if (minSplitOpt) {
+      args.minWordSplitLen = readNumber(minSplitOpt.raw, "--min-word-split", 0);
+      i = minSplitOpt.nextIndex;
+      continue;
+    }
+
+    const noSplitOpt = readOptionValue(argv, i, "--no-split");
+    if (noSplitOpt) {
+      addCsvWordsToSet(args.forbidSplitWords, noSplitOpt.raw);
+      i = noSplitOpt.nextIndex;
+      continue;
+    }
+
+    const splitOpt = readOptionValue(argv, i, "--split");
+    if (splitOpt) {
+      addCsvWordsToSet(args.forceSplitWords, splitOpt.raw);
+      i = splitOpt.nextIndex;
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${arg}`);
   }
 
   return args;
@@ -82,11 +173,12 @@ Usage:
 Options:
   --pretty                   Pretty multiline output (default)
   --compact                  Single-line compact regex
+  --balanced[=N]             Balanced multiline output with inline-first wrapping (default wrap: 100)
   --json                     Print compressed trie as JSON instead of regex
   --capturing                Use (...) groups (default)
   --noncapturing             Use (?:...) groups
   --indent N|auto            Pretty-print indentation width, or continuation-column alignment (default: auto)
-  --wrap N                   Maximum emitted line length in pretty mode (default: 100)
+  --wrap N                   Maximum emitted line length in pretty/balanced mode (default: 100)
   --min-word-split N         Minimum chars in local split prefix before mid-word factoring (default: 3)
   --no-split W1[,...W2]      Forbid mid-word splitting before completing these fragments (exact, case-sensitive)
   --split W1[,...W2]         Allow exact split points even when min-word-split / no-split would block

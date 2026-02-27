@@ -1,6 +1,7 @@
 /**
  * @typedef {{
  *   pretty?: boolean,
+ *   format?: "pretty" | "compact" | "balanced",
  *   json?: boolean,
  *   groupStyle?: "capturing" | "noncapturing",
  *   indent?: number | "auto",
@@ -14,6 +15,7 @@
 /**
  * @typedef {{
  *   pretty: boolean,
+ *   format: "pretty" | "compact" | "balanced",
  *   json: boolean,
  *   groupStyle: "capturing" | "noncapturing",
  *   indent: number | "auto",
@@ -29,8 +31,11 @@
  * @returns {ResolvedOptions}
  */
 export function resolveOptions(raw = {}) {
+  const format = resolveFormat(raw);
+
   return {
-    pretty: raw.pretty ?? true,
+    pretty: format !== "compact",
+    format,
     json: raw.json ?? false,
     groupStyle:
       raw.groupStyle === "noncapturing" ? "noncapturing" : "capturing",
@@ -40,6 +45,23 @@ export function resolveOptions(raw = {}) {
     forbidSplitWords: cloneStringSet(raw.forbidSplitWords),
     forceSplitWords: cloneStringSet(raw.forceSplitWords),
   };
+}
+
+/**
+ * @param {RawOptions} raw
+ * @returns {"pretty" | "compact" | "balanced"}
+ */
+function resolveFormat(raw) {
+  if (
+    raw.format === "pretty" ||
+    raw.format === "compact" ||
+    raw.format === "balanced"
+  ) {
+    return raw.format;
+  }
+
+  if (raw.pretty === false) return "compact";
+  return "pretty";
 }
 
 /**

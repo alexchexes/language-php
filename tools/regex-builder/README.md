@@ -32,13 +32,14 @@ Then you can inspect or edit the output in an editor with dedicated regex syntax
 
 ## Options
 - `--compact`: don't prettify, print on one-line
+- `--balanced[=N]` / `--balanced N`: in-between format that keeps groups inline until wrap limit (default `100`)
 - `--json`: print compressed trie JSON
 - `--capturing` / `--noncapturing`: group style
-- `--indent N|auto`: pretty indentation mode
-- `--wrap N`: max pretty line length (default: `100`)
+- `--indent N|auto`: pretty/balanced indentation mode
+- `--wrap N` / `--wrap=N`: max pretty line length (default: `100`)
 - `--min-word-split N`: minimum chars before mid-word factoring. Default `3`.
-- `--no-split W1[,...W2]`: comma-separated list of words that should not be factored (example: use `--no-split STANDARD` to avoid `STA(NDARD|TUS)` instead of `STANDARD|STATUS`)
-- `--split W1[,...W2]`: comma-separated list of exact split fragments to allow even when `--min-word-split` / `--no-split` would block (`--split` wins on conflicts)
+- `--no-split W1[,...W2]` / `--no-split=W1[,...W2]`: comma-separated list of words that should not be factored (example: use `--no-split STANDARD` to avoid `STA(NDARD|TUS)` instead of `STANDARD|STATUS`)
+- `--split W1[,...W2]` / `--split=W1[,...W2]`: comma-separated list of exact split fragments to allow even when `--min-word-split` / `--no-split` would block (`--split` wins on conflicts)
 
 ## Testing
 Run fixture tests:

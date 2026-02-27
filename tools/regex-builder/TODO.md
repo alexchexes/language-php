@@ -136,7 +136,6 @@ even if we add --no-split=FUNC, it doesn't gives expected result and instead bec
 
 # TODO:
 
-
 ## 
 Sort groups after or during rebalancing / any other structural changes. For groups like |(...) take first member letter for sort purpose
 So that this
@@ -166,17 +165,24 @@ But to check we can now allow only endings like digit or _, and see how it goes.
 ## Allow to forbid split only for endings
 allow providing `--no-split-end=ED` so that `CLOSED FAILED REJECTED` not factored like `(CLOS|FAIL|REJECT)ED` while still allowing to break any ED that is not at the end of what we treat as separate "word" (our "word" bounds are _, digits, camel->Case change)
 
-
-
 # NICE TO HAVE:
 
 ##
 replace 0|1|2|3 with [0-3]
 
-##
+## 
 allow passing a word, like `CWD`, in a way so that as a result we allow splitting CWD even if `--min-word-split` disslows, like here: `MULTICWD|NOCWD` even though `NO` violates `--min-word-split 3`.
 This is similar to --split= except that --split (we need to rename it) targets end of the string (where --split value ends - split allowed) and the new option will do on both ends, so, to produce the same results with both (`MULTICWD|NOCWD` -> `(MULTI|NO)CWD`):
 with current --split: `--split=NO`
 with new option: `--new-flag=CWD`
 result would be identical. possible name for split: `--split-after` (natural hah? `--split-after=_NO`, clear intent).
 And yep, current internal name `forceSplitWords` is misleading anyway.
+
+##
+Allow providing a dict for those split/no-split flags
+
+## 
+Allow specify output file with cli option
+
+##
+Allow specify input with cli option
