@@ -68,3 +68,15 @@ Regex semantic assertions are evaluated with boundary usage:
 ```txt
 \b(?:FOO)\b
 ```
+
+---
+
+Regex that may help find undesired word splits:
+```
+([^_() |]\(|\)[a-z])
+```
+
+Regex to find incorrectly placed alternation operators
+```
+(\(\s*\||\|\s*\))
+```
