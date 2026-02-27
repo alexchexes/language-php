@@ -18,6 +18,8 @@ pnpm run -s regex-builder for-grammar/input/ext.json.txt --no-split=NONE,PRETTY 
 
 pnpm run -s regex-builder for-grammar/input/ext.openssl.txt --no-split=SIGS,128,224,RSA,SERVER --min-word-split=2 > for-grammar/ext.openssl.re
 
+pnpm run -s regex-builder for-grammar/input/ext.pcntl.txt --min-word-split=2 --split=PCNTL_E,W --no-split=SIG,DUMP,STOP,EXIT,CLD,ACCES,BLOCK,INTR,PROCESS,EXITED,STOPPED,TRACED,CONTINUED,FILE,PIPE,TERM,ALRM,POLL,LIB,ADR,PCNTL,SIG_,QUIT,INT,TRAP,KILL,KILLED,ERR,DUMPED,IO,USER,ABRT,TTIN,TTOU,IOT,CONT,OPC > for-grammar/ext.pcntl.re
+
 # Compact mode:
 
 pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.intl.txt --no-split=VALID,STANDARD,TOKEN,VERSION,OPTION,FILTER,PROHIBITED,ACCESS,RULE,OPERATOR > for-grammar/ext.intl.COMPACT.re
@@ -37,3 +39,5 @@ pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.imap.txt --no-spl
 pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.json.txt --no-split=NONE,PRETTY > for-grammar/ext.json.COMPACT.re
 
 pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.openssl.txt --no-split=SIGS,128,224,RSA,SERVER --min-word-split=2 > for-grammar/ext.openssl.COMPACT.re
+
+pnpm run -s regex-builder --balanced 100 for-grammar/input/ext.pcntl.txt --min-word-split=2 --split=PCNTL_E,W --no-split=SIG,DUMP,STOP,EXIT,CLD,ACCES,BLOCK,INTR,PROCESS,EXITED,STOPPED,TRACED,CONTINUED,FILE,PIPE,TERM,ALRM,POLL,LIB,ADR,PCNTL,SIG_,QUIT,INT,TRAP,KILL,KILLED,ERR,DUMPED,IO,USER,ABRT,TTIN,TTOU,IOT,CONT,OPC > for-grammar/ext.pcntl.COMPACT.re
