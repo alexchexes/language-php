@@ -134,6 +134,9 @@ even if we add --no-split=FUNC, it doesn't gives expected result and instead bec
 `(READFUNC|WRITEFUNC)_PAUSE`.
 
 
+## 8
+minor bug in balanced formatter: for some inputs (e.g. for-grammar/input/ext.xsl.txt), the very last closing brace is on new line (should be on the same line as last token)
+
 # TODO:
 
 ##

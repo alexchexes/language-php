@@ -1,10 +1,10 @@
 (
-  LIB(E)?XSLT_(DOTTED_)?VERSION
-  |XSL_(
-        CLONE_(ALWAYS|AUTO|NEVER)
-        |SECPREF_(
-          CREATE_DIRECTORY|DEFAULT|NONE
-          |(READ|WRITE)_(FILE|NETWORK)
-        )
-  )
+LIB(E)?XSLT_(DOTTED_)?VERSION
+|XSL_(
+     CLONE_(ALWAYS|AUTO|NEVER)
+     |SECPREF_(
+              CREATE_DIRECTORY|DEFAULT|NONE
+              |(READ|WRITE)_(FILE|NETWORK)
+     )
+)
 )
