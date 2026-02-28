@@ -1,3 +1,14 @@
+# TODO
+
+## For better tests:
+To deterministically assert that we truly don't generate regex that covers more identifiers than intended,
+we should switch to use this ASAP:
+- `regex-to-strings` js package to expand regex (if needed, convert with `oniguruma-to-es` first).
+
+## Consider partial rewrite using existing tools to do the hard job:
+For more compact factoring (will they?), see last messages: https://chatgpt.com/share/69a49185-8d10-800d-ae19-be30edfc103e
+It suggests using NFA / DFA (aka DAWG / DAFSA) algorythms, links to https://dafsa.readthedocs.io/en/latest/ though that is in python.
+
 # Incorrect behavior:
 
 ## 0
@@ -190,7 +201,10 @@ So we come to a conclusion that we need another option that will forbid word to 
 Actually we instead of adding new option for that, we could simply allow passing regexes, like --no-split='\bSET\b'.
 
 ##
-Allow providing a dict for those split/no-split flags
+Allow providing a dict file path in addition to --split / --no-split flags.
+### OR EVEN ADD BUILT-IN DEFAULT `no-split` DICTIONARY:
+- obtain english full dictionary
+- determine a strategy how to find words that should not be added to the default no-split dictionary because they consist of other words. For example, if we would naively just add all english words as "no split", we will forbid countless `UN(...)` words factoring.
 
 ## 
 Allow specify output file with cli option
