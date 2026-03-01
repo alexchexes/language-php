@@ -3310,7 +3310,7 @@
         'match': '''(?xi)\\b
           curl_(
             close|copy_handle|errno|error|escape|exec|getinfo|init|pause|reset|
-setopt(_array)?|strerror|unescape|upkeep|version|
+            setopt(_array)?|strerror|unescape|upkeep|version|
             multi_((add|remove)_handle|close|errno|exec|getcontent|
               info_read|init|select|setopt|strerror)|
             share_(close|errno|init(_persistent)?|setopt|strerror)

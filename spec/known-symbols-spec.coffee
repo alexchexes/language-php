@@ -19,7 +19,7 @@ readGrammarDefinition = do ->
     cache = runInThisContext(compiled)
     cache
 
-readPatternRulesForScope = (expectedScope) ->
+extractPatternRulesForScope = (expectedScope) ->
   grammar = readGrammarDefinition()
   rules = []
   queue = [grammar]
@@ -41,9 +41,24 @@ readPatternRulesForScope = (expectedScope) ->
 
   rules
 
+cleanRegexNaive = (pattern) ->
+  # Keep order intact; later steps rely on earlier ones.
+  pattern
+    # Strip leading inline flags like (?i), (?xi), etc.
+    .replace(/^(?:\s*\(\?[a-z-]+\))+/i, ' ')
+    # Strip inline comment groups like (?# comment)
+    .replace(/\(\?#[\s\S]*?\)/g, ' ')
+    # Strip character classes like [gs] and [01]
+    .replace(/\[[^\]]*\]/g, ' ')
+    # Strip hash comments like " ... # comment"
+    .replace(/(^|[^\\])#.*$/gm, ' $1 ')
+    # Strip word boundaries like \b
+    .replace(/\\b/g, ' ')
+
 extractRegexWordParts = (pattern) ->
   regexTokens = new Set(['x', 'i', 'b'])
-  parts = pattern.match(/\w+/g) ? []
+  cleanedPattern = cleanRegexNaive(pattern)
+  parts = cleanedPattern.match(/\w+/g) ? []
   [...new Set(parts)]
     .filter((part) -> not regexTokens.has(part))
 
@@ -133,7 +148,7 @@ describe 'PHP known symbols', ->
           symbolsByScope[scope].push(symbol)
 
         missingCoverage = []
-        rules = readPatternRulesForScope(target.expectedScope)
+        rules = extractPatternRulesForScope(target.expectedScope)
 
         unless rules.length > 0
           throw new Error("No regex rules found for #{target.expectedScope}")

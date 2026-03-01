@@ -1,22 +1,29 @@
-This contains lists of known identifiers used by snapshot tests:
+This contains input files with lists of names used for testing rules with long enumerations of known language symbols.
 
-* `./constants.properties`: known constants
-* `./functions.properties`: known functions
+- `./functions.properties`: known functions (target scope `/^support\.function\..+\.php$/`)
+- `./constants.properties`: known constants (target scope `/^support\.constant\..+\.php$/`)
 
-The test definitions live in `spec/symbol-snapshots-spec.coffee` (`TARGET_DEFS`).
-Each target config stays minimal:
+In these files there should be one identifier per line without any extra characters except comments that start with either `#`, `;` or `!`.
 
-* `name`
-* `sourceFormatFn`
-* `expectedScope` (RegExp)
+> `.properties` format is handy as code editors allow toggle and highlight comments in it. It is a non-standardized format, though editors may treat it similar to .ini.
 
-`listPath` and `snapshotPath` are derived by harness helpers from `name`:
+- Any identifier that is added to one of the input files, but is not covered by any rule of the target scope, will effectively fail the spec test.
+- The "vice-versa" also works although heuristically. Test fails if there is a regex containing parts that are never found in the corresponding scope (for each target, defined in spec).
+  Example:
+  If there is a rule with regex `msg_((get|remove|set|stat)_queue` that assigns scope `support.function.sem.php`
+  And there is spec target `/^support\.function\..+\.php$/`,
+  Then in the test target input file (`./functions.properties`) MUST be all of the following:
 
-* list file: `{name}.properties`
-* snapshot file: `{name}.snapshot.json`
+  - at least one identifier that contains `msg_`
+  - at least one that contains `get`
+  - at least one that contains `remove`
+  - at least one that contains `set`
+  - at least one that contains `stat`
+  - at least one that contains `_queue`
+    If that's not true, test fails.
+    This effectively catches many typos including cases like extra `_` (`(_get)` instead of `(get)`) or `set_stat` instead of `set|stat`, but it does it bluntly and heuristically so it doesn't guarantee that regex is 100% correct — just helps with common typos/mistakes/non-existing identifiers.
 
-Generated near-miss identifiers are also checked against the same `expectedScope` rule.
-List files accept one identifier per line and allow comment lines starting with `#` or `!`.
+---
 
 To add a new identifier: add it to `php.cson`, then add it to `constants.properties` or `functions.properties`.
 
