@@ -2161,7 +2161,7 @@
   "preg_replace_callback_array": "support.function.php_pcre.php",
   "preg_split": "support.function.php_pcre.php",
   "prev": "support.function.array.php",
-  "print": "support.function.string.php",
+  "print": "support.function.construct.output.php",
   "print_r": "support.function.var.php",
   "printf": "support.function.string.php",
   "proc_close": "support.function.exec.php",
