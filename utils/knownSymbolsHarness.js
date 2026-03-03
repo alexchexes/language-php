@@ -17,11 +17,15 @@ const readIdentifierList = (fileName) => {
   const seen = new Set();
 
   content.split(/\r?\n/).forEach((raw, index) => {
-    const line = raw.trim();
-    // .properties format not standardized, different IDE may use #, ! or ; for "toggle comment" action
-    if (line.length === 0 || line.startsWith("#") || line.startsWith("!") || line.startsWith(";")) {
+    let line = raw.trim();
+
+    // Ignore comments - lines starting with `#` or `;`
+    if (line.length === 0 || line.startsWith("#") || line.startsWith(";")) {
       return;
     }
+
+    // Handle trailing comments as well
+    line = line.split(/\s*[;#]/)[0];
 
     if (!IDENTIFIER_REGEX.test(line)) {
       throw new Error(

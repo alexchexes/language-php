@@ -6,6 +6,31 @@ fs = require('fs')
 path = require('path')
 {compile} = require('coffeescript')
 {runInThisContext} = require('vm')
+{toRegExp} = require('oniguruma-to-es')
+{count, expandAll} = require('regex-to-strings')
+
+MAX_REGEX_EXPANSIONS = 25_000
+
+normalizeIdentifier = (value) ->
+  value.toLowerCase()
+
+stripCaseInsensitiveInlineFlags = (pattern) ->
+  pattern.replace(/\(\?([a-z-]+)\)/ig, (match, flags) ->
+    normalizedFlags = flags.replace(/i/ig, '')
+    if normalizedFlags.length is 0 then '' else "(?#{normalizedFlags})"
+  )
+
+expandRegexSymbols = (pattern) ->
+  normalizedPattern = stripCaseInsensitiveInlineFlags(pattern)
+  regex = toRegExp(normalizedPattern, target: 'ES2018', avoidSubclass: true)
+
+  expansionCount = count(regex)
+  if not Number.isFinite(expansionCount) or expansionCount > MAX_REGEX_EXPANSIONS
+    throw new Error("""
+      Regex expansion count #{expansionCount} exceeds limit #{MAX_REGEX_EXPANSIONS}.
+    """)
+
+  [...new Set(expandAll(regex))]
 
 readGrammarDefinition = do ->
   cache = null
@@ -40,28 +65,6 @@ extractPatternRulesForScope = (expectedScope) ->
       queue.push(value))
 
   rules
-
-cleanRegexNaive = (pattern) ->
-  # Keep order intact; later steps rely on earlier ones.
-  pattern
-    # Strip leading inline flags like (?i), (?xi), etc.
-    .replace(/^(?:\s*\(\?[a-z-]+\))+/i, ' ')
-    # Strip inline comment groups like (?# comment)
-    .replace(/\(\?#[\s\S]*?\)/g, ' ')
-    # Strip character classes like [gs] and [01]
-    .replace(/\[[^\]]*\]/g, ' ')
-    # Strip hash comments like " ... # comment"
-    .replace(/(^|[^\\])#.*$/gm, ' $1 ')
-    # Strip word boundaries like \b
-    .replace(/\\b/g, ' ')
-
-extractRegexWordParts = (pattern) ->
-  regexTokens = new Set(['x', 'i', 'b'])
-  cleanedPattern = cleanRegexNaive(pattern)
-  parts = cleanedPattern.match(/\w+/g) ? []
-  [...new Set(parts)]
-    .filter((part) -> not regexTokens.has(part))
-
 describe 'PHP known symbols', ->
   grammar = null
   before ->
@@ -71,20 +74,23 @@ describe 'PHP known symbols', ->
   targets = [
     {
       name: 'constants'
+      knownSymbolsFile: 'constants.properties'
       expectedScope: /^support\.constant\..+\.php$/
       sourceFormatFn: (symbol) -> "#{symbol};"
     }
     {
       name: 'functions'
+      knownSymbolsFile: 'functions.properties'
       expectedScope: /^support\.function\..+\.php$/
       sourceFormatFn: (symbol) -> "#{symbol}();"
     }
   ]
 
   targets.forEach (target) ->
-    describe target.name, ->
+    describe "#{target.name}", ->
       snapshotName = "#{target.name}.snapshot.json"
-      symbols = harness.readIdentifierList("#{target.name}.properties")
+      symbols = harness.readIdentifierList(target.knownSymbolsFile)
+      knownSymbols = new Set(symbols.map((symbol) -> normalizeIdentifier(symbol)))
 
       scopeForSymbol = (identifier) ->
         {tokens} = grammar.tokenizeLine(target.sourceFormatFn(identifier))
@@ -101,7 +107,7 @@ describe 'PHP known symbols', ->
 
       formatEntries = (entries) ->
         entries.map(([symbol, scope]) ->
-          "#{symbol} - #{scope}").join("\n") + "\n Total: " + entries.length
+          "#{symbol} (#{scope})").join("\n") + "\n Total: " + entries.length
 
       it "should match #{target.expectedScope}", ->
         scopes = captureScopes()
@@ -128,6 +134,7 @@ describe 'PHP known symbols', ->
 
       it "should not match #{target.expectedScope} for generated near-miss symbols", ->
         nearMisses = harness.generateNearMissSet(symbols)
+
         overmatches = []
         nearMisses.forEach (candidate) ->
           scope = scopeForSymbol(candidate)
@@ -138,38 +145,34 @@ describe 'PHP known symbols', ->
         if overmatches.length > 0
           throw new Error("Unexpected matches:\n" + formatEntries(overmatches))
 
-      it "should cover regex parts for #{target.expectedScope}", ->
-        scopes = captureScopes()
-        symbolsByScope = {}
-
-        Object.entries(scopes).forEach ([symbol, scope]) ->
-          return unless typeof scope is 'string'
-          symbolsByScope[scope] ?= []
-          symbolsByScope[scope].push(symbol)
-
-        missingCoverage = []
+      it "should not produce unknown symbols when expanding regexes", ->
+        missingCoverage = new Map()
         rules = extractPatternRulesForScope(target.expectedScope)
 
         unless rules.length > 0
           throw new Error("No regex rules found for #{target.expectedScope}")
 
         rules.forEach (rule) ->
-          scopedSymbols = symbolsByScope[rule.name] ? []
-          parts = extractRegexWordParts(rule.match)
+          expandedSymbols = null
+          try
+            expandedSymbols = expandRegexSymbols(rule.match)
+          catch error
+            throw new Error("Failed to expand regex for #{rule.name}: #{error.message}")
 
-          parts.forEach (part) ->
-            hasScopeCoverage = scopedSymbols.some((symbol) ->
-              symbol.toUpperCase().includes(part.toUpperCase()))
-            unless hasScopeCoverage
-              missingCoverage.push([rule.name, part])
+          expandedSymbols.forEach (symbol) ->
+            matchedScope = scopeForSymbol(symbol)
+            # Only keep symbols whose tokenized scope exactly matches this rule's scope (rule.name).
+            unless matchedScope is rule.name
+              return
+              
+            if knownSymbols.has(normalizeIdentifier(symbol))
+              return
 
-        if missingCoverage.length > 0
-          details = missingCoverage
-            .map(([scope, part]) -> "#{scope} - #{part}")
-            .join("\n")
+            entry = [symbol, rule.name]
+            missingCoverage.set(JSON.stringify(entry), entry)
 
+        if missingCoverage.size > 0
           throw new Error("""
-            Missing regex-part coverage in #{target.name}.properties:
-            #{details}
-            Total: #{missingCoverage.length}
+            Regex expansion for rules matching #{target.expectedScope} produced symbols not found in #{target.knownSymbolsFile} file.
+            #{formatEntries([...missingCoverage.values()])}
           """)
