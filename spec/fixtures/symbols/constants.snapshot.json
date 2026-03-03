@@ -121,7 +121,6 @@
   "CURLE_MALFORMAT_USER": "support.constant.ext.php",
   "CURLE_OBSOLETE": "support.constant.ext.php",
   "CURLE_OK": "support.constant.ext.php",
-  "CURLE_OPERATION_TIMEOUT": "support.constant.ext.php",
   "CURLE_OPERATION_TIMEOUTED": "support.constant.ext.php",
   "CURLE_OUT_OF_MEMORY": "support.constant.ext.php",
   "CURLE_PARTIAL_FILE": "support.constant.ext.php",
