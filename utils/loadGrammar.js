@@ -65,7 +65,7 @@ const parseRawGrammar = (data, grammarPath) => {
 
 const rawGrammarCache = new Map();
 
-const loadRawGrammarDefinition = (scopeName) => {
+const loadLocalRawGrammar = (scopeName) => {
   if (rawGrammarCache.has(scopeName)) return rawGrammarCache.get(scopeName);
 
   const grammarPath = grammarPaths[scopeName];
@@ -84,9 +84,7 @@ const registry = new textmate.Registry({
   loadGrammar: (scopeName) => {
     let grammarPath = grammarPaths[scopeName];
     if (typeof grammarPath === "string") {
-      return readFile(grammarPath).then((data) =>
-        parseRawGrammar(data, grammarPath)
-      );
+      return Promise.resolve(loadLocalRawGrammar(scopeName));
     }
 
     grammarPath = grammarImported[scopeName];
@@ -159,5 +157,7 @@ const loadGrammar = (scopeName) => {
     };
   });
 };
+
+const loadRawGrammarDefinition = (scopeName) => loadLocalRawGrammar(scopeName);
 
 module.exports = { loadGrammar, loadRawGrammarDefinition };
