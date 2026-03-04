@@ -19,3 +19,4 @@ To refresh snapshots after changes:
 
 ```sh
 UPDATE_SNAPSHOTS=1 yarn test
+```
