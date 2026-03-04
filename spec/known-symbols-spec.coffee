@@ -1,11 +1,7 @@
-{loadGrammar} = require('../utils/loadGrammar')
+{loadGrammar, loadRawGrammarDefinition} = require('../utils/loadGrammar')
 require('../utils/compatibleExpect')
 {expect} = require('chai')
 harness = require('../utils/knownSymbolsHarness')
-fs = require('fs')
-path = require('path')
-{compile} = require('coffeescript')
-{runInThisContext} = require('vm')
 {toRegExp} = require('oniguruma-to-es')
 {count, expandAll} = require('regex-to-strings')
 
@@ -32,20 +28,8 @@ expandRegexSymbols = (pattern) ->
 
   [...new Set(expandAll(regex))]
 
-readGrammarDefinition = do ->
-  cache = null
-  ->
-    if cache?
-      return cache
-
-    grammarPath = path.join(__dirname, '../grammars/php.cson')
-    source = fs.readFileSync(grammarPath, 'utf8')
-    compiled = compile(source, bare: true, header: false, sourceMap: false)
-    cache = runInThisContext(compiled)
-    cache
-
 extractPatternRulesForScope = (expectedScope) ->
-  grammar = readGrammarDefinition()
+  grammar = loadRawGrammarDefinition('source.php')
   rules = []
   queue = [grammar]
 

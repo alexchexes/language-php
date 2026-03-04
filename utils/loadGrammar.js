@@ -1,4 +1,4 @@
-const { existsSync, mkdirSync } = require("fs");
+const { existsSync, mkdirSync, readFileSync } = require("fs");
 const { writeFile, readFile } = require("fs/promises");
 const path = require("path");
 const textmate = require("vscode-textmate");
@@ -61,6 +61,21 @@ const parseRawGrammar = (data, grammarPath) => {
     return runInThisContext(data);
   }
   return textmate.parseRawGrammar(data, grammarPath);
+};
+
+const rawGrammarCache = new Map();
+
+const loadRawGrammarDefinition = (scopeName) => {
+  if (rawGrammarCache.has(scopeName)) return rawGrammarCache.get(scopeName);
+
+  const grammarPath = grammarPaths[scopeName];
+  if (typeof grammarPath !== "string") {
+    throw new Error(`Raw grammar is not available for scope: ${scopeName}`);
+  }
+
+  const grammar = parseRawGrammar(readFileSync(grammarPath), grammarPath);
+  rawGrammarCache.set(scopeName, grammar);
+  return grammar;
 };
 
 // Create a registry that can create a grammar from a scope name.
@@ -145,4 +160,4 @@ const loadGrammar = (scopeName) => {
   });
 };
 
-module.exports = { loadGrammar };
+module.exports = { loadGrammar, loadRawGrammarDefinition };
