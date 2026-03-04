@@ -3,7 +3,7 @@ const path = require("path");
 
 const UPDATE_SNAPSHOTS =
   process.env.UPDATE_SNAPSHOTS === "1" ||
-  process.env.UPDATE_SNAPSHOTS === "true";
+  process.env.UPDATE_SNAPSHOTS?.toLowerCase() === "true";
 
 const IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
