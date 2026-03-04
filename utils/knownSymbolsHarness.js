@@ -5,8 +5,6 @@ const UPDATE_SNAPSHOTS =
   process.env.UPDATE_SNAPSHOTS === "1" ||
   process.env.UPDATE_SNAPSHOTS?.toLowerCase() === "true";
 
-const IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
-
 const fixturePath = (fileName) =>
   path.join(__dirname, "../spec/fixtures/symbols", fileName);
 
@@ -27,7 +25,7 @@ const readIdentifierList = (fileName) => {
     // Handle trailing comments as well
     line = line.split(/\s*[;#]/)[0];
 
-    if (!IDENTIFIER_REGEX.test(line)) {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(line)) {
       throw new Error(
         `Invalid identifier name in ${filePath}:${index + 1}: "${raw}"`,
       );
