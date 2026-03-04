@@ -3509,7 +3509,7 @@
             get_(cfg_var|current_user|defined_constants|extension_funcs|include_path|included_files|loaded_extensions|
                  magic_quotes_(gpc|runtime)|required_files|resources)|
             get(env|lastmod|rusage|my(inode|[gup]id))|
-            memory_get_(peak_)?usage|main|magic_quotes_runtime
+            memory_get_(peak_)?usage|magic_quotes_runtime
           )\\b
         '''
         'name': 'support.function.info.php'
@@ -3529,7 +3529,7 @@
       {
         'match': '''(?xi)\\b
           (
-            normalizer_(normalize|is_normalized)|idn_to_(unicode|utf8|ascii)|
+            normalizer_(normalize|is_normalized)|idn_to_(utf8|ascii)|
             numfmt_(set_(symbol|(text_)?attribute|pattern)|create|(parse|format)(_currency)?|
                     get_(symbol|(text_)?attribute|pattern|error_(code|message)|locale))|
             collator_(sort(_with_sort_keys)?|set_(attribute|strength)|compare|create|asort|

@@ -9,7 +9,7 @@ In these files, there should be one identifier per line, with no extra character
 > `.properties` is used here for convenience. `.ini` or another plain text format is also fine.
 
 - Any identifier added to an input file must be covered by a rule in the target scope, or the test fails.
-- The reverse check expands target-scope regex rules (up to `MAX_REGEX_EXPANSIONS`), tokenizes the candidates, and verifies that every candidate resolving to that exact scope exists in the corresponding input file.
+- The reverse check expands target-scope regex rules (up to `MAX_REGEX_EXPANSIONS`), tokenizes the candidates, and verifies that every candidate resolving to that scope exists in the corresponding input file.
 
 ---
 
