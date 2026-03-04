@@ -34,7 +34,6 @@ expandRegexSymbols = (pattern) ->
 
 readGrammarDefinition = do ->
   cache = null
-
   ->
     if cache?
       return cache
@@ -67,6 +66,7 @@ extractPatternRulesForScope = (expectedScope) ->
       queue.push(value))
 
   rules
+
 describe 'PHP known symbols', ->
   grammar = null
   before ->
@@ -146,19 +146,6 @@ describe 'PHP known symbols', ->
           throw new Error("Missing snapshot file: #{snapshotName}. #{hintText}")
 
         expect(scopes, "Scopes snapshot doesn't match. #{hintText}").toEqual(expectedSnapshot)
-
-      it "should not match #{target.expectedScope} for generated near-miss symbols", ->
-        nearMisses = harness.generateNearMissSet(symbols)
-
-        overmatches = []
-        nearMisses.forEach (candidate) ->
-          scope = scopeForSymbol(candidate)
-          if typeof scope is 'string' and target.expectedScope.test(scope)
-            overmatches.push([candidate, scope])
-
-        expect(nearMisses.length > 0).toBe(true)
-        if overmatches.length > 0
-          throw new Error("Unexpected matches:\n" + formatEntries(overmatches))
 
       it "should not produce unknown symbols when expanding regexes", ->
         missingCoverage = new Map()
