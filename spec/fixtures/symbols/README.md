@@ -1,34 +1,21 @@
-This contains input files with lists of names used for testing rules with long enumerations of known language symbols.
+This directory contains input files with lists of known language symbols used to test rules with long symbol enumerations.
 
 - `./functions.properties`: known functions (target scope `/^support\.function\..+\.php$/`)
 - `./constants.properties`: known constants (target scope `/^support\.constant\..+\.php$/`)
+- `./classes.properties`: known classes (target scope `/^support\.class\.builtin\.php$/`)
 
-In these files there should be one identifier per line without any extra characters except comments that start with either `#`, `;` or `!`.
+In these files, there should be one identifier per line, with no extra characters except comments that start with `#` or `;`.
 
-> `.properties` format is handy as code editors allow toggle and highlight comments in it. It is a non-standardized format, though editors may treat it similar to .ini.
+> `.properties` is used here for convenience. `.ini` or another plain text format is also fine.
 
-- Any identifier that is added to one of the input files, but is not covered by any rule of the target scope, will effectively fail the spec test.
-- The "vice-versa" also works although heuristically. Test fails if there is a regex containing parts that are never found in the corresponding scope (for each target, defined in spec).
-  Example:
-  If there is a rule with regex `msg_((get|remove|set|stat)_queue` that assigns scope `support.function.sem.php`
-  And there is spec target `/^support\.function\..+\.php$/`,
-  Then in the test target input file (`./functions.properties`) MUST be all of the following:
-
-  - at least one identifier that contains `msg_`
-  - at least one that contains `get`
-  - at least one that contains `remove`
-  - at least one that contains `set`
-  - at least one that contains `stat`
-  - at least one that contains `_queue`
-    If that's not true, test fails.
-    This effectively catches many typos including cases like extra `_` (`(_get)` instead of `(get)`) or `set_stat` instead of `set|stat`, but it does it bluntly and heuristically so it doesn't guarantee that regex is 100% correct — just helps with common typos/mistakes/non-existing identifiers.
+- Any identifier added to an input file must be covered by a rule in the target scope, or the test fails.
+- The reverse check expands target-scope regex rules (up to `MAX_REGEX_EXPANSIONS`), tokenizes the candidates, and verifies that every candidate resolving to that exact scope exists in the corresponding input file.
 
 ---
 
-To add a new identifier: add it to `php.cson`, then add it to `constants.properties` or `functions.properties`.
+To add a new identifier: add it to `php.cson`, then add it to the corresponding input file.
 
 To refresh snapshots after changes:
 
 ```sh
 UPDATE_SNAPSHOTS=1 yarn test
-```
