@@ -36,7 +36,8 @@ readGrammarDefinition = do ->
   cache = null
 
   ->
-    return cache if cache?
+    if cache?
+      return cache
 
     grammarPath = path.join(__dirname, '../grammars/php.cson')
     source = fs.readFileSync(grammarPath, 'utf8')
@@ -56,7 +57,8 @@ extractPatternRulesForScope = (expectedScope) ->
       queue.push(child) for child in node
       continue
 
-    continue unless node? and typeof node is 'object'
+    unless node? and typeof node is 'object'
+      continue
 
     if typeof node.name is 'string' and typeof node.match is 'string' and expectedScope.test(node.name)
       rules.push(node)
@@ -77,6 +79,12 @@ describe 'PHP known symbols', ->
       knownSymbolsFile: 'constants.properties'
       expectedScope: /^support\.constant\..+\.php$/
       sourceFormatFn: (symbol) -> "#{symbol};"
+    }
+    {
+      name: 'classes'
+      knownSymbolsFile: 'classes.properties'
+      expectedScope: /^support\.class\.builtin\.php$/
+      sourceFormatFn: (symbol) -> "new #{symbol}();"
     }
     {
       name: 'functions'
@@ -106,7 +114,14 @@ describe 'PHP known symbols', ->
         scopes
 
       formatEntries = (entries) ->
-        entries.map(([symbol, scope]) ->
+        sortedEntries = [...entries].sort(([symbolA, scopeA], [symbolB, scopeB]) ->
+          scopeCompare = String(scopeA ? '').localeCompare(String(scopeB ? ''))
+          unless scopeCompare is 0
+            return scopeCompare
+          String(symbolA ? '').localeCompare(String(symbolB ? ''))
+        )
+
+        sortedEntries.map(([symbol, scope]) ->
           "#{symbol} (#{scope})").join("\n") + "\n Total: " + entries.length
 
       it "should match #{target.expectedScope}", ->

@@ -1143,14 +1143,14 @@
           |FANNConnection|(Filter|Filesystem)Iterator
           |Gender\\\\Gender|GlobIterator|Gmagick(Draw|Pixel)?
           |Haru(Annotation|Destination|Doc|Encoder|Font|Image|Outline|Page)
-          |Http((Inflate|Deflate)?Stream|Message|Request(Pool)?|Response|QueryString)
+          |Http((Inflate|Deflate)Stream|Message|Request(Pool)?|Response|QueryString)
           |HRTime\\\\(PerformanceCounter|StopWatch)
           |Intl(Calendar|((CodePoint|RuleBased)?Break|Parts)?Iterator|DateFormatter|TimeZone)
           |Imagick(Draw|Pixel(Iterator)?)?
           |InfiniteIterator|InvalidArgumentException|Iterator(Aggregate|Iterator)?
           |JsonSerializable
           |KTaglib_(MPEG_(File|AudioProperties)|Tag|ID3v2_(Tag|(AttachedPicture)?Frame))
-          |Lapack|(Length|Locale|Logic)Exception|LimitIterator|Lua(Closure)?
+          |Lapack|Locale|(Length|Logic)Exception|LimitIterator|Lua(Closure)?
           |Mongo(BinData|Client|Code|Collection|CommandCursor|Cursor(Exception)?|Date|DB(Ref)?|DeleteBatch
                 |Grid(FS(Cursor|File)?)|Id|InsertBatch|Int(32|64)|Log|Pool|Regex|ResultException|Timestamp
                 |UpdateBatch|Write(Batch|ConcernException))?
@@ -1161,7 +1161,7 @@
           |OCI-(Collection|Lob)|OuterIterator|(OutOf(Bounds|Range)|Overflow)Exception
           |ParentIterator|PDO(Statement)?|Phar(Data|FileInfo)?|php_user_filter|Pool
           |QuickHash(Int(Set|StringHash)|StringIntHash)
-          |Recursive(Array|Caching|Directory|Fallback|Filter|Iterator|Regex|Tree)?Iterator
+          |Recursive(Array|Caching|Directory|(Callback)?Filter|Iterator|Regex|Tree)?Iterator
           |Reflection(Attribute|Class(Constant)?|Constant|Enum(UnitCase|BackedCase)?
             |Fiber|Function(Abstract)?|Generator|(Named|Union|Intersection)?Type
             |Method|Object|Parameter|Property|Reference|(Zend)?Extension)?
