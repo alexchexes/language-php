@@ -1,7 +1,12 @@
 {loadGrammar} = require('../utils/loadGrammar')
 require('../utils/compatibleExpect')
 {expect} = require('chai')
-fixtures = require('../utils/knownSymbolsFixtures')
+{
+  UPDATE_SNAPSHOTS
+  readIdentifierList
+  readSnapshot
+  writeSnapshot
+} = require('../utils/knownSymbolsFixtures')
 {expandRegexSymbols, extractPatternRulesForScope} = require('../utils/knownSymbolsRegex')
 
 normalizeIdentifier = (value) -> value.toLowerCase()
@@ -46,7 +51,7 @@ describe 'PHP known symbols', ->
   targets.forEach (target) ->
     describe "#{target.name}", ->
       snapshotName = "#{target.name}.snapshot.json"
-      symbols = fixtures.readIdentifierList(target.knownSymbolsFile)
+      symbols = readIdentifierList(target.knownSymbolsFile)
       knownSymbols = new Set(symbols.map((symbol) -> normalizeIdentifier(symbol)))
       scopeCache = new Map()
       scopesCache = null
@@ -73,12 +78,12 @@ describe 'PHP known symbols', ->
       it "should match scopes snapshot", ->
         scopes = captureScopes()
 
-        if fixtures.UPDATE_SNAPSHOTS
-          fixtures.writeSnapshot(snapshotName, scopes)
+        if UPDATE_SNAPSHOTS
+          writeSnapshot(snapshotName, scopes)
           return
 
         hintText = "Run tests with UPDATE_SNAPSHOTS=1 to update."
-        expectedSnapshot = fixtures.readSnapshot(snapshotName)
+        expectedSnapshot = readSnapshot(snapshotName)
 
         unless expectedSnapshot?
           throw new Error("Missing snapshot file: #{snapshotName}. #{hintText}")
