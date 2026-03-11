@@ -2770,18 +2770,18 @@ describe 'PHP grammar', ->
       expect(tokens[4]).toEqual value: ')', scopes: ['source.php', 'punctuation.definition.storage-type.end.bracket.round.php']
 
       castCases = [
-        ['(integer)', 'integer', 'storage.type.cast.int.php']
+        ['(integer)', 'integer', 'storage.type.cast.deprecated.php']
         ['(bool)', 'bool', 'storage.type.cast.bool.php']
-        ['(boolean)', 'boolean', 'storage.type.cast.bool.php']
-        ['(BoOlEaN)', 'BoOlEaN', 'storage.type.cast.bool.php']
+        ['(boolean)', 'boolean', 'storage.type.cast.deprecated.php']
+        ['(BoOlEaN)', 'BoOlEaN', 'storage.type.cast.deprecated.php']
         ['(float)', 'float', 'storage.type.cast.float.php']
-        ['(double)', 'double', 'storage.type.cast.float.php']
-        ['(real)', 'real', 'storage.type.cast.float.php']
+        ['(double)', 'double', 'storage.type.cast.deprecated.php']
+        ['(real)', 'real', 'storage.type.cast.deprecated.php']
         ['(string)', 'string', 'storage.type.cast.string.php']
         ['(array)', 'array', 'storage.type.cast.array.php']
         ['(object)', 'object', 'storage.type.cast.object.php']
-        ['(binary)', 'binary', 'storage.type.cast.binary.php']
-        ['(unset)', 'unset', 'storage.type.cast.unset.php']
+        ['(binary)', 'binary', 'storage.type.cast.deprecated.php']
+        ['(unset)', 'unset', 'storage.type.cast.deprecated.php']
       ]
 
       for [input, value, specificScope] in castCases
