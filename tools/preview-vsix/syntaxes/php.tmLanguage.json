@@ -950,7 +950,7 @@
       ]
     },
     {
-      "match": "(?ix)\n(\\()\n\\s*\n(\n    (int(?:eger)?)\n    | (bool(?:ean)?)\n    | (float|double|real)\n    | (string|array|object|binary|unset)\n)\n\\s*\n(\\))",
+      "match": "(?ix)\n(\\()\n\\s*\n(\n    (bool|int|float|string|array|object)\n    |(binary|boolean|integer|double|real|unset)\n)\n\\s*\n(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.storage-type.begin.bracket.round.php"
@@ -959,18 +959,12 @@
           "name": "storage.type.php"
         },
         "3": {
-          "name": "storage.type.cast.int.php"
+          "name": "storage.type.cast.${3:/downcase}.php"
         },
         "4": {
-          "name": "storage.type.cast.bool.php"
+          "name": "storage.type.cast.php"
         },
         "5": {
-          "name": "storage.type.cast.float.php"
-        },
-        "6": {
-          "name": "storage.type.cast.${6:/downcase}.php"
-        },
-        "7": {
           "name": "punctuation.definition.storage-type.end.bracket.round.php"
         }
       }
