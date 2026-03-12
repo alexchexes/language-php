@@ -3616,6 +3616,9 @@
           "name": "constant.character.escape.php"
         },
         {
+          "match": "N(?=')"
+        },
+        {
           "match": "`(?=((\\\\`)|[^`'])*('|$))",
           "name": "string.quoted.other.backtick.unclosed.sql"
         },
