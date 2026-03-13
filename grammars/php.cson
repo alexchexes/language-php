@@ -3607,7 +3607,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.string.end.php'
-    'name': 'string.quoted.double.sql.php'
+    'name': 'meta.embedded.sql'
     'patterns': [
       {
         'match': '(#)(\\\\"|[^"])*(?="|$)'
@@ -3696,7 +3696,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.string.end.php'
-    'name': 'string.quoted.single.sql.php'
+    'name': 'meta.embedded.sql'
     'patterns': [
       {
         'match': '(#)(\\\\\'|[^\'])*(?=\'|$)'
