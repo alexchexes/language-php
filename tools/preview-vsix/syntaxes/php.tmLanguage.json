@@ -3579,6 +3579,22 @@
           "name": "constant.character.escape.php"
         },
         {
+          "match": "\\[(?=((\\\\\")|[^\\]\"])*(\"|$))",
+          "name": "text.bracketed.unclosed.sql"
+        },
+        {
+          "match": "/\\*(?=((\\\\\")|(?:(?!\\*/|\").))*(\"|$))",
+          "name": "comment.block.unclosed.sql"
+        },
+        {
+          "match": "%\\{(?=((\\\\\")|[^}\"])*(\"|$))",
+          "name": "string.other.quoted.brackets.unclosed.sql"
+        },
+        {
+          "match": "%r\\{(?=((\\\\\")|[^}\"])*(\"|$))",
+          "name": "string.regexp.modr.unclosed.sql"
+        },
+        {
           "match": "'(?=((\\\\')|[^'\"])*(\"|$))",
           "name": "string.quoted.single.unclosed.sql"
         },
@@ -3654,6 +3670,22 @@
         },
         {
           "match": "N(?=')"
+        },
+        {
+          "match": "\\[(?=((\\\\')|[^\\]'])*('|$))",
+          "name": "text.bracketed.unclosed.sql"
+        },
+        {
+          "match": "/\\*(?=((\\\\')|(?:(?!\\*/|').))*('|$))",
+          "name": "comment.block.unclosed.sql"
+        },
+        {
+          "match": "%\\{(?=((\\\\')|[^}'])*('|$))",
+          "name": "string.other.quoted.brackets.unclosed.sql"
+        },
+        {
+          "match": "%r\\{(?=((\\\\')|[^}'])*('|$))",
+          "name": "string.regexp.modr.unclosed.sql"
         },
         {
           "match": "`(?=((\\\\`)|[^`'])*('|$))",
