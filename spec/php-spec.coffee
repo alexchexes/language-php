@@ -4116,6 +4116,37 @@ describe 'PHP grammar', ->
     expect(tokens[20]).toEqual value: '\'', scopes: ['source.php', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
     expect(tokens[21]).toEqual value: ']', scopes: ['source.php', 'punctuation.section.array.end.php']
 
+  it 'should tokenize SQL continuation fragments in a string', ->
+    cases = [
+      {
+        line: '"WHERE id = 1"'
+        stringScope: 'string.quoted.double.php'
+      }
+      {
+        line: "'WHERE id = 1'"
+        stringScope: 'string.quoted.single.php'
+      }
+      {
+        line: '"JOIN child c ON c.parent_id = p.id"'
+        stringScope: 'string.quoted.double.php'
+      }
+      {
+        line: "'LEFT JOIN child c ON c.parent_id = p.id'"
+        stringScope: 'string.quoted.single.php'
+      }
+      {
+        line: '"FULL OUTER JOIN child c ON c.parent_id = p.id"'
+        stringScope: 'string.quoted.double.php'
+      }
+    ]
+
+    for {line, stringScope} in cases
+      {tokens} = grammar.tokenizeLine line
+
+      expect(tokens[0].scopes).toContainAll ['source.php', 'meta.embedded.sql', stringScope, 'punctuation.definition.string.begin.php']
+      expect(tokens[1].scopes).toContainAll ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'keyword.other.DML.sql']
+      expect(tokens[tokens.length - 1].scopes).toContainAll ['source.php', 'meta.embedded.sql', stringScope, 'punctuation.definition.string.end.php']
+
   it 'should tokenize single quoted string regex escape characters correctly', ->
     {tokens} = grammar.tokenizeLine "'/[\\\\\\\\]/';"
 
