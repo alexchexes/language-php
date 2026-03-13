@@ -3938,10 +3938,10 @@ describe 'PHP grammar', ->
     for {line, keyword} in cases
       {tokens} = grammar.tokenizeLine line
 
-      expect(tokens[1]).toEqual value: '\'', scopes: ['source.php', 'meta.embedded.sql', 'punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\'', scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.begin.php']
       expect(tokens[2]).toEqual value: keyword, scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'keyword.other.DML.sql']
       expect(tokens[4]).toEqual value: 'N', scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php']
-      expect(tokens[5]).toEqual value: '\'', scopes: ['source.php', 'meta.embedded.sql', 'punctuation.definition.string.end.php']
+      expect(tokens[5]).toEqual value: '\'', scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
       expect(tokens[7]).toEqual value: '=>', scopes: ['source.php', 'keyword.operator.key.php']
       expect(tokens[12]).toEqual value: '\'', scopes: ['source.php', 'string.quoted.single.php', 'punctuation.definition.string.begin.php']
       expect(tokens[13]).toEqual value: '\'', scopes: ['source.php', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
@@ -4018,7 +4018,9 @@ describe 'PHP grammar', ->
         token:
           value: '['
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'text.bracketed.unclosed.sql']
-        stringEnd: '"'
+        stringEndToken:
+          value: '"'
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
       }
       {
         line: "$sql = 'UPDATE ['.$x.']';"
@@ -4026,7 +4028,9 @@ describe 'PHP grammar', ->
         token:
           value: '['
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'text.bracketed.unclosed.sql']
-        stringEnd: '\''
+        stringEndToken:
+          value: '\''
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
       }
       {
         line: '$sql = "SELECT /*".$x."*/";'
@@ -4034,7 +4038,9 @@ describe 'PHP grammar', ->
         token:
           value: '/*'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'comment.block.unclosed.sql']
-        stringEnd: '"'
+        stringEndToken:
+          value: '"'
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
       }
       {
         line: "$sql = 'UPDATE /*'.$x.'*/';"
@@ -4042,7 +4048,9 @@ describe 'PHP grammar', ->
         token:
           value: '/*'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'comment.block.unclosed.sql']
-        stringEnd: '\''
+        stringEndToken:
+          value: '\''
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
       }
       {
         line: '$sql = "SELECT %{".$x."}";'
@@ -4050,7 +4058,9 @@ describe 'PHP grammar', ->
         token:
           value: '%{'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'string.other.quoted.brackets.unclosed.sql']
-        stringEnd: '"'
+        stringEndToken:
+          value: '"'
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
       }
       {
         line: "$sql = 'UPDATE %{'.$x.'}';"
@@ -4058,7 +4068,9 @@ describe 'PHP grammar', ->
         token:
           value: '%{'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'string.other.quoted.brackets.unclosed.sql']
-        stringEnd: '\''
+        stringEndToken:
+          value: '\''
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
       }
       {
         line: '$sql = "SELECT %r{".$x."}";'
@@ -4066,7 +4078,9 @@ describe 'PHP grammar', ->
         token:
           value: '%r{'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'string.regexp.modr.unclosed.sql']
-        stringEnd: '"'
+        stringEndToken:
+          value: '"'
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
       }
       {
         line: "$sql = 'UPDATE %r{'.$x.'}';"
@@ -4074,14 +4088,16 @@ describe 'PHP grammar', ->
         token:
           value: '%r{'
           scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'string.regexp.modr.unclosed.sql']
-        stringEnd: '\''
+        stringEndToken:
+          value: '\''
+          scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
       }
     ]
 
-    for {line, tokenIndex, token, stringEnd} in cases
+    for {line, tokenIndex, token, stringEnd, stringEndToken} in cases
       {tokens} = grammar.tokenizeLine line
       expect(tokens[tokenIndex]).toEqual token
-      expect(tokens[tokenIndex + 1]).toEqual value: stringEnd, scopes: ['source.php', token.scopes[1], 'punctuation.definition.string.end.php']
+      expect(tokens[tokenIndex + 1]).toEqual stringEndToken
       expect(tokens[tokenIndex + 2]).toEqual value: '.', scopes: ['source.php', 'keyword.operator.string.php']
       expect(tokens[tokenIndex + 3]).toEqual value: '$', scopes: ['source.php', 'variable.other.php', 'punctuation.definition.variable.php']
       expect(tokens[tokenIndex + 4]).toEqual value: 'x', scopes: ['source.php', 'variable.other.php']
@@ -4090,7 +4106,7 @@ describe 'PHP grammar', ->
     {tokens} = grammar.tokenizeLine '$findloginfeild = "SELECT * FROM [".$_POST[\'getdb\']."].[dbo].[tabl1] WHERE [column1] = \'PASSWORD\'";'
 
     expect(tokens[12]).toEqual value: '[', scopes: ['source.php', 'meta.embedded.sql', 'source.sql.embedded.php', 'text.bracketed.unclosed.sql']
-    expect(tokens[13]).toEqual value: '"', scopes: ['source.php', 'meta.embedded.sql', 'punctuation.definition.string.end.php']
+    expect(tokens[13]).toEqual value: '"', scopes: ['source.php', 'meta.embedded.sql', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
     expect(tokens[14]).toEqual value: '.', scopes: ['source.php', 'keyword.operator.string.php']
     expect(tokens[15]).toEqual value: '$', scopes: ['source.php', 'variable.other.global.php', 'punctuation.definition.variable.php']
     expect(tokens[16]).toEqual value: '_POST', scopes: ['source.php', 'variable.other.global.php']
