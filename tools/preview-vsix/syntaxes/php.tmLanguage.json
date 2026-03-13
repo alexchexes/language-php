@@ -1913,6 +1913,9 @@
           "name": "meta.embedded.sql",
           "patterns": [
             {
+              "include": "#sql-quoted-strings-heredoc"
+            },
+            {
               "include": "#interpolation"
             },
             {
@@ -3502,6 +3505,40 @@
     "single_quote_regex_escape": {
       "match": "\\\\(?:\\\\(?:\\\\[\\\\']?|[^'])|.)",
       "name": "constant.character.escape.php"
+    },
+    "sql-quoted-strings-heredoc": {
+      "patterns": [
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "`",
+          "end": "`",
+          "name": "string.quoted.other.backtick.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        }
+      ]
     },
     "sql-string-double-quoted": {
       "begin": "\"\\s*(?=(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH)\\b)",
