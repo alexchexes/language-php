@@ -3723,16 +3723,22 @@
       ]
     },
     "sql-string-double-quoted": {
-      "begin": "\"\\s*(?=(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH)\\b)",
+      "begin": "(\")\\s*(?=(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH)\\b)",
       "beginCaptures": {
         "0": {
+          "name": "string.quoted.double.php"
+        },
+        "1": {
           "name": "punctuation.definition.string.begin.php"
         }
       },
       "contentName": "source.sql.embedded.php",
-      "end": "\"",
+      "end": "(\")",
       "endCaptures": {
         "0": {
+          "name": "string.quoted.double.php"
+        },
+        "1": {
           "name": "punctuation.definition.string.end.php"
         }
       },
@@ -3813,16 +3819,22 @@
       ]
     },
     "sql-string-single-quoted": {
-      "begin": "'\\s*(?=(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH)\\b)",
+      "begin": "(')\\s*(?=(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH)\\b)",
       "beginCaptures": {
         "0": {
+          "name": "string.quoted.single.php"
+        },
+        "1": {
           "name": "punctuation.definition.string.begin.php"
         }
       },
       "contentName": "source.sql.embedded.php",
-      "end": "'",
+      "end": "(')",
       "endCaptures": {
         "0": {
+          "name": "string.quoted.single.php"
+        },
+        "1": {
           "name": "punctuation.definition.string.end.php"
         }
       },
