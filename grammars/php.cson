@@ -2892,10 +2892,6 @@
     'match': '\\\\[()]'
     'name': 'constant.character.escape.regex.php'
   'regexp-anchor-explicit':
-    # Preserve keyword.operator.regexp.php for BC while adding a more specific anchor scope.
-    'captures':
-      '0':
-        'name': 'keyword.operator.regexp.php'
     'match': '\\\\[bBAZzG]|[$^]'
     'name': 'keyword.control.anchor.regexp.php'
   'regexp-backreference-numeric-explicit':
@@ -2913,8 +2909,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '3':
         'name': 'variable.other.regexp.php'
-      '4':
-        'name': 'entity.name.other.group.regexp.php'
       '5':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '(\\\\)k(<)(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(>)'
@@ -2926,8 +2920,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '3':
         'name': 'variable.other.regexp.php'
-      '4':
-        'name': 'entity.name.other.group.regexp.php'
       '5':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '(\\\\)k(\')(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\')'
@@ -2982,24 +2974,16 @@
   'regexp-character-class-explicit':
     'begin': '((\\[))(\\^)?(?:\\])?'
     'beginCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
       '3':
         'name': 'keyword.operator.negation.regexp.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
-    # Keep string.regexp.character-class.php for BC via content and boundary capture 0.
+    # Keep string.regexp.character-class.php for the class content itself.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
@@ -3016,22 +3000,14 @@
   'regexp-character-class-double-quoted':
     'begin': '((\\[))(?:\\^?\\])?'
     'beginCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '((\\]))|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
-    # Keep string.regexp.character-class.php for BC via content and boundary capture 0.
+    # Keep string.regexp.character-class.php for the class content itself.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
@@ -3041,22 +3017,14 @@
   'regexp-character-class-single-quoted':
     'begin': '((\\[))(?:\\^?\\])?'
     'beginCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '((\\]))|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
-      '0':
-        'name': 'string.regexp.character-class.php'
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-      '2':
-        'name': 'punctuation.definition.character-class.php'
-    # Keep string.regexp.character-class.php for BC via content and boundary capture 0.
+    # Keep string.regexp.character-class.php for the class content itself.
     'name': 'meta.embedded.character-class.regexp.php'
   'regexp-comment-group-heredoc':
     'begin': '(\\()(\\?\\#)'
@@ -3249,8 +3217,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3276,8 +3242,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3303,8 +3267,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3330,8 +3292,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3357,8 +3317,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3384,8 +3342,6 @@
         'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '4':
         'name': 'variable.other.regexp.php'
-      '5':
-        'name': 'entity.name.other.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.regexp.php'
       '7':
@@ -3408,8 +3364,6 @@
         'name': 'keyword.other.back-reference.named.regexp.php'
       '3':
         'name': 'variable.other.regexp.php'
-      '4':
-        'name': 'entity.name.other.group.regexp.php'
       '5':
         'name': 'punctuation.definition.group.regexp.php'
     'match': '(\\()(\\?P=)(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\\))'
@@ -3497,10 +3451,6 @@
     'match': '(\\()(\\?[imsxADJUXunr-]+)(\\))'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-simple-quantifier-explicit':
-    # Preserve keyword.operator.regexp.php for BC while adding a more specific quantifier scope.
-    'captures':
-      '0':
-        'name': 'keyword.operator.regexp.php'
     'match': '[?+*][?+]?'
     'name': 'keyword.operator.quantifier.regexp.php'
   'regexp-alternation-explicit':

@@ -21,11 +21,14 @@ describe 'PHP regexp grammar', ->
   heredocRegexpScope = heredocRegexpBoundaryScope.concat ['string.regexp.heredoc.php']
   nowdocRegexpBoundaryScope = ['source.php', 'string.unquoted.nowdoc.php', 'meta.embedded.regexp.php']
   nowdocRegexpScope = nowdocRegexpBoundaryScope.concat ['string.regexp.nowdoc.php']
+  regexpCharacterClassBoundaryScope = ['meta.embedded.character-class.regexp.php']
   regexpCharacterClassScope = ['meta.embedded.character-class.regexp.php', 'string.regexp.character-class.php']
   regexpCharacterClassScopes = (baseScope) ->
     baseScope.concat regexpCharacterClassScope
   regexpCharacterClassPunctuationScopes = (baseScope) ->
-    regexpCharacterClassScopes(baseScope).concat ['punctuation.definition.character-class.regexp.php', 'punctuation.definition.character-class.php']
+    baseScope.concat regexpCharacterClassBoundaryScope.concat ['punctuation.definition.character-class.regexp.php']
+  regexpCharacterClassBoundaryNegationScopes = (baseScope) ->
+    baseScope.concat regexpCharacterClassBoundaryScope.concat ['keyword.operator.negation.regexp.php']
   regexpCharacterClassPosixScope = ['meta.embedded.character-class.posix.regexp.php', 'constant.other.character-class.posix.regexp.php']
   regexpCharacterClassPosixScopes = (baseScope) ->
     regexpCharacterClassScopes(baseScope).concat regexpCharacterClassPosixScope
@@ -35,11 +38,11 @@ describe 'PHP regexp grammar', ->
   regexpSpecificGroupPunctuationScopes = (baseScope, specificScope) ->
     baseScope.concat ['punctuation.definition.group.regexp.php', specificScope]
   regexpGroupNameScopes = (baseScope) ->
-    baseScope.concat ['variable.other.regexp.php', 'entity.name.other.group.regexp.php']
+    baseScope.concat ['variable.other.regexp.php']
   regexpNamedBackreferenceScopes = (baseScope) ->
     baseScope.concat ['keyword.other.back-reference.named.regexp.php']
   regexpNamedBackreferenceNameScopes = (baseScope) ->
-    regexpNamedBackreferenceScopes(baseScope).concat ['variable.other.regexp.php', 'entity.name.other.group.regexp.php']
+    regexpNamedBackreferenceScopes(baseScope).concat ['variable.other.regexp.php']
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
   regexpAssertionGroupScopes = (baseScope) ->
     baseScope.concat regexpAssertionGroupScope
@@ -323,7 +326,7 @@ describe 'PHP regexp grammar', ->
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
-          expect(lines[1][2]).toEqual value: '^', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.negation.regexp.php']
+          expect(lines[1][2]).toEqual value: '^', scopes: regexpCharacterClassBoundaryNegationScopes(regexScope)
           expect(lines[1][3]).toEqual value: 'a', scopes: regexpCharacterClassScopes(regexScope)
           expect(lines[1][4]).toEqual value: '-', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.range.regexp.php']
           expect(lines[1][5]).toEqual value: 'z', scopes: regexpCharacterClassScopes(regexScope)
@@ -758,18 +761,18 @@ describe 'PHP regexp grammar', ->
           """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-          expect(lines[1][1]).toEqual value: '^', scopes: regexScope.concat ['keyword.control.anchor.regexp.php', 'keyword.operator.regexp.php']
-          expect(lines[1][2]).toEqual value: '\\A', scopes: regexScope.concat ['keyword.control.anchor.regexp.php', 'keyword.operator.regexp.php']
+          expect(lines[1][1]).toEqual value: '^', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
+          expect(lines[1][2]).toEqual value: '\\A', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
           expect(lines[1][3]).toEqual value: '.', scopes: regexScope.concat ['constant.character.class.regexp.php']
           expect(lines[1][4]).toEqual value: 'a', scopes: regexScope
-          expect(lines[1][5]).toEqual value: '+?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'keyword.operator.regexp.php']
+          expect(lines[1][5]).toEqual value: '+?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
           expect(lines[1][6]).toEqual value: '|', scopes: regexScope.concat ['keyword.operator.or.regexp.php']
           expect(lines[1][7]).toEqual value: 'b', scopes: regexScope
           expect(lines[1][8]).toEqual value: '{', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
           expect(lines[1][9]).toEqual value: '2,4', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
           expect(lines[1][10]).toEqual value: '}', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
           expect(lines[1][11]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
-          expect(lines[1][12]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php', 'keyword.operator.regexp.php']
+          expect(lines[1][12]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
           expect(lines[1][13]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
