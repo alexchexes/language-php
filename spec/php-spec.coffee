@@ -5708,6 +5708,37 @@ describe 'PHP grammar', ->
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+      # Moved to php-regexp-backslash-spec.coffee to keep this file below CoffeeScript's
+      # compile recursion limit on larger integration branches.
+
+      it "should not treat doubled backslashes as backreferences or shorthand escapes in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /\\\\1\\\\d/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regex.php']
+        expect(lines[1][2]).toEqual value: '1', scopes: regexScope
+        expect(lines[1][3]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regex.php']
+        expect(lines[1][4]).toEqual value: 'd/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize escaped delimiters in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /refs\\/tags/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/refs', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '\\/', scopes: regexScope.concat ['constant.character.escape.regex.php']
+        expect(lines[1][2]).toEqual value: 'tags/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
       it "should tokenize quoted literals in #{description}", ->
         lines = grammar.tokenizeLines """
           $r = #{opener}
