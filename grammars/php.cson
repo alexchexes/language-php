@@ -3253,6 +3253,15 @@
       '4':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '(\\\\){1,2}k(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
+  'regexp-character-type-escape-explicit':
+    'match': '(\\\\){1,2}(?:[dDhHsSvVwW]|R)'
+    'name': 'constant.character.class.regexp.php'
+  'regexp-property-escape-explicit':
+    'match': '(\\\\){1,2}[pP]\\{[^}]+\\}'
+    'name': 'constant.character.class.regexp.php'
+  'regexp-literal-escape-explicit':
+    'match': '(\\\\){1,2}(?:\\\\|[0-7]{1,3}|c[A-Za-z]|x[0-9A-Fa-f]{2}|x\\{[0-9A-Fa-f]+\\}|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
+    'name': 'constant.character.escape.regex.php'
   'regexp-arbitrary-repitition-explicit':
     # Keep string.regexp.arbitrary-repitition.php for BC while widening range quantifier support.
     'captures':
@@ -3697,6 +3706,33 @@
         'include': '#regexp-nowdoc-common'
       }
     ]
+  'regexp-quoted-literal-heredoc':
+    'begin': '((\\\\){1,2}Q)'
+    'beginCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'contentName': 'string.regexp.quoted-literal.php'
+    'end': '((\\\\){1,2}E)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'name': 'meta.embedded.quoted-literal.regexp.php'
+    'patterns': [
+      {
+        'include': '#interpolation'
+      }
+    ]
+  'regexp-quoted-literal-nowdoc':
+    'begin': '((\\\\){1,2}Q)'
+    'beginCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'contentName': 'string.regexp.quoted-literal.php'
+    'end': '((\\\\){1,2}E)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'name': 'meta.embedded.quoted-literal.regexp.php'
   'regexp-line-comment':
     # We are restrictive in what we allow to go after the comment to avoid false positives,
     # since the availability of comments depend on regexp flags.
@@ -3735,14 +3771,26 @@
   'regexp-dot-explicit':
     'match': '\\.'
     'name': 'constant.character.class.regexp.php'
-  'regexp-explicit-shared':
+  'regexp-explicit-escapes':
     'patterns': [
+      {
+        'include': '#regexp-character-type-escape-explicit'
+      }
+      {
+        'include': '#regexp-property-escape-explicit'
+      }
+      {
+        'include': '#regexp-literal-escape-explicit'
+      }
       {
         'include': '#regexp-basic-escape'
       }
       {
         'include': '#regexp-group-escape-explicit'
       }
+    ]
+  'regexp-explicit-operators':
+    'patterns': [
       {
         'include': '#regexp-anchor-explicit'
       }
@@ -3783,6 +3831,12 @@
         'include': '#regexp-group-backreference-pcre-explicit'
       }
       {
+        'include': '#regexp-quoted-literal-heredoc'
+      }
+      {
+        'include': '#regexp-explicit-escapes'
+      }
+      {
         'include': '#interpolation'
       }
       {
@@ -3813,7 +3867,7 @@
         'include': '#regexp-character-class-explicit'
       }
       {
-        'include': '#regexp-explicit-shared'
+        'include': '#regexp-explicit-operators'
       }
     ]
   'regexp-nowdoc-common':
@@ -3832,6 +3886,12 @@
       }
       {
         'include': '#regexp-group-backreference-pcre-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-nowdoc'
+      }
+      {
+        'include': '#regexp-explicit-escapes'
       }
       {
         'include': '#regexp-comment-group-nowdoc'
@@ -3861,7 +3921,7 @@
         'include': '#regexp-character-class-explicit'
       }
       {
-        'include': '#regexp-explicit-shared'
+        'include': '#regexp-explicit-operators'
       }
     ]
   'regexp-heredoc-body':
