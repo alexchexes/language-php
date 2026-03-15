@@ -2084,7 +2084,7 @@
                   "name": "punctuation.definition.character-class.php"
                 }
               },
-              "end": "\\]",
+              "end": "\\]|(?=$)",
               "name": "string.regexp.character-class.php",
               "patterns": [
                 {
@@ -2427,7 +2427,7 @@
                   "name": "punctuation.definition.character-class.php"
                 }
               },
-              "end": "\\]",
+              "end": "\\]|(?=$)",
               "name": "string.regexp.character-class.php",
               "patterns": [
                 {
@@ -3343,7 +3343,7 @@
       }
     },
     "regex-double-quoted": {
-      "begin": "\"/(?=(\\\\.|[^\"/])++/[imsxeADSUXu]*\")",
+      "begin": "\"/(?=(?:\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?![\"/\\\\\\[]).)++/[imsxeADSUXu]*\")",
       "beginCaptures": {
         "0": {
           "name": "punctuation.definition.string.begin.php"
@@ -3383,7 +3383,7 @@
               "name": "punctuation.definition.character-class.php"
             }
           },
-          "end": "\\]",
+          "end": "\\]|(?=/[imsxeADSUXu]*\")|(?=$)",
           "name": "string.regexp.character-class.php",
           "patterns": [
             {
@@ -3398,7 +3398,7 @@
       ]
     },
     "regex-single-quoted": {
-      "begin": "'/(?=(\\\\(?:\\\\(?:\\\\[\\\\']?|[^'])|.)|[^'/])++/[imsxeADSUXu]*')",
+      "begin": "'/(?=(?:\\\\(?:\\\\(?:\\\\[\\\\']?|[^'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\']?|[^'])|.)|[^\\]])*\\]|(?!['/\\\\\\[]).)++/[imsxeADSUXu]*')",
       "beginCaptures": {
         "0": {
           "name": "punctuation.definition.string.begin.php"
@@ -3434,7 +3434,7 @@
               "name": "punctuation.definition.character-class.php"
             }
           },
-          "end": "\\]",
+          "end": "\\]|(?=/[imsxeADSUXu]*')|(?=$)",
           "name": "string.regexp.character-class.php"
         },
         {
