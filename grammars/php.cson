@@ -2893,8 +2893,11 @@
     'name': 'constant.character.escape.regex.php'
   'regexp-anchor-explicit':
     # Preserve keyword.operator.regexp.php for BC while adding a more specific anchor scope.
+    'captures':
+      '0':
+        'name': 'keyword.operator.regexp.php'
     'match': '(\\\\){1,2}[bBAZzG]|[$^]'
-    'name': 'keyword.control.anchor.regexp.php keyword.operator.regexp.php'
+    'name': 'keyword.control.anchor.regexp.php'
   'regexp-backreference-numeric-explicit':
     'captures':
       '0':
@@ -2927,14 +2930,14 @@
   'regexp-arbitrary-repitition-explicit':
     # Keep string.regexp.arbitrary-repitition.php for BC while widening range quantifier support.
     'captures':
+      '0':
+        'name': 'string.regexp.arbitrary-repitition.php'
       '1':
         'name': 'punctuation.definition.arbitrary-repitition.php'
       '2':
         'name': 'punctuation.definition.arbitrary-repitition.php'
-      '3':
-        'name': 'keyword.operator.quantifier.regexp.php'
     'match': '({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)'
-    'name': 'keyword.operator.quantifier.regexp.php string.regexp.arbitrary-repitition.php'
+    'name': 'keyword.operator.quantifier.regexp.php'
   'regexp-arbitrary-repetition-quoted':
     'captures':
       '1':
@@ -2944,13 +2947,21 @@
     'match': '({)\\d+(,\\d+)?(})'
     'name': 'string.regexp.arbitrary-repetition.php'
   'regexp-character-class-explicit':
-    'begin': '\\[(?:\\^?\\])?'
-    'captures':
+    'begin': '(\\[)(?:\\^?\\])?'
+    'beginCaptures':
       '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
         'name': 'punctuation.definition.character-class.php'
-    'end': '\\]|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
-    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
-    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+    'contentName': 'string.regexp.character-class.php'
+    'end': '(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
+        'name': 'punctuation.definition.character-class.php'
+    # Keep string.regexp.character-class.php for BC via content and boundary captures.
+    'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
         'match': '\\\\[\\\\\'\\[\\]]'
@@ -2958,50 +2969,80 @@
       }
     ]
   'regexp-character-class-double-quoted':
-    'begin': '\\[(?:\\^?\\])?'
-    'captures':
+    'begin': '(\\[)(?:\\^?\\])?'
+    'beginCaptures':
       '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
         'name': 'punctuation.definition.character-class.php'
-    'end': '\\]|(?=/[imsxeADSUXu]*")|(?=$)'
-    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
-    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+    'contentName': 'string.regexp.character-class.php'
+    'end': '(\\])|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
+        'name': 'punctuation.definition.character-class.php'
+    # Keep string.regexp.character-class.php for BC via content and boundary captures.
+    'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
         'include': '#interpolation_double_quoted'
       }
     ]
   'regexp-character-class-single-quoted':
-    'begin': '\\[(?:\\^?\\])?'
-    'captures':
+    'begin': '(\\[)(?:\\^?\\])?'
+    'beginCaptures':
       '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
         'name': 'punctuation.definition.character-class.php'
-    'end': '\\]|(?=/[imsxeADSUXu]*\')|(?=$)'
-    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
-    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+    'contentName': 'string.regexp.character-class.php'
+    'end': '(\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'string.regexp.character-class.php'
+      '1':
+        'name': 'punctuation.definition.character-class.php'
+    # Keep string.regexp.character-class.php for BC via content and boundary captures.
+    'name': 'meta.embedded.character-class.regexp.php'
   'regexp-comment-group-heredoc':
     'begin': '(\\()(\\?\\#)'
     'beginCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
-    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'contentName': 'comment.block.regexp.php'
+    'end': '((\\)))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
-        'name': 'punctuation.definition.group.regexp.php punctuation.definition.comment.end.regexp.php'
-    'name': 'meta.embedded.group.regexp.php comment.block.regexp.php'
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.comment.end.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
   'regexp-comment-group-nowdoc':
     'begin': '(\\()(\\?\\#)'
     'beginCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
-    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'contentName': 'comment.block.regexp.php'
+    'end': '((\\)))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
-        'name': 'punctuation.definition.group.regexp.php punctuation.definition.comment.end.regexp.php'
-    'name': 'meta.embedded.group.regexp.php comment.block.regexp.php'
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.comment.end.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-heredoc':
     'begin': '(\\()((?:\\?=)|(?:\\?!)|(?:\\?<=)|(?:\\?<!))'
     'beginCaptures':
@@ -3333,8 +3374,11 @@
     'name': 'meta.embedded.group.regexp.php'
   'regexp-simple-quantifier-explicit':
     # Preserve keyword.operator.regexp.php for BC while adding a more specific quantifier scope.
+    'captures':
+      '0':
+        'name': 'keyword.operator.regexp.php'
     'match': '[?+*][?+]?'
-    'name': 'keyword.operator.quantifier.regexp.php keyword.operator.regexp.php'
+    'name': 'keyword.operator.quantifier.regexp.php'
   'regexp-alternation-explicit':
     'match': '\\|'
     'name': 'keyword.operator.or.regexp.php'
@@ -3516,32 +3560,42 @@
       }
     ]
   'regex-double-quoted':
-    'begin': '"/(?=(?:\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
+    'begin': '("/)(?=(?:\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
     'beginCaptures':
       '0':
+        'name': 'string.regexp.double-quoted.php'
+      '1':
         'name': 'punctuation.definition.string.begin.php'
-    'end': '(/)([imsxeADSUXu]*)(")'
+    'contentName': 'string.regexp.double-quoted.php'
+    'end': '((/)([imsxeADSUXu]*)("))'
     'endCaptures':
       '0':
+        'name': 'string.regexp.double-quoted.php'
+      '1':
         'name': 'punctuation.definition.string.end.php'
-    # Keep string.regexp.double-quoted.php for BC while layering on an embedded wrapper.
-    'name': 'meta.embedded.regexp.php string.regexp.double-quoted.php'
+    # Keep string.regexp.double-quoted.php for BC via contentName while layering on an embedded wrapper.
+    'name': 'meta.embedded.regexp.php'
     'patterns': [
       {
         'include': '#regexp-double-quoted-body'
       }
     ]
   'regex-single-quoted':
-    'begin': '\'/(?=(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\')'
+    'begin': '(\'/(?=(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\'))'
     'beginCaptures':
       '0':
+        'name': 'string.regexp.single-quoted.php'
+      '1':
         'name': 'punctuation.definition.string.begin.php'
-    'end': '(/)([imsxeADSUXu]*)(\')'
+    'contentName': 'string.regexp.single-quoted.php'
+    'end': '((/)([imsxeADSUXu]*)(\'))'
     'endCaptures':
       '0':
+        'name': 'string.regexp.single-quoted.php'
+      '1':
         'name': 'punctuation.definition.string.end.php'
-    # Keep string.regexp.single-quoted.php for BC while layering on an embedded wrapper.
-    'name': 'meta.embedded.regexp.php string.regexp.single-quoted.php'
+    # Keep string.regexp.single-quoted.php for BC via contentName while layering on an embedded wrapper.
+    'name': 'meta.embedded.regexp.php'
     'patterns': [
       {
         'include': '#regexp-single-quoted-body'
