@@ -3253,17 +3253,69 @@
       "match": "(\\\\){1,2}[()]",
       "name": "constant.character.escape.regex.php"
     },
+    "regexp-anchor-explicit": {
+      "match": "(\\\\){1,2}[bBAZzG]|[$^]",
+      "name": "keyword.control.anchor.regexp.php keyword.operator.regexp.php"
+    },
+    "regexp-backreference-numeric-explicit": {
+      "captures": {
+        "0": {
+          "name": "keyword.other.back-reference.regexp.php"
+        },
+        "2": {
+          "name": "constant.numeric.regexp.php"
+        }
+      },
+      "match": "(\\\\){1,2}([1-9][0-9]*)"
+    },
+    "regexp-backreference-named-angle-explicit": {
+      "captures": {
+        "0": {
+          "name": "keyword.other.back-reference.named.regexp.php"
+        },
+        "2": {
+          "name": "punctuation.definition.group.capture.begin.regexp.php"
+        },
+        "3": {
+          "name": "entity.name.other.group.regexp.php"
+        },
+        "4": {
+          "name": "punctuation.definition.group.capture.end.regexp.php"
+        }
+      },
+      "match": "(\\\\){1,2}k(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)"
+    },
+    "regexp-backreference-named-single-quoted-explicit": {
+      "captures": {
+        "0": {
+          "name": "keyword.other.back-reference.named.regexp.php"
+        },
+        "2": {
+          "name": "punctuation.definition.group.capture.begin.regexp.php"
+        },
+        "3": {
+          "name": "entity.name.other.group.regexp.php"
+        },
+        "4": {
+          "name": "punctuation.definition.group.capture.end.regexp.php"
+        }
+      },
+      "match": "(\\\\){1,2}k(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(')"
+    },
     "regexp-arbitrary-repitition-explicit": {
       "captures": {
         "1": {
           "name": "punctuation.definition.arbitrary-repitition.php"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.arbitrary-repitition.php"
+        },
+        "3": {
+          "name": "keyword.operator.quantifier.regexp.php"
         }
       },
-      "match": "({)\\d+(,\\d+)?(})",
-      "name": "string.regexp.arbitrary-repitition.php"
+      "match": "({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)",
+      "name": "keyword.operator.quantifier.regexp.php string.regexp.arbitrary-repitition.php"
     },
     "regexp-arbitrary-repetition-quoted": {
       "captures": {
@@ -3317,6 +3369,42 @@
       },
       "end": "\\]|(?=/[imsxeADSUXu]*')|(?=$)",
       "name": "meta.embedded.character-class.regexp.php string.regexp.character-class.php"
+    },
+    "regexp-comment-group-heredoc": {
+      "begin": "(\\()(\\?\\#)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "punctuation.definition.comment.begin.regexp.php"
+        }
+      },
+      "end": "\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php punctuation.definition.comment.end.regexp.php"
+        }
+      },
+      "name": "meta.embedded.group.regexp.php comment.block.regexp.php"
+    },
+    "regexp-comment-group-nowdoc": {
+      "begin": "(\\()(\\?\\#)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "punctuation.definition.comment.begin.regexp.php"
+        }
+      },
+      "end": "\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php punctuation.definition.comment.end.regexp.php"
+        }
+      },
+      "name": "meta.embedded.group.regexp.php comment.block.regexp.php"
     },
     "regexp-group-assertion-heredoc": {
       "begin": "(\\()((?:\\?=)|(?:\\?!)|(?:\\?<=)|(?:\\?<!))",
@@ -3668,6 +3756,24 @@
         }
       ]
     },
+    "regexp-group-backreference-pcre-explicit": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "keyword.other.back-reference.named.regexp.php"
+        },
+        "3": {
+          "name": "entity.name.other.group.regexp.php"
+        },
+        "4": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "match": "(\\()(\\?P=)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "name": "meta.embedded.group.regexp.php"
+    },
     "regexp-group-heredoc": {
       "begin": "\\(",
       "beginCaptures": {
@@ -3727,6 +3833,33 @@
       "match": "[$^+*]",
       "name": "keyword.operator.regexp.php"
     },
+    "regexp-option-toggle-explicit": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "keyword.other.option-toggle.regexp.php"
+        },
+        "3": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "match": "(\\()(\\?[imsxADJUXunr-]+)(\\))",
+      "name": "meta.embedded.group.regexp.php"
+    },
+    "regexp-simple-quantifier-explicit": {
+      "match": "[?+*][?+]?",
+      "name": "keyword.operator.quantifier.regexp.php keyword.operator.regexp.php"
+    },
+    "regexp-alternation-explicit": {
+      "match": "\\|",
+      "name": "keyword.operator.or.regexp.php"
+    },
+    "regexp-dot-explicit": {
+      "match": "\\.",
+      "name": "constant.character.class.regexp.php"
+    },
     "regexp-explicit-shared": {
       "patterns": [
         {
@@ -3736,7 +3869,19 @@
           "include": "#regexp-group-escape-explicit"
         },
         {
+          "include": "#regexp-anchor-explicit"
+        },
+        {
           "include": "#regexp-arbitrary-repitition-explicit"
+        },
+        {
+          "include": "#regexp-simple-quantifier-explicit"
+        },
+        {
+          "include": "#regexp-alternation-explicit"
+        },
+        {
+          "include": "#regexp-dot-explicit"
         },
         {
           "include": "#regexp-operators-basic"
@@ -3749,7 +3894,25 @@
     "regexp-heredoc-common": {
       "patterns": [
         {
+          "include": "#regexp-backreference-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-group-backreference-pcre-explicit"
+        },
+        {
           "include": "#interpolation"
+        },
+        {
+          "include": "#regexp-comment-group-heredoc"
         },
         {
           "include": "#regexp-group-assertion-heredoc"
@@ -3782,6 +3945,24 @@
     },
     "regexp-nowdoc-common": {
       "patterns": [
+        {
+          "include": "#regexp-backreference-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-group-backreference-pcre-explicit"
+        },
+        {
+          "include": "#regexp-comment-group-nowdoc"
+        },
         {
           "include": "#regexp-group-assertion-nowdoc"
         },
