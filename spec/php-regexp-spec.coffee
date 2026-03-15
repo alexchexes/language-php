@@ -696,16 +696,16 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should tokenize escaped delimiters in #{description}", ->
+        it "should tokenize escaped slashes in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
-            /refs\\/tags/
+            foo/bar\\/baz
             #{label};
           """
 
-          expect(lines[1][0]).toEqual value: '/refs', scopes: regexScope
+          expect(lines[1][0]).toEqual value: 'foo/bar', scopes: regexScope
           expect(lines[1][1]).toEqual value: '\\/', scopes: regexScope.concat ['constant.character.escape.regex.php']
-          expect(lines[1][2]).toEqual value: 'tags/', scopes: regexScope
+          expect(lines[1][2]).toEqual value: 'baz', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
