@@ -3254,11 +3254,6 @@
       "name": "constant.character.escape.regex.php"
     },
     "regexp-anchor-explicit": {
-      "captures": {
-        "0": {
-          "name": "keyword.operator.regexp.php"
-        }
-      },
       "match": "\\\\[bBAZzG]|[$^]",
       "name": "keyword.control.anchor.regexp.php"
     },
@@ -3284,9 +3279,6 @@
         "3": {
           "name": "variable.other.regexp.php"
         },
-        "4": {
-          "name": "entity.name.other.group.regexp.php"
-        },
         "5": {
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
@@ -3303,9 +3295,6 @@
         },
         "3": {
           "name": "variable.other.regexp.php"
-        },
-        "4": {
-          "name": "entity.name.other.group.regexp.php"
         },
         "5": {
           "name": "punctuation.definition.group.capture.end.regexp.php"
@@ -3384,14 +3373,8 @@
     "regexp-character-class-explicit": {
       "begin": "((\\[))(\\^)?(?:\\])?",
       "beginCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         },
         "3": {
           "name": "keyword.operator.negation.regexp.php"
@@ -3400,14 +3383,8 @@
       "contentName": "string.regexp.character-class.php",
       "end": "((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
       "endCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         }
       },
       "name": "meta.embedded.character-class.regexp.php",
@@ -3427,27 +3404,15 @@
     "regexp-character-class-double-quoted": {
       "begin": "((\\[))(?:\\^?\\])?",
       "beginCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
       "end": "((\\]))|(?=/[imsxeADSUXu]*\")|(?=$)",
       "endCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         }
       },
       "name": "meta.embedded.character-class.regexp.php",
@@ -3460,27 +3425,15 @@
     "regexp-character-class-single-quoted": {
       "begin": "((\\[))(?:\\^?\\])?",
       "beginCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
       "end": "((\\]))|(?=/[imsxeADSUXu]*')|(?=$)",
       "endCaptures": {
-        "0": {
-          "name": "string.regexp.character-class.php"
-        },
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.character-class.php"
         }
       },
       "name": "meta.embedded.character-class.regexp.php"
@@ -3754,9 +3707,6 @@
         "4": {
           "name": "variable.other.regexp.php"
         },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
-        },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
         },
@@ -3791,9 +3741,6 @@
         },
         "4": {
           "name": "variable.other.regexp.php"
-        },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
         },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
@@ -3830,9 +3777,6 @@
         "4": {
           "name": "variable.other.regexp.php"
         },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
-        },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
         },
@@ -3867,9 +3811,6 @@
         },
         "4": {
           "name": "variable.other.regexp.php"
-        },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
         },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
@@ -3906,9 +3847,6 @@
         "4": {
           "name": "variable.other.regexp.php"
         },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
-        },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
         },
@@ -3944,9 +3882,6 @@
         "4": {
           "name": "variable.other.regexp.php"
         },
-        "5": {
-          "name": "entity.name.other.group.regexp.php"
-        },
         "6": {
           "name": "punctuation.definition.group.regexp.php"
         },
@@ -3977,9 +3912,6 @@
         },
         "3": {
           "name": "variable.other.regexp.php"
-        },
-        "4": {
-          "name": "entity.name.other.group.regexp.php"
         },
         "5": {
           "name": "punctuation.definition.group.regexp.php"
@@ -4100,11 +4032,6 @@
       "name": "meta.embedded.group.regexp.php"
     },
     "regexp-simple-quantifier-explicit": {
-      "captures": {
-        "0": {
-          "name": "keyword.operator.regexp.php"
-        }
-      },
       "match": "[?+*][?+]?",
       "name": "keyword.operator.quantifier.regexp.php"
     },
