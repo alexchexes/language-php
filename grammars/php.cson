@@ -3268,6 +3268,268 @@
     'end': '\\]|(?=/[imsxeADSUXu]*\')|(?=$)'
     # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
     'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+  'regexp-group-assertion-heredoc':
+    'begin': '(\\()((?:\\?=)|(?:\\?!)|(?:\\?<=)|(?:\\?<!))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-assertion-nowdoc':
+    'begin': '(\\()((?:\\?=)|(?:\\?!)|(?:\\?<=)|(?:\\?<!))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-non-capturing-heredoc':
+    'begin': '(\\()((?:\\?:)|(?:\\?>)|(?:\\?\\|))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'patterns': [
+          {
+            'match': '\\?:'
+            'name': 'punctuation.definition.group.no-capture.regexp.php'
+          }
+          {
+            'match': '\\?>'
+            'name': 'punctuation.definition.group.atomic.regexp.php'
+          }
+          {
+            'match': '\\?\\|'
+            'name': 'punctuation.definition.group.branch-reset.regexp.php'
+          }
+        ]
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-non-capturing-nowdoc':
+    'begin': '(\\()((?:\\?:)|(?:\\?>)|(?:\\?\\|))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'patterns': [
+          {
+            'match': '\\?:'
+            'name': 'punctuation.definition.group.no-capture.regexp.php'
+          }
+          {
+            'match': '\\?>'
+            'name': 'punctuation.definition.group.atomic.regexp.php'
+          }
+          {
+            'match': '\\?\\|'
+            'name': 'punctuation.definition.group.branch-reset.regexp.php'
+          }
+        ]
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-options-heredoc':
+    'begin': '(\\()(\\?)([-A-Za-z]+)(:)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.option.regexp.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.option.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-options-nowdoc':
+    'begin': '(\\()(\\?)([-A-Za-z]+)(:)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.option.regexp.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.option.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-named-angle-heredoc':
+    'begin': '(\\()(\\?<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-named-angle-nowdoc':
+    'begin': '(\\()(\\?<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-named-single-quoted-heredoc':
+    'begin': '(\\()(\\?\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-named-single-quoted-nowdoc':
+    'begin': '(\\()(\\?\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-named-pcre-heredoc':
+    'begin': '(\\()(\\?P<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-named-pcre-nowdoc':
+    'begin': '(\\()(\\?P<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '3':
+        'name': 'entity.name.other.group.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
   'regexp-group-heredoc':
     'begin': '\\('
     'beginCaptures':
@@ -3337,6 +3599,24 @@
         'include': '#interpolation'
       }
       {
+        'include': '#regexp-group-assertion-heredoc'
+      }
+      {
+        'include': '#regexp-group-non-capturing-heredoc'
+      }
+      {
+        'include': '#regexp-group-options-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-angle-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-pcre-heredoc'
+      }
+      {
         'include': '#regexp-group-heredoc'
       }
       {
@@ -3348,6 +3628,24 @@
     ]
   'regexp-nowdoc-common':
     'patterns': [
+      {
+        'include': '#regexp-group-assertion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-non-capturing-nowdoc'
+      }
+      {
+        'include': '#regexp-group-options-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-angle-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-pcre-nowdoc'
+      }
       {
         'include': '#regexp-group-nowdoc'
       }
