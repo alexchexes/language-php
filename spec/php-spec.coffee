@@ -29,6 +29,9 @@ describe 'PHP grammar', ->
   regexpGroupScope = ['meta.embedded.group.regexp.php']
   regexpGroupScopes = (baseScope) ->
     baseScope.concat regexpGroupScope
+  regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
+  regexpAssertionGroupScopes = (baseScope) ->
+    baseScope.concat regexpAssertionGroupScope
 
   it 'parses the grammar', ->
     expect(grammar).toBeTruthy()
@@ -4910,6 +4913,106 @@ describe 'PHP grammar', ->
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+      it "should tokenize assertion groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?<=ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?<=', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.assertion.regexp.php']
+        expect(lines[1][3]).toEqual value: 'ab', scopes: regexpAssertionGroupScopes(regexScope)
+        expect(lines[1][4]).toEqual value: ')', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize non-capturing groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?:ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?:', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.no-capture.regexp.php']
+        expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupScopes(regexScope)
+        expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize option groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?im:ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.option.regexp.php']
+        expect(lines[1][3]).toEqual value: 'im', scopes: regexpGroupScopes(regexScope).concat ['storage.modifier.regexp.php']
+        expect(lines[1][4]).toEqual value: ':', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.option.regexp.php']
+        expect(lines[1][5]).toEqual value: 'ab', scopes: regexpGroupScopes(regexScope)
+        expect(lines[1][6]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][7]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize angle-bracket named groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?<word>ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?<', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+        expect(lines[1][3]).toEqual value: 'word', scopes: regexpGroupScopes(regexScope).concat ['entity.name.other.group.regexp.php']
+        expect(lines[1][4]).toEqual value: '>', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+        expect(lines[1][5]).toEqual value: 'ab', scopes: regexpGroupScopes(regexScope)
+        expect(lines[1][6]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][7]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize atomic groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?>ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?>', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.atomic.regexp.php']
+        expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupScopes(regexScope)
+        expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize branch-reset groups in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /(?|ab)/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][2]).toEqual value: '?|', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.branch-reset.regexp.php']
+        expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupScopes(regexScope)
+        expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
   it 'should tokenize interpolation inside REGEXP heredoc groups', ->
     lines = grammar.tokenizeLines '''
       $r = <<<REGEXP
@@ -4923,6 +5026,38 @@ describe 'PHP grammar', ->
     expect(lines[1][3]).toEqual value: 'value', scopes: regexpGroupScopes(heredocRegexpScope).concat ['variable.other.php']
     expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
     expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+
+  it 'should tokenize single-quoted named groups in REGEXP heredoc', ->
+    lines = grammar.tokenizeLines '''
+      $r = <<<REGEXP
+      /(?'word'ab)/
+      REGEXP;
+    '''
+
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(lines[1][2]).toEqual value: '?\'', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+    expect(lines[1][3]).toEqual value: 'word', scopes: regexpGroupScopes(heredocRegexpScope).concat ['entity.name.other.group.regexp.php']
+    expect(lines[1][4]).toEqual value: '\'', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+    expect(lines[1][5]).toEqual value: 'ab', scopes: regexpGroupScopes(heredocRegexpScope)
+    expect(lines[1][6]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
+
+  it 'should tokenize PCRE named groups in REGEXP heredoc', ->
+    lines = grammar.tokenizeLines '''
+      $r = <<<REGEXP
+      /(?P<word>ab)/
+      REGEXP;
+    '''
+
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(lines[1][2]).toEqual value: '?P<', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+    expect(lines[1][3]).toEqual value: 'word', scopes: regexpGroupScopes(heredocRegexpScope).concat ['entity.name.other.group.regexp.php']
+    expect(lines[1][4]).toEqual value: '>', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+    expect(lines[1][5]).toEqual value: 'ab', scopes: regexpGroupScopes(heredocRegexpScope)
+    expect(lines[1][6]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
 
   describe 'punctuation', ->
     it 'tokenizes brackets', ->
