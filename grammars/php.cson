@@ -2929,8 +2929,14 @@
   'regexp-property-escape-explicit':
     'match': '\\\\[pP]\\{[^}]+\\}'
     'name': 'constant.character.class.regexp.php'
+  'regexp-hex-escape-explicit':
+    'match': '\\\\x[0-9A-Fa-f]{2}'
+    'name': 'constant.character.numeric.regexp.php'
+  'regexp-braced-hex-escape-explicit':
+    'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
+    'name': 'constant.character.numeric.regexp.php'
   'regexp-literal-escape-explicit':
-    'match': '\\\\(?:\\\\|[0-7]{1,3}|c[A-Za-z]|x[0-9A-Fa-f]{2}|x\\{[0-9A-Fa-f]+\\}|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
+    'match': '\\\\(?:\\\\|[0-7]{1,3}|c[A-Za-z]|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
     'name': 'constant.character.escape.regex.php'
   'regexp-arbitrary-repitition-explicit':
     # Keep string.regexp.arbitrary-repitition.php for BC while widening range quantifier support.
@@ -2951,8 +2957,14 @@
         'name': 'punctuation.definition.arbitrary-repetition.php'
     'match': '({)\\d+(,\\d+)?(})'
     'name': 'string.regexp.arbitrary-repetition.php'
+  'regexp-character-class-hex-escape-explicit':
+    'match': '\\\\x[0-9A-Fa-f]{2}'
+    'name': 'constant.character.numeric.regexp.php'
+  'regexp-character-class-braced-hex-escape-explicit':
+    'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
+    'name': 'constant.character.numeric.regexp.php'
   'regexp-character-class-escape-explicit':
-    'match': '\\\\(?:[0-7]{1,3}|c[A-Za-z]|x[0-9A-Fa-f]{2}|x\\{[0-9A-Fa-f]+\\}|[pP]\\{[^}]+\\}|.)'
+    'match': '\\\\(?:[0-7]{1,3}|c[A-Za-z]|[pP]\\{[^}]+\\}|.)'
     'name': 'constant.character.escape.php'
   'regexp-character-class-posix-explicit':
     'begin': '(\\[:)(\\^)?'
@@ -2988,6 +3000,12 @@
     'patterns': [
       {
         'include': '#regexp-character-class-posix-explicit'
+      }
+      {
+        'include': '#regexp-character-class-braced-hex-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-hex-escape-explicit'
       }
       {
         'include': '#regexp-character-class-escape-explicit'
@@ -3466,6 +3484,12 @@
       }
       {
         'include': '#regexp-property-escape-explicit'
+      }
+      {
+        'include': '#regexp-braced-hex-escape-explicit'
+      }
+      {
+        'include': '#regexp-hex-escape-explicit'
       }
       {
         'include': '#regexp-literal-escape-explicit'
