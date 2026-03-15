@@ -5620,7 +5620,7 @@ describe 'PHP grammar', ->
         expect(lines[1][8]).toEqual value: '{', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
         expect(lines[1][9]).toEqual value: '2,4', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
         expect(lines[1][10]).toEqual value: '}', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
-        expect(lines[1][11]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'keyword.operator.quantifier.regexp.php']
+        expect(lines[1][11]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
         expect(lines[1][12]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php', 'keyword.operator.regexp.php']
         expect(lines[1][13]).toEqual value: '/', scopes: regexScope
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
