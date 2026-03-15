@@ -2141,6 +2141,7 @@
             'name': 'keyword.operator.heredoc.php'
           '5':
             'name': 'invalid.illegal.trailing-whitespace.php'
+        # Preserve string.regexp.heredoc.php for BC while adding an embedded wrapper.
         'contentName': 'string.regexp.heredoc.php'
         'end': '^\\s*(\\3)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}])'
         'endCaptures':
@@ -2148,54 +2149,10 @@
             'name': 'punctuation.section.embedded.end.php'
           '1':
             'name': 'keyword.operator.heredoc.php'
+        'name': 'meta.embedded.regexp.php'
         'patterns': [
           {
-            'include': '#interpolation'
-          }
-          {
-            # Escaped from the regexp – there can also be 2 backslashes (since 1 will escape the first)
-            'match': '(\\\\){1,2}[.$^\\[\\]{}]'
-            'name': 'constant.character.escape.regex.php'
-          }
-          {
-            'captures':
-              '1':
-                'name': 'punctuation.definition.arbitrary-repitition.php'
-              '3':
-                'name': 'punctuation.definition.arbitrary-repitition.php'
-            'match': '({)\\d+(,\\d+)?(})'
-            'name': 'string.regexp.arbitrary-repitition.php'
-          }
-          {
-            'begin': '\\[(?:\\^?\\])?'
-            'captures':
-              '0':
-                'name': 'punctuation.definition.character-class.php'
-            'end': '\\]|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
-            'name': 'string.regexp.character-class.php'
-            'patterns': [
-              {
-                'match': '\\\\[\\\\\'\\[\\]]'
-                'name': 'constant.character.escape.php'
-              }
-            ]
-          }
-          {
-            'match': '[$^+*]'
-            'name': 'keyword.operator.regexp.php'
-          }
-          {
-            # We are restrictive in what we allow to go after the comment to avoid false positives,
-            # since the availability of comments depend on regexp flags.
-            'begin': '(?i)(?<=^|\\s)(#)\\s(?=[[a-z0-9_\\x{7f}-\\x{10ffff},. \\t?!-][^\\x{00}-\\x{7f}]]*$)'
-            'beginCaptures':
-              '1':
-                'name': 'punctuation.definition.comment.php'
-            'end': '$'
-            'endCaptures':
-              '0':
-                'name': 'punctuation.definition.comment.php'
-            'name': 'comment.line.number-sign.php'
+            'include': '#regexp-heredoc-body'
           }
         ]
       }
@@ -2410,6 +2367,7 @@
             'name': 'keyword.operator.nowdoc.php'
           '3':
             'name': 'invalid.illegal.trailing-whitespace.php'
+        # Preserve string.regexp.nowdoc.php for BC while adding an embedded wrapper.
         'contentName': 'string.regexp.nowdoc.php'
         'end': '^\\s*(\\2)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}])'
         'endCaptures':
@@ -2417,51 +2375,10 @@
             'name': 'punctuation.section.embedded.end.php'
           '1':
             'name': 'keyword.operator.nowdoc.php'
+        'name': 'meta.embedded.regexp.php'
         'patterns': [
           {
-            # Escaped from the regexp – there can also be 2 backslashes (since 1 will escape the first)
-            'match': '(\\\\){1,2}[.$^\\[\\]{}]'
-            'name': 'constant.character.escape.regex.php'
-          }
-          {
-            'captures':
-              '1':
-                'name': 'punctuation.definition.arbitrary-repitition.php'
-              '3':
-                'name': 'punctuation.definition.arbitrary-repitition.php'
-            'match': '({)\\d+(,\\d+)?(})'
-            'name': 'string.regexp.arbitrary-repitition.php'
-          }
-          {
-            'begin': '\\[(?:\\^?\\])?'
-            'captures':
-              '0':
-                'name': 'punctuation.definition.character-class.php'
-            'end': '\\]|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
-            'name': 'string.regexp.character-class.php'
-            'patterns': [
-              {
-                'match': '\\\\[\\\\\'\\[\\]]'
-                'name': 'constant.character.escape.php'
-              }
-            ]
-          }
-          {
-            'match': '[$^+*]'
-            'name': 'keyword.operator.regexp.php'
-          }
-          {
-            # We are restrictive in what we allow to go after the comment to avoid false positives,
-            # since the availability of comments depend on regexp flags.
-            'begin': '(?i)(?<=^|\\s)(#)\\s(?=[[a-z0-9_\\x{7f}-\\x{10ffff},. \\t?!-][^\\x{00}-\\x{7f}]]*$)'
-            'beginCaptures':
-              '1':
-                'name': 'punctuation.definition.comment.php'
-            'end': '$'
-            'endCaptures':
-              '0':
-                'name': 'punctuation.definition.comment.php'
-            'name': 'comment.line.number-sign.php'
+            'include': '#regexp-nowdoc-body'
           }
         ]
       }
@@ -3293,6 +3210,142 @@
         ]
       '2':
         'name': 'keyword.other.array.phpdoc.php'
+  'regexp-basic-escape':
+    # Escaped from the regexp – there can also be 2 backslashes (since 1 will escape the first)
+    'match': '(\\\\){1,2}[.$^\\[\\]{}]'
+    'name': 'constant.character.escape.regex.php'
+  'regexp-arbitrary-repitition-explicit':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.arbitrary-repitition.php'
+      '3':
+        'name': 'punctuation.definition.arbitrary-repitition.php'
+    'match': '({)\\d+(,\\d+)?(})'
+    'name': 'string.regexp.arbitrary-repitition.php'
+  'regexp-arbitrary-repetition-quoted':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.arbitrary-repetition.php'
+      '3':
+        'name': 'punctuation.definition.arbitrary-repetition.php'
+    'match': '({)\\d+(,\\d+)?(})'
+    'name': 'string.regexp.arbitrary-repetition.php'
+  'regexp-character-class-explicit':
+    'begin': '\\[(?:\\^?\\])?'
+    'captures':
+      '0':
+        'name': 'punctuation.definition.character-class.php'
+    'end': '\\]|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
+    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+    'patterns': [
+      {
+        'match': '\\\\[\\\\\'\\[\\]]'
+        'name': 'constant.character.escape.php'
+      }
+    ]
+  'regexp-character-class-double-quoted':
+    'begin': '\\[(?:\\^?\\])?'
+    'captures':
+      '0':
+        'name': 'punctuation.definition.character-class.php'
+    'end': '\\]|(?=/[imsxeADSUXu]*")|(?=$)'
+    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
+    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+    'patterns': [
+      {
+        'include': '#interpolation_double_quoted'
+      }
+    ]
+  'regexp-character-class-single-quoted':
+    'begin': '\\[(?:\\^?\\])?'
+    'captures':
+      '0':
+        'name': 'punctuation.definition.character-class.php'
+    'end': '\\]|(?=/[imsxeADSUXu]*\')|(?=$)'
+    # Keep string.regexp.character-class.php for BC while adding an embedded wrapper.
+    'name': 'meta.embedded.character-class.regexp.php string.regexp.character-class.php'
+  'regexp-line-comment':
+    # We are restrictive in what we allow to go after the comment to avoid false positives,
+    # since the availability of comments depend on regexp flags.
+    'begin': '(?i)(?<=^|\\s)(#)\\s(?=[[a-z0-9_\\x{7f}-\\x{10ffff},. \\t?!-][^\\x{00}-\\x{7f}]]*$)'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.comment.php'
+    'end': '$'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.comment.php'
+    'name': 'comment.line.number-sign.php'
+  'regexp-operators-basic':
+    'match': '[$^+*]'
+    'name': 'keyword.operator.regexp.php'
+  'regexp-explicit-common':
+    'patterns': [
+      {
+        'include': '#regexp-basic-escape'
+      }
+      {
+        'include': '#regexp-arbitrary-repitition-explicit'
+      }
+      {
+        'include': '#regexp-character-class-explicit'
+      }
+      {
+        'include': '#regexp-operators-basic'
+      }
+      {
+        'include': '#regexp-line-comment'
+      }
+    ]
+  'regexp-heredoc-body':
+    'patterns': [
+      {
+        'include': '#interpolation'
+      }
+      {
+        'include': '#regexp-explicit-common'
+      }
+    ]
+  'regexp-nowdoc-body':
+    'patterns': [
+      {
+        'include': '#regexp-explicit-common'
+      }
+    ]
+  'regexp-double-quoted-body':
+    'patterns': [
+      {
+        'include': '#regexp-basic-escape'
+      }
+      {
+        'include': '#interpolation_double_quoted'
+      }
+      {
+        'include': '#regexp-arbitrary-repetition-quoted'
+      }
+      {
+        'include': '#regexp-character-class-double-quoted'
+      }
+      {
+        'include': '#regexp-operators-basic'
+      }
+    ]
+  'regexp-single-quoted-body':
+    'patterns': [
+      {
+        'include': '#single_quote_regex_escape'
+      }
+      {
+        'include': '#regexp-arbitrary-repetition-quoted'
+      }
+      {
+        'include': '#regexp-character-class-single-quoted'
+      }
+      {
+        'include': '#regexp-operators-basic'
+      }
+    ]
   'regex-double-quoted':
     'begin': '"/(?=(?:\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
     'beginCaptures':
@@ -3302,41 +3355,11 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.string.end.php'
-    'name': 'string.regexp.double-quoted.php'
+    # Keep string.regexp.double-quoted.php for BC while layering on an embedded wrapper.
+    'name': 'meta.embedded.regexp.php string.regexp.double-quoted.php'
     'patterns': [
       {
-        # Escaped from the regexp – there can also be 2 backslashes (since 1 will escape the first)
-        'match': '(\\\\){1,2}[.$^\\[\\]{}]'
-        'name': 'constant.character.escape.regex.php'
-      }
-      {
-        'include': '#interpolation_double_quoted'
-      }
-      {
-        'captures':
-          '1':
-            'name': 'punctuation.definition.arbitrary-repetition.php'
-          '3':
-            'name': 'punctuation.definition.arbitrary-repetition.php'
-        'match': '({)\\d+(,\\d+)?(})'
-        'name': 'string.regexp.arbitrary-repetition.php'
-      }
-      {
-        'begin': '\\[(?:\\^?\\])?'
-        'captures':
-          '0':
-            'name': 'punctuation.definition.character-class.php'
-        'end': '\\]|(?=/[imsxeADSUXu]*")|(?=$)'
-        'name': 'string.regexp.character-class.php'
-        'patterns': [
-          {
-            'include': '#interpolation_double_quoted'
-          }
-        ]
-      }
-      {
-        'match': '[$^+*]'
-        'name': 'keyword.operator.regexp.php'
+        'include': '#regexp-double-quoted-body'
       }
     ]
   'regex-single-quoted':
@@ -3348,31 +3371,11 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.string.end.php'
-    'name': 'string.regexp.single-quoted.php'
+    # Keep string.regexp.single-quoted.php for BC while layering on an embedded wrapper.
+    'name': 'meta.embedded.regexp.php string.regexp.single-quoted.php'
     'patterns': [
       {
-       'include': '#single_quote_regex_escape'
-      }
-      {
-        'captures':
-          '1':
-            'name': 'punctuation.definition.arbitrary-repetition.php'
-          '3':
-            'name': 'punctuation.definition.arbitrary-repetition.php'
-        'match': '({)\\d+(,\\d+)?(})'
-        'name': 'string.regexp.arbitrary-repetition.php'
-      }
-      {
-        'begin': '\\[(?:\\^?\\])?'
-        'captures':
-          '0':
-            'name': 'punctuation.definition.character-class.php'
-        'end': '\\]|(?=/[imsxeADSUXu]*\')|(?=$)'
-        'name': 'string.regexp.character-class.php'
-      }
-      {
-        'match': '[$^+*]'
-        'name': 'keyword.operator.regexp.php'
+        'include': '#regexp-single-quoted-body'
       }
     ]
   'scope-resolution':

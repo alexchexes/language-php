@@ -17,6 +17,16 @@ describe 'PHP grammar', ->
     expect(tokens[5]).toEqual value: '1', scopes: ['source.php', 'constant.numeric.decimal.php']
     expect(tokens[6]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+  quotedSingleRegexpScope = ['source.php', 'meta.embedded.regexp.php', 'string.regexp.single-quoted.php']
+  quotedDoubleRegexpScope = ['source.php', 'meta.embedded.regexp.php', 'string.regexp.double-quoted.php']
+  heredocRegexpBoundaryScope = ['source.php', 'string.unquoted.heredoc.php', 'meta.embedded.regexp.php']
+  heredocRegexpScope = heredocRegexpBoundaryScope.concat ['string.regexp.heredoc.php']
+  nowdocRegexpBoundaryScope = ['source.php', 'string.unquoted.nowdoc.php', 'meta.embedded.regexp.php']
+  nowdocRegexpScope = nowdocRegexpBoundaryScope.concat ['string.regexp.nowdoc.php']
+  regexpCharacterClassScope = ['meta.embedded.character-class.regexp.php', 'string.regexp.character-class.php']
+  regexpCharacterClassScopes = (baseScope) ->
+    baseScope.concat regexpCharacterClassScope
+
   it 'parses the grammar', ->
     expect(grammar).toBeTruthy()
     expect(grammar.scopeName).toBe 'source.php'
@@ -4161,19 +4171,19 @@ describe 'PHP grammar', ->
   it 'should tokenize single quoted string regex escape characters correctly', ->
     {tokens} = grammar.tokenizeLine "'/[\\\\\\\\]/';"
 
-    expect(tokens[0]).toEqual value: '\'/', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.begin.php']
-    expect(tokens[1]).toEqual value: '[', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[2]).toEqual value: '\\\\\\\\', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php']
-    expect(tokens[3]).toEqual value: ']', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[4]).toEqual value: '/\'', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.end.php']
+    expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+    expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[2]).toEqual value: '\\\\\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope)
+    expect(tokens[3]).toEqual value: ']', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[4]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
     expect(tokens[5]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize single quoted string regex with escaped bracket', ->
     {tokens} = grammar.tokenizeLine "'/\\[/'"
 
-    expect(tokens[0]).toEqual value: '\'/', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.begin.php']
-    expect(tokens[1]).toEqual value: '\\[', scopes: ['source.php', 'string.regexp.single-quoted.php', 'constant.character.escape.php']
-    expect(tokens[2]).toEqual value: '/\'', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.end.php']
+    expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+    expect(tokens[1]).toEqual value: '\\[', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
+    expect(tokens[2]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
   for {description, regex} in [
     {description: 'empty character class', regex: '/[]/'}
@@ -4196,20 +4206,20 @@ describe 'PHP grammar', ->
   it 'should tokenize single quoted regex with slash inside character class', ->
     {tokens} = grammar.tokenizeLine "'/[a/b]/'"
 
-    expect(tokens[0]).toEqual value: '\'/', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.begin.php']
-    expect(tokens[1]).toEqual value: '[', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[2]).toEqual value: 'a/b', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php']
-    expect(tokens[3]).toEqual value: ']', scopes: ['source.php', 'string.regexp.single-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[4]).toEqual value: '/\'', scopes: ['source.php', 'string.regexp.single-quoted.php', 'punctuation.definition.string.end.php']
+    expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+    expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[2]).toEqual value: 'a/b', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope)
+    expect(tokens[3]).toEqual value: ']', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[4]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
   it 'should tokenize double quoted regex with slash inside character class', ->
     {tokens} = grammar.tokenizeLine "\"/[a/b]/\""
 
-    expect(tokens[0]).toEqual value: '"/', scopes: ['source.php', 'string.regexp.double-quoted.php', 'punctuation.definition.string.begin.php']
-    expect(tokens[1]).toEqual value: '[', scopes: ['source.php', 'string.regexp.double-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[2]).toEqual value: 'a/b', scopes: ['source.php', 'string.regexp.double-quoted.php', 'string.regexp.character-class.php']
-    expect(tokens[3]).toEqual value: ']', scopes: ['source.php', 'string.regexp.double-quoted.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(tokens[4]).toEqual value: '/"', scopes: ['source.php', 'string.regexp.double-quoted.php', 'punctuation.definition.string.end.php']
+    expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+    expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[2]).toEqual value: 'a/b', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope)
+    expect(tokens[3]).toEqual value: ']', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
   it 'should tokenize opening scope of a closure correctly', ->
     {tokens} = grammar.tokenizeLine '$a = function() {};'
@@ -5118,12 +5128,12 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[1][1]).toEqual value: '\\[', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'constant.character.escape.regex.php']
-    expect(lines[1][2]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\[', scopes: heredocRegexpScope.concat ['constant.character.escape.regex.php']
+    expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a nowdoc with embedded regex escape characters correctly', ->
@@ -5138,17 +5148,17 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[0][7]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
-    expect(lines[0][8]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[1][1]).toEqual value: '[', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][2]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][3]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][4]).toEqual value: ']', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][5]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[0][7]).toEqual value: 'REGEX', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][8]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][4]).toEqual value: ']', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][5]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEX', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a nowdoc with embedded regex escaped bracket correctly', ->
@@ -5163,14 +5173,14 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[0][7]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
-    expect(lines[0][8]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[1][1]).toEqual value: '\\[', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'constant.character.escape.regex.php']
-    expect(lines[1][2]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEX', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[0][7]).toEqual value: 'REGEX', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][8]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\[', scopes: nowdocRegexpScope.concat ['constant.character.escape.regex.php']
+    expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEX', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a heredoc with embedded regex escape characters correctly', ->
@@ -5185,15 +5195,15 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[1][1]).toEqual value: '[', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][2]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][3]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][4]).toEqual value: ']', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][5]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: 'REGEXP', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][4]).toEqual value: ']', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a heredoc with embedded regex escaped bracket correctly', ->
@@ -5208,12 +5218,12 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[1][1]).toEqual value: '\\[', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php', 'constant.character.escape.regex.php']
-    expect(lines[1][2]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: 'REGEXP', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.heredoc.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\[', scopes: heredocRegexpScope.concat ['constant.character.escape.regex.php']
+    expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a nowdoc with embedded regex escape characters correctly', ->
@@ -5228,17 +5238,17 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[0][7]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
-    expect(lines[0][8]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[1][1]).toEqual value: '[', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][2]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][3]).toEqual value: '\\\\', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'constant.character.escape.php']
-    expect(lines[1][4]).toEqual value: ']', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-    expect(lines[1][5]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[0][7]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][8]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.escape.php']
+    expect(lines[1][4]).toEqual value: ']', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['punctuation.definition.character-class.php']
+    expect(lines[1][5]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   it 'should tokenize a nowdoc with embedded regex escaped bracket correctly', ->
@@ -5253,14 +5263,14 @@ describe 'PHP grammar', ->
     expect(lines[0][2]).toEqual value: ' ', scopes: ['source.php']
     expect(lines[0][3]).toEqual value: '=', scopes: ['source.php', 'keyword.operator.assignment.php']
     expect(lines[0][4]).toEqual value: ' ', scopes: ['source.php']
-    expect(lines[0][5]).toEqual value: '<<<', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
-    expect(lines[0][6]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[0][7]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
-    expect(lines[0][8]).toEqual value: '\'', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.begin.php']
-    expect(lines[1][0]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[1][1]).toEqual value: '\\[', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php', 'constant.character.escape.regex.php']
-    expect(lines[1][2]).toEqual value: '/', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][5]).toEqual value: '<<<', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'punctuation.definition.string.php']
+    expect(lines[0][6]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[0][7]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php', 'keyword.operator.nowdoc.php']
+    expect(lines[0][8]).toEqual value: '\'', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.begin.php']
+    expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\[', scopes: nowdocRegexpScope.concat ['constant.character.escape.regex.php']
+    expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
     expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
   for {description, regex} in [
@@ -5279,7 +5289,7 @@ describe 'PHP grammar', ->
           $x = 1;
         """
 
-        expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+        expect(lines[2][0]).toEqual value: 'REGEXP', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
         expectPlainAssignment(lines[3])
 
@@ -5291,7 +5301,7 @@ describe 'PHP grammar', ->
           $x = 1;
         """
 
-        expect(lines[2][0]).toEqual value: 'REGEXP', scopes: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+        expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
         expectPlainAssignment(lines[3])
 
@@ -5300,15 +5310,15 @@ describe 'PHP grammar', ->
       description: 'REGEX heredoc'
       opener: '<<<REGEX'
       label: 'REGEX'
-      regexScope: ['source.php', 'string.unquoted.heredoc.php', 'string.regexp.heredoc.php']
-      terminatorScope: ['source.php', 'string.unquoted.heredoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      regexScope: heredocRegexpScope
+      terminatorScope: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
     }
     {
       description: 'REGEXP nowdoc'
       opener: '<<<\'REGEXP\''
       label: 'REGEXP'
-      regexScope: ['source.php', 'string.unquoted.nowdoc.php', 'string.regexp.nowdoc.php']
-      terminatorScope: ['source.php', 'string.unquoted.nowdoc.php', 'punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      regexScope: nowdocRegexpScope
+      terminatorScope: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
     }
   ]
     do (description, opener, label, regexScope, terminatorScope) ->
@@ -5322,10 +5332,10 @@ describe 'PHP grammar', ->
         """
 
         expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-        expect(lines[1][1]).toEqual value: '[', scopes: regexScope.concat ['string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-        expect(lines[1][2]).toEqual value: 'ab', scopes: regexScope.concat ['string.regexp.character-class.php']
-        expect(lines[2][0]).toEqual value: 'cd', scopes: regexScope.concat ['string.regexp.character-class.php']
-        expect(lines[2][1]).toEqual value: ']', scopes: regexScope.concat ['string.regexp.character-class.php', 'punctuation.definition.character-class.php']
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][2]).toEqual value: 'ab', scopes: regexpCharacterClassScopes(regexScope)
+        expect(lines[2][0]).toEqual value: 'cd', scopes: regexpCharacterClassScopes(regexScope)
+        expect(lines[2][1]).toEqual value: ']', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
         expect(lines[2][2]).toEqual value: '/', scopes: regexScope
         expect(lines[3][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[3][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
@@ -5340,8 +5350,8 @@ describe 'PHP grammar', ->
         """
 
         expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-        expect(lines[1][1]).toEqual value: '[', scopes: regexScope.concat ['string.regexp.character-class.php', 'punctuation.definition.character-class.php']
-        expect(lines[1][2]).toEqual value: 'ab', scopes: regexScope.concat ['string.regexp.character-class.php']
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][2]).toEqual value: 'ab', scopes: regexpCharacterClassScopes(regexScope)
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
         expectPlainAssignment(lines[3])
