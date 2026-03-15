@@ -3249,6 +3249,10 @@
       "match": "(\\\\){1,2}[.$^\\[\\]{}]",
       "name": "constant.character.escape.regex.php"
     },
+    "regexp-group-escape-explicit": {
+      "match": "(\\\\){1,2}[()]",
+      "name": "constant.character.escape.regex.php"
+    },
     "regexp-arbitrary-repitition-explicit": {
       "captures": {
         "1": {
@@ -3314,6 +3318,46 @@
       "end": "\\]|(?=/[imsxeADSUXu]*')|(?=$)",
       "name": "meta.embedded.character-class.regexp.php string.regexp.character-class.php"
     },
+    "regexp-group-heredoc": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "end": "\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "name": "meta.embedded.group.regexp.php",
+      "patterns": [
+        {
+          "include": "#regexp-heredoc-common"
+        }
+      ]
+    },
+    "regexp-group-nowdoc": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "end": "\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "name": "meta.embedded.group.regexp.php",
+      "patterns": [
+        {
+          "include": "#regexp-nowdoc-common"
+        }
+      ]
+    },
     "regexp-line-comment": {
       "begin": "(?i)(?<=^|\\s)(#)\\s(?=[[a-z0-9_\\x{7f}-\\x{10ffff},. \\t?!-][^\\x{00}-\\x{7f}]]*$)",
       "beginCaptures": {
@@ -3333,16 +3377,16 @@
       "match": "[$^+*]",
       "name": "keyword.operator.regexp.php"
     },
-    "regexp-explicit-common": {
+    "regexp-explicit-shared": {
       "patterns": [
         {
           "include": "#regexp-basic-escape"
         },
         {
-          "include": "#regexp-arbitrary-repitition-explicit"
+          "include": "#regexp-group-escape-explicit"
         },
         {
-          "include": "#regexp-character-class-explicit"
+          "include": "#regexp-arbitrary-repitition-explicit"
         },
         {
           "include": "#regexp-operators-basic"
@@ -3352,20 +3396,46 @@
         }
       ]
     },
-    "regexp-heredoc-body": {
+    "regexp-heredoc-common": {
       "patterns": [
         {
           "include": "#interpolation"
         },
         {
-          "include": "#regexp-explicit-common"
+          "include": "#regexp-group-heredoc"
+        },
+        {
+          "include": "#regexp-character-class-explicit"
+        },
+        {
+          "include": "#regexp-explicit-shared"
+        }
+      ]
+    },
+    "regexp-nowdoc-common": {
+      "patterns": [
+        {
+          "include": "#regexp-group-nowdoc"
+        },
+        {
+          "include": "#regexp-character-class-explicit"
+        },
+        {
+          "include": "#regexp-explicit-shared"
+        }
+      ]
+    },
+    "regexp-heredoc-body": {
+      "patterns": [
+        {
+          "include": "#regexp-heredoc-common"
         }
       ]
     },
     "regexp-nowdoc-body": {
       "patterns": [
         {
-          "include": "#regexp-explicit-common"
+          "include": "#regexp-nowdoc-common"
         }
       ]
     },
