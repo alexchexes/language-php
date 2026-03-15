@@ -26,6 +26,9 @@ describe 'PHP grammar', ->
   regexpCharacterClassScope = ['meta.embedded.character-class.regexp.php', 'string.regexp.character-class.php']
   regexpCharacterClassScopes = (baseScope) ->
     baseScope.concat regexpCharacterClassScope
+  regexpCharacterClassPosixScope = ['meta.embedded.character-class.posix.regexp.php', 'constant.other.character-class.posix.regexp.php']
+  regexpCharacterClassPosixScopes = (baseScope) ->
+    regexpCharacterClassScopes(baseScope).concat regexpCharacterClassPosixScope
   regexpGroupScope = ['meta.embedded.group.regexp.php']
   regexpGroupScopes = (baseScope) ->
     baseScope.concat regexpGroupScope
@@ -5364,6 +5367,49 @@ describe 'PHP grammar', ->
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
         expectPlainAssignment(lines[3])
+
+      it "should tokenize richer character class internals in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /[^a-z[:digit:]\\d\\]]/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][2]).toEqual value: '^', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.negation.regexp.php']
+        expect(lines[1][3]).toEqual value: 'a', scopes: regexpCharacterClassScopes(regexScope)
+        expect(lines[1][4]).toEqual value: '-', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+        expect(lines[1][5]).toEqual value: 'z', scopes: regexpCharacterClassScopes(regexScope)
+        expect(lines[1][6]).toEqual value: '[:', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.begin.regexp.php']
+        expect(lines[1][7]).toEqual value: 'digit', scopes: regexpCharacterClassPosixScopes(regexScope)
+        expect(lines[1][8]).toEqual value: ':]', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.end.regexp.php']
+        expect(lines[1][9]).toEqual value: '\\d', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.escape.php']
+        expect(lines[1][10]).toEqual value: '\\]', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.escape.php']
+        expect(lines[1][11]).toEqual value: ']', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][12]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+      it "should tokenize negated POSIX classes and property escapes in #{description}", ->
+        lines = grammar.tokenizeLines """
+          $r = #{opener}
+          /[[:^digit:]\\p{L}\\-]/
+          #{label};
+        """
+
+        expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][2]).toEqual value: '[:', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.begin.regexp.php']
+        expect(lines[1][3]).toEqual value: '^', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['keyword.operator.negation.regexp.php']
+        expect(lines[1][4]).toEqual value: 'digit', scopes: regexpCharacterClassPosixScopes(regexScope)
+        expect(lines[1][5]).toEqual value: ':]', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.end.regexp.php']
+        expect(lines[1][6]).toEqual value: '\\p{L}', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.escape.php']
+        expect(lines[1][7]).toEqual value: '\\-', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.escape.php']
+        expect(lines[1][8]).toEqual value: ']', scopes: regexpCharacterClassScopes(regexScope).concat ['punctuation.definition.character-class.php']
+        expect(lines[1][9]).toEqual value: '/', scopes: regexScope
+        expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+        expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
       it "should tokenize plain groups in #{description}", ->
         lines = grammar.tokenizeLines """
