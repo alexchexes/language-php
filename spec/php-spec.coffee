@@ -5537,10 +5537,10 @@ describe 'PHP grammar', ->
         """
 
         expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-        expect(lines[1][1]).toEqual value: '(', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
         expect(lines[1][2]).toEqual value: '?#', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
         expect(lines[1][3]).toEqual value: ' note', scopes: regexpCommentGroupScopes(regexScope)
-        expect(lines[1][4]).toEqual value: ')', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php', 'punctuation.definition.comment.end.regexp.php']
+        expect(lines[1][4]).toEqual value: ')', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.end.regexp.php']
         expect(lines[1][5]).toEqual value: '/', scopes: regexScope
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
         expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
@@ -5554,7 +5554,7 @@ describe 'PHP grammar', ->
         """
 
         expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-        expect(lines[1][1]).toEqual value: '(', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        expect(lines[1][1]).toEqual value: '(', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
         expect(lines[1][2]).toEqual value: '?#', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
         expect(lines[1][3]).toEqual value: ' note', scopes: regexpCommentGroupScopes(regexScope)
         expect(lines[2][0]).toEqual value: label, scopes: terminatorScope

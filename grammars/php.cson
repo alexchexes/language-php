@@ -3337,17 +3337,15 @@
       '0':
         'name': 'comment.block.regexp.php'
       '1':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.comment.begin.regexp.php'
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
     'contentName': 'comment.block.regexp.php'
-    'end': '((\\)))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'end': '(\\))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
         'name': 'comment.block.regexp.php'
       '1':
-        'name': 'punctuation.definition.group.regexp.php'
-      '2':
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-comment-group-nowdoc':
@@ -3356,17 +3354,15 @@
       '0':
         'name': 'comment.block.regexp.php'
       '1':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.comment.begin.regexp.php'
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
     'contentName': 'comment.block.regexp.php'
-    'end': '((\\)))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'end': '(\\))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
         'name': 'comment.block.regexp.php'
       '1':
-        'name': 'punctuation.definition.group.regexp.php'
-      '2':
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-heredoc':
