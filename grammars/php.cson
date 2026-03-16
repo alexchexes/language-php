@@ -3270,6 +3270,59 @@
   'regexp-literal-escape-explicit':
     'match': '\\\\(?:\\\\|[0-7]{1,3}|c[A-Za-z]|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
     'name': 'constant.character.escape.regex.php'
+  'regexp-decoded-backreference-numeric-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.back-reference.regexp.php'
+      '3':
+        'name': 'keyword.other.back-reference.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+    'match': '((\\\\\\\\))(([1-9][0-9]*))'
+  'regexp-decoded-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.numeric.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(x[0-9A-Fa-f]{2})'
+  'regexp-decoded-character-type-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.class.regexp.php'
+      '3':
+        'name': 'constant.character.class.regexp.php'
+    'match': '((\\\\\\\\))((v))'
+  'regexp-decoded-literal-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regex.php'
+      '3':
+        'name': 'constant.character.escape.regex.php'
+    'match': '((\\\\\\\\))(([nrtfe$]))'
+  'regexp-decoded-overlap-escapes-interpreted':
+    'patterns': [
+      {
+        'include': '#regexp-decoded-backreference-numeric-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-character-type-escape-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-literal-escape-interpreted'
+      }
+    ]
   'regexp-arbitrary-repetition-explicit':
     'captures':
       '1':
@@ -4401,6 +4454,9 @@
         'include': '#regexp-quoted-literal-heredoc'
       }
       {
+        'include': '#regexp-decoded-overlap-escapes-interpreted'
+      }
+      {
         'include': '#interpolation'
       }
       {
@@ -4597,6 +4653,9 @@
     'patterns': [
       {
         'include': '#regexp-quoted-literal-double-quoted'
+      }
+      {
+        'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
         'include': '#regexp-group-escape-explicit'
