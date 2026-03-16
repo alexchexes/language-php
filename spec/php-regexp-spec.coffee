@@ -153,6 +153,61 @@ describe 'PHP regexp grammar', ->
       expect(doubleQuoted.tokens[5]).toEqual value: '?', scopes: regexpRangeQuantifierScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[6]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should tokenize interpolation inside double quoted regex bodies', ->
+      {tokens} = grammar.tokenizeLine "\"/($value)/\""
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '(', scopes: quotedDoubleRegexpScope
+      expect(tokens[2]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(tokens[3]).toEqual value: 'value', scopes: quotedDoubleRegexpScope.concat ['variable.other.php']
+      expect(tokens[4]).toEqual value: ')', scopes: quotedDoubleRegexpScope
+      expect(tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize interpolation inside double quoted regex character classes', ->
+      {tokens} = grammar.tokenizeLine "\"/[{$value}\\d]/\""
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[2]).toEqual value: '{', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.variable.php']
+      expect(tokens[3]).toEqual value: '$', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(tokens[4]).toEqual value: 'value', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php']
+      expect(tokens[5]).toEqual value: '}', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.variable.php']
+      expect(tokens[6]).toEqual value: '\\d', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope)
+      expect(tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[8]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should keep interpolation-like syntax raw in single quoted regex bodies', ->
+      {tokens} = grammar.tokenizeLine "'/($value)/'"
+
+      expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '(', scopes: quotedSingleRegexpScope
+      expect(tokens[2]).toEqual value: '$', scopes: quotedSingleRegexpScope.concat ['keyword.operator.regexp.php']
+      expect(tokens[3]).toEqual value: 'value)', scopes: quotedSingleRegexpScope
+      expect(tokens[4]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(tokens.some((token) -> 'variable.other.php' in token.scopes)).toBe false
+
+    it 'should keep interpolation-like syntax raw in single quoted regex character classes', ->
+      {tokens} = grammar.tokenizeLine "'/[{$value}\\d]/'"
+
+      expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(tokens[2]).toEqual value: '{$value}\\d', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope)
+      expect(tokens[3]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(tokens[4]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(tokens.some((token) -> 'variable.other.php' in token.scopes)).toBe false
+
+    it 'should keep multiline slash-prefixed double quoted strings out of regex mode', ->
+      lines = grammar.tokenizeLines "$r = \"/foo\nbar/\";"
+
+      expect(lines[0].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+      expect(lines[1].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    it 'should keep multiline slash-prefixed single quoted strings out of regex mode', ->
+      lines = grammar.tokenizeLines "$r = '/foo\nbar/';"
+
+      expect(lines[0].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+      expect(lines[1].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
   describe 'explicit REGEX and REGEXP blocks', ->
     it 'should tokenize a heredoc with embedded regex escaped bracket correctly', ->
       lines = grammar.tokenizeLines '''
