@@ -3388,6 +3388,9 @@
     },
     "regexp-character-class-hex-range-explicit": {
       "captures": {
+        "0": {
+          "name": "support.class.range.regexp.php"
+        },
         "1": {
           "name": "constant.character.numeric.regexp.php"
         },
@@ -3399,14 +3402,14 @@
         }
       },
       "match": "(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})(-)(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})",
-      "name": "support.class.range.regexp.php"
+      "name": "constant.other.character-class.range.regexp.php"
     },
     "regexp-character-class-numeric-literal-explicit": {
       "match": "[0-9]+",
       "name": "constant.numeric.regexp.php"
     },
     "regexp-character-class-literal-explicit": {
-      "match": "[^\\\\\\[\\]0-9-]+",
+      "match": "[^\\\\\\[\\]0-9-]",
       "name": "constant.other.character-class.regexp.php"
     },
     "regexp-character-class-escape-explicit": {
@@ -3448,7 +3451,7 @@
           "name": "keyword.operator.negation.regexp.php"
         }
       },
-      "contentName": "string.regexp.character-class.php",
+      "contentName": "constant.other.character-class.set.regexp.php",
       "end": "((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
       "endCaptures": {
         "1": {
@@ -3497,7 +3500,7 @@
           "name": "punctuation.definition.character-class.regexp.php"
         }
       },
-      "contentName": "string.regexp.character-class.php",
+      "contentName": "constant.other.character-class.set.regexp.php",
       "end": "((\\]))|(?=/[imsxeADSUXu]*\")|(?=$)",
       "endCaptures": {
         "1": {
@@ -3518,7 +3521,7 @@
           "name": "punctuation.definition.character-class.regexp.php"
         }
       },
-      "contentName": "string.regexp.character-class.php",
+      "contentName": "constant.other.character-class.set.regexp.php",
       "end": "((\\]))|(?=/[imsxeADSUXu]*')|(?=$)",
       "endCaptures": {
         "1": {
