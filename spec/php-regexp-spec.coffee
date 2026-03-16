@@ -1384,6 +1384,26 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][8]).toEqual value: '/', scopes: heredocRegexpScope
 
+    it 'should keep single-backslash overlapping escapes PHP-first in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\1\\x41\\n\\v\\$\\u{41}\\d\\x{41}]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\1', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.octal.php']
+      expect(lines[1][3]).toEqual value: '\\x41', scopes: regexpCharacterClassPhpHexEscapeScopes(heredocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\n', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][5]).toEqual value: '\\v', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][6]).toEqual value: '\\$', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][7]).toEqual value: '\\u{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.unicode.php']
+      expect(lines[1][8]).toEqual value: '\\d', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
+      expect(lines[1][9]).toEqual value: '\\x{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
+
     it 'should keep character-class interpolation syntax raw inside REGEXP nowdoc', ->
       lines = grammar.tokenizeLines '''
         $r = <<<'REGEXP'
@@ -1400,6 +1420,29 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
       expect(lines[1][12]).toEqual value: '/', scopes: nowdocRegexpScope
       expect(lines[1].some((token) -> 'variable.other.php' in token.scopes)).toBe false
+
+    it 'should keep overlapping single-backslash escapes raw-regex in REGEXP nowdoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[\\1\\x41\\n\\v\\$\\u{41}\\d\\x{41}]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\1', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][3]).toEqual value: '\\x41', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][4]).toEqual value: '\\n', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][5]).toEqual value: '\\v', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][6]).toEqual value: '\\$', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][7]).toEqual value: '\\u', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][8]).toEqual value: '{', scopes: regexpCharacterClassLiteralScopes(nowdocRegexpScope)
+      expect(lines[1][9]).toEqual value: '41', scopes: regexpCharacterClassNumericScopes(nowdocRegexpScope)
+      expect(lines[1][10]).toEqual value: '}', scopes: regexpCharacterClassLiteralScopes(nowdocRegexpScope)
+      expect(lines[1][11]).toEqual value: '\\d', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][12]).toEqual value: '\\x{41}', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][13]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][14]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'should tokenize single-quoted named groups in REGEXP heredoc', ->
       lines = grammar.tokenizeLines '''
