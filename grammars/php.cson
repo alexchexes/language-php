@@ -2963,6 +2963,36 @@
   'regexp-character-class-braced-hex-escape-explicit':
     'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
     'name': 'constant.character.numeric.regexp.php'
+  'regexp-character-class-letter-range-explicit':
+    'captures':
+      '1':
+        'name': 'constant.other.character-class.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'constant.other.character-class.regexp.php'
+    'match': '([A-Za-z])(-)([A-Za-z])'
+    'name': 'variable.other.constant.character-class.range.regexp.php'
+  'regexp-character-class-digit-range-explicit':
+    'captures':
+      '1':
+        'name': 'constant.numeric.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+    'match': '([0-9])(-)([0-9])'
+    'name': 'constant.numeric.character-class.range.regexp.php'
+  'regexp-character-class-hex-range-explicit':
+    'captures':
+      '1':
+        'name': 'constant.character.numeric.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})(-)(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})'
+    'name': 'support.class.range.regexp.php'
   'regexp-character-class-numeric-literal-explicit':
     'match': '[0-9]+'
     'name': 'constant.numeric.regexp.php'
@@ -3006,6 +3036,15 @@
     'patterns': [
       {
         'include': '#regexp-character-class-posix-explicit'
+      }
+      {
+        'include': '#regexp-character-class-hex-range-explicit'
+      }
+      {
+        'include': '#regexp-character-class-digit-range-explicit'
+      }
+      {
+        'include': '#regexp-character-class-letter-range-explicit'
       }
       {
         'include': '#regexp-character-class-braced-hex-escape-explicit'
