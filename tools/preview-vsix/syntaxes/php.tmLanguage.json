@@ -4971,7 +4971,19 @@
     "regexp-quoted-common": {
       "patterns": [
         {
+          "include": "#regexp-anchor-explicit"
+        },
+        {
           "include": "#regexp-arbitrary-repetition-quoted"
+        },
+        {
+          "include": "#regexp-simple-quantifier-explicit"
+        },
+        {
+          "include": "#regexp-alternation-explicit"
+        },
+        {
+          "include": "#regexp-dot-explicit"
         },
         {
           "include": "#regexp-operators-basic"
@@ -5049,6 +5061,15 @@
           "include": "#interpolation_double_quoted"
         },
         {
+          "include": "#regexp-character-type-escape-explicit"
+        },
+        {
+          "include": "#regexp-property-escape-explicit"
+        },
+        {
+          "include": "#regexp-braced-hex-escape-explicit"
+        },
+        {
           "include": "#regexp-backreference-named-angle-explicit"
         },
         {
@@ -5081,6 +5102,18 @@
         },
         {
           "include": "#regexp-group-backreference-pcre-explicit"
+        },
+        {
+          "include": "#regexp-character-type-escape-explicit"
+        },
+        {
+          "include": "#regexp-property-escape-explicit"
+        },
+        {
+          "include": "#regexp-hex-escape-explicit"
+        },
+        {
+          "include": "#regexp-braced-hex-escape-explicit"
         },
         {
           "include": "#regexp-quoted-literal-single-quoted"
