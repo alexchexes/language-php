@@ -2941,19 +2941,23 @@
   'regexp-arbitrary-repetition-explicit':
     'captures':
       '1':
-        'name': 'punctuation.definition.quantifier.begin.regexp.php'
+        'name': 'keyword.operator.quantifier.regexp.php'
       '2':
+        'name': 'punctuation.definition.quantifier.begin.regexp.php'
+      '3':
         'name': 'punctuation.definition.quantifier.end.regexp.php'
-    'match': '({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)'
-    'name': 'keyword.operator.quantifier.regexp.php'
+    'match': '((\\{)(?:\\d+(?:,\\d*)?|,\\d+)(\\})([?+]?))'
+    'name': 'meta.embedded.quantifier.range.regexp.php'
   'regexp-arbitrary-repetition-quoted':
     'captures':
       '1':
-        'name': 'punctuation.definition.quantifier.begin.regexp.php'
+        'name': 'keyword.operator.quantifier.regexp.php'
       '2':
+        'name': 'punctuation.definition.quantifier.begin.regexp.php'
+      '3':
         'name': 'punctuation.definition.quantifier.end.regexp.php'
-    'match': '({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)'
-    'name': 'keyword.operator.quantifier.regexp.php'
+    'match': '((\\{)(?:\\d+(?:,\\d*)?|,\\d+)(\\})([?+]?))'
+    'name': 'meta.embedded.quantifier.range.regexp.php'
   'regexp-character-class-hex-escape-explicit':
     'match': '\\\\x[0-9A-Fa-f]{2}'
     'name': 'constant.character.numeric.regexp.php'

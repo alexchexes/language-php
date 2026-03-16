@@ -71,7 +71,7 @@ describe 'PHP regexp grammar', ->
   regexpQuotedLiteralContentScopes = (baseScope) ->
     regexpQuotedLiteralBoundaryScopes(baseScope).concat ['string.regexp.quoted-literal.php']
   regexpRangeQuantifierScopes = (baseScope) ->
-    baseScope.concat ['keyword.operator.quantifier.regexp.php']
+    baseScope.concat ['meta.embedded.quantifier.range.regexp.php', 'keyword.operator.quantifier.regexp.php']
   regexpRangeQuantifierBeginScopes = (baseScope) ->
     regexpRangeQuantifierScopes(baseScope).concat ['punctuation.definition.quantifier.begin.regexp.php']
   regexpRangeQuantifierEndScopes = (baseScope) ->
