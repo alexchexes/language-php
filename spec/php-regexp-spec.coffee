@@ -223,6 +223,24 @@ describe 'PHP regexp grammar', ->
       expect(tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
       expect(tokens[8]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should tokenize decoded overlapping escapes in double quoted regex character classes', ->
+      {tokens} = grammar.tokenizeLine '"/[\\\\1\\\\x41\\\\n\\\\v\\\\$]/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[3]).toEqual value: '1', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.numeric.regexp.php']
+      expect(tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[5]).toEqual value: 'x41', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.numeric.regexp.php']
+      expect(tokens[6]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[7]).toEqual value: 'n', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[8]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[9]).toEqual value: 'v', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[10]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[11]).toEqual value: '$', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[13]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should keep interpolation-like syntax raw in single quoted regex bodies', ->
       {tokens} = grammar.tokenizeLine "'/($value)/'"
 
@@ -521,14 +539,13 @@ describe 'PHP regexp grammar', ->
     it 'should keep PHP transport scopes on doubled backslashes in quoted regex character classes', ->
       doubleQuoted = grammar.tokenizeLine '"/[\\\\1\\\\x41\\\\d]/";'
       singleQuoted = grammar.tokenizeLine "'/[\\\\1\\\\x41\\\\d]/';"
+      doubleQuotedEscapes = doubleQuoted.tokens.filter (token) -> token.value is '\\\\'
+      singleQuotedEscapes = singleQuoted.tokens.filter (token) -> token.value is '\\\\'
 
-      expect(doubleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-      expect(doubleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-      expect(doubleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-
-      expect(singleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
-      expect(singleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
-      expect(singleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(doubleQuotedEscapes).to.have.lengthOf 3
+      expect(singleQuotedEscapes).to.have.lengthOf 3
+      expect(doubleQuotedEscapes.every((token) -> token.scopes.includes('constant.character.escape.php'))).toBe true
+      expect(singleQuotedEscapes.every((token) -> token.scopes.includes('constant.character.escape.php'))).toBe true
 
     it 'should keep PHP transport scopes on doubled backslashes in REGEX heredoc bodies', ->
       lines = grammar.tokenizeLines '''
@@ -550,10 +567,10 @@ describe 'PHP regexp grammar', ->
         /[\\\\1\\\\x41\\\\d]/
         REGEXP;
       '''
+      heredocEscapes = lines[1].filter (token) -> token.value is '\\\\'
 
-      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
-      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
-      expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(heredocEscapes).to.have.lengthOf 3
+      expect(heredocEscapes.every((token) -> token.scopes.includes('constant.character.escape.php'))).toBe true
 
     it 'should keep doubled backslashes regex-native in REGEXP nowdoc bodies', ->
       lines = grammar.tokenizeLines '''
@@ -1491,6 +1508,28 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][9]).toEqual value: '\\x{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
       expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should tokenize decoded overlapping escapes in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\1\\\\x41\\\\n\\\\v\\\\$]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][3]).toEqual value: '1', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.numeric.regexp.php']
+      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][5]).toEqual value: 'x41', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][6]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][7]).toEqual value: 'n', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][8]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][9]).toEqual value: 'v', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][10]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][11]).toEqual value: '$', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][13]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'should keep character-class interpolation syntax raw inside REGEXP nowdoc', ->
       lines = grammar.tokenizeLines '''

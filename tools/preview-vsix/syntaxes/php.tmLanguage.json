@@ -3512,6 +3512,52 @@
       "match": "\\\\(?:[0-7]{1,3}|c[A-Za-z]|[pP]\\{[^}]+\\}|.)",
       "name": "constant.character.escape.php"
     },
+    "regexp-character-class-decoded-octal-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.numeric.regexp.php"
+        }
+      },
+      "match": "(\\\\\\\\)([0-7]{1,3})"
+    },
+    "regexp-character-class-decoded-hex-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.numeric.regexp.php"
+        }
+      },
+      "match": "(\\\\\\\\)(x[0-9A-Fa-f]{2})"
+    },
+    "regexp-character-class-decoded-literal-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.php"
+        }
+      },
+      "match": "(\\\\\\\\)([nrtfev$])"
+    },
+    "regexp-character-class-decoded-overlap-escapes-interpreted": {
+      "patterns": [
+        {
+          "include": "#regexp-character-class-decoded-octal-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-hex-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-literal-escape-interpreted"
+        }
+      ]
+    },
     "regexp-character-class-posix-explicit": {
       "begin": "(\\[:)(\\^)?",
       "beginCaptures": {
@@ -3599,6 +3645,9 @@
       "name": "meta.embedded.character-class.regexp.php",
       "patterns": [
         {
+          "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
+        },
+        {
           "include": "#interpolation"
         },
         {
@@ -3652,6 +3701,9 @@
       },
       "name": "meta.embedded.character-class.regexp.php",
       "patterns": [
+        {
+          "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
+        },
         {
           "include": "#interpolation_double_quoted"
         },
