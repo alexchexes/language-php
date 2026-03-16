@@ -3579,6 +3579,12 @@
       "patterns": [
         {
           "include": "#interpolation_double_quoted"
+        },
+        {
+          "include": "#regexp-character-class-common-explicit-leading"
+        },
+        {
+          "include": "#regexp-character-class-common-explicit-trailing"
         }
       ]
     },
@@ -3596,7 +3602,15 @@
           "name": "punctuation.definition.character-class.regexp.php"
         }
       },
-      "name": "meta.embedded.character-class.regexp.php"
+      "name": "meta.embedded.character-class.regexp.php",
+      "patterns": [
+        {
+          "include": "#regexp-character-class-common-explicit-leading"
+        },
+        {
+          "include": "#regexp-character-class-common-explicit-trailing"
+        }
+      ]
     },
     "regexp-comment-group-heredoc": {
       "begin": "(\\()(\\?\\#)",
@@ -4394,7 +4408,17 @@
         }
       ]
     },
-    "regexp-double-quoted-body": {
+    "regexp-quoted-common": {
+      "patterns": [
+        {
+          "include": "#regexp-arbitrary-repetition-quoted"
+        },
+        {
+          "include": "#regexp-operators-basic"
+        }
+      ]
+    },
+    "regexp-double-quoted-common": {
       "patterns": [
         {
           "include": "#regexp-basic-escape"
@@ -4403,29 +4427,37 @@
           "include": "#interpolation_double_quoted"
         },
         {
-          "include": "#regexp-arbitrary-repetition-quoted"
+          "include": "#regexp-quoted-common"
+        }
+      ]
+    },
+    "regexp-single-quoted-common": {
+      "patterns": [
+        {
+          "include": "#single_quote_regex_escape"
+        },
+        {
+          "include": "#regexp-quoted-common"
+        }
+      ]
+    },
+    "regexp-double-quoted-body": {
+      "patterns": [
+        {
+          "include": "#regexp-double-quoted-common"
         },
         {
           "include": "#regexp-character-class-double-quoted"
-        },
-        {
-          "include": "#regexp-operators-basic"
         }
       ]
     },
     "regexp-single-quoted-body": {
       "patterns": [
         {
-          "include": "#single_quote_regex_escape"
-        },
-        {
-          "include": "#regexp-arbitrary-repetition-quoted"
+          "include": "#regexp-single-quoted-common"
         },
         {
           "include": "#regexp-character-class-single-quoted"
-        },
-        {
-          "include": "#regexp-operators-basic"
         }
       ]
     },

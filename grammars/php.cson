@@ -3466,6 +3466,12 @@
       {
         'include': '#interpolation_double_quoted'
       }
+      {
+        'include': '#regexp-character-class-common-explicit-leading'
+      }
+      {
+        'include': '#regexp-character-class-common-explicit-trailing'
+      }
     ]
   'regexp-character-class-single-quoted':
     'begin': '((\\[))(?:\\^?\\])?'
@@ -3480,6 +3486,14 @@
     # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
     # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-common-explicit-leading'
+      }
+      {
+        'include': '#regexp-character-class-common-explicit-trailing'
+      }
+    ]
   'regexp-comment-group-heredoc':
     'begin': '(\\()(\\?\\#)'
     'beginCaptures':
