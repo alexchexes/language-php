@@ -3488,6 +3488,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.assertion.regexp.php'
     'patterns': [
       {
@@ -3513,6 +3514,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.assertion.regexp.php'
     'patterns': [
       {
@@ -3536,6 +3538,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3559,6 +3562,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3584,6 +3588,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3609,6 +3614,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3634,6 +3640,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3659,6 +3666,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3684,6 +3692,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3709,6 +3718,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3734,6 +3744,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3759,6 +3770,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3786,6 +3798,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
@@ -3801,6 +3814,7 @@
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.regexp.php'
     'patterns': [
       {
