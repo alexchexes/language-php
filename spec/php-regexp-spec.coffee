@@ -972,6 +972,40 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][4]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regex.php']
       expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
 
+    it 'should tokenize interpolation inside REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[{$value}\\d]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '{', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['punctuation.definition.variable.php']
+      expect(lines[1][3]).toEqual value: '$', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(lines[1][4]).toEqual value: 'value', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php']
+      expect(lines[1][5]).toEqual value: '}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['punctuation.definition.variable.php']
+      expect(lines[1][6]).toEqual value: '\\d', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][8]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should keep character-class interpolation syntax raw inside REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[{$value}\\d]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '{', scopes: regexpCharacterClassScopes(nowdocRegexpScope)
+      expect(lines[1][3]).toEqual value: '$', scopes: regexpCharacterClassScopes(nowdocRegexpScope)
+      expect(lines[1][9]).toEqual value: '}', scopes: regexpCharacterClassScopes(nowdocRegexpScope)
+      expect(lines[1][10]).toEqual value: '\\d', scopes: regexpCharacterClassScopes(nowdocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][12]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1].some((token) -> 'variable.other.php' in token.scopes)).toBe false
+
     it 'should tokenize single-quoted named groups in REGEXP heredoc', ->
       lines = grammar.tokenizeLines '''
         $r = <<<REGEXP
