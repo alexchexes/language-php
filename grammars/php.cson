@@ -3494,6 +3494,380 @@
         'include': '#regexp-character-class-common-explicit-trailing'
       }
     ]
+  'regexp-comment-group-double-quoted':
+    'begin': '(\\()(\\?\\#)'
+    'beginCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.comment.begin.regexp.php'
+      '2':
+        'name': 'punctuation.definition.comment.begin.regexp.php'
+    'contentName': 'comment.block.regexp.php'
+    'end': '(\\))|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.comment.end.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+  'regexp-comment-group-single-quoted':
+    'begin': '(\\()(\\?\\#)'
+    'beginCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.comment.begin.regexp.php'
+      '2':
+        'name': 'punctuation.definition.comment.begin.regexp.php'
+    'contentName': 'comment.block.regexp.php'
+    'end': '(\\))|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'comment.block.regexp.php'
+      '1':
+        'name': 'punctuation.definition.comment.end.regexp.php'
+    'name': 'meta.embedded.group.regexp.php'
+  'regexp-group-assertion-double-quoted':
+    'begin': '(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-assertion-single-quoted':
+    'begin': '(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-non-capturing-double-quoted':
+    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.no-capture.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.atomic.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.branch-reset.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-non-capturing-single-quoted':
+    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.no-capture.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.atomic.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.branch-reset.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-options-double-quoted':
+    'begin': '(\\()((\\?))([-A-Za-z]+)((:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.option.regexp.php'
+      '4':
+        'name': 'storage.modifier.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.option.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-options-single-quoted':
+    'begin': '(\\()((\\?))([-A-Za-z]+)((:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.option.regexp.php'
+      '4':
+        'name': 'storage.modifier.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.option.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-named-angle-double-quoted':
+    'begin': '(\\()((\\?<))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((>))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-named-angle-single-quoted':
+    'begin': '(\\()((\\?<))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((>))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-named-single-quoted-double-quoted':
+    'begin': '(\\()((\\?\'))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((\'))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-named-single-quoted-single-quoted':
+    'begin': '(\\()((\\?\'))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((\'))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-named-pcre-double-quoted':
+    'begin': '(\\()((\\?P<))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((>))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-named-pcre-single-quoted':
+    'begin': '(\\()((\\?P<))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((>))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-double-quoted':
+    'begin': '\\('
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-single-quoted':
+    'begin': '\\('
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
   'regexp-comment-group-heredoc':
     'begin': '(\\()(\\?\\#)'
     'beginCaptures':
@@ -4121,8 +4495,65 @@
         'include': '#regexp-operators-basic'
       }
     ]
+  'regexp-double-quoted-groups-common':
+    'patterns': [
+      {
+        'include': '#regexp-comment-group-double-quoted'
+      }
+      {
+        'include': '#regexp-group-assertion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-non-capturing-double-quoted'
+      }
+      {
+        'include': '#regexp-group-options-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-angle-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-pcre-double-quoted'
+      }
+      {
+        'include': '#regexp-group-double-quoted'
+      }
+    ]
+  'regexp-single-quoted-groups-common':
+    'patterns': [
+      {
+        'include': '#regexp-comment-group-single-quoted'
+      }
+      {
+        'include': '#regexp-group-assertion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-non-capturing-single-quoted'
+      }
+      {
+        'include': '#regexp-group-options-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-angle-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-pcre-single-quoted'
+      }
+      {
+        'include': '#regexp-group-single-quoted'
+      }
+    ]
   'regexp-double-quoted-common':
     'patterns': [
+      {
+        'include': '#regexp-group-escape-explicit'
+      }
       {
         'include': '#regexp-basic-escape'
       }
@@ -4130,11 +4561,38 @@
         'include': '#interpolation_double_quoted'
       }
       {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-group-backreference-pcre-explicit'
+      }
+      {
         'include': '#regexp-quoted-common'
       }
     ]
   'regexp-single-quoted-common':
     'patterns': [
+      {
+        'include': '#regexp-backreference-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-group-backreference-pcre-explicit'
+      }
       {
         'include': '#single_quote_regex_escape'
       }
@@ -4148,6 +4606,9 @@
         'include': '#regexp-double-quoted-common'
       }
       {
+        'include': '#regexp-double-quoted-groups-common'
+      }
+      {
         'include': '#regexp-character-class-double-quoted'
       }
     ]
@@ -4155,6 +4616,9 @@
     'patterns': [
       {
         'include': '#regexp-single-quoted-common'
+      }
+      {
+        'include': '#regexp-single-quoted-groups-common'
       }
       {
         'include': '#regexp-character-class-single-quoted'
