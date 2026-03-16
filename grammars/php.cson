@@ -3772,7 +3772,16 @@
         'include': '#regexp-nowdoc-common'
       }
     ]
-  'regexp-double-quoted-body':
+  'regexp-quoted-common':
+    'patterns': [
+      {
+        'include': '#regexp-arbitrary-repetition-quoted'
+      }
+      {
+        'include': '#regexp-operators-basic'
+      }
+    ]
+  'regexp-double-quoted-common':
     'patterns': [
       {
         'include': '#regexp-basic-escape'
@@ -3781,28 +3790,34 @@
         'include': '#interpolation_double_quoted'
       }
       {
-        'include': '#regexp-arbitrary-repetition-quoted'
-      }
-      {
-        'include': '#regexp-character-class-double-quoted'
-      }
-      {
-        'include': '#regexp-operators-basic'
+        'include': '#regexp-quoted-common'
       }
     ]
-  'regexp-single-quoted-body':
+  'regexp-single-quoted-common':
     'patterns': [
       {
         'include': '#single_quote_regex_escape'
       }
       {
-        'include': '#regexp-arbitrary-repetition-quoted'
+        'include': '#regexp-quoted-common'
+      }
+    ]
+  'regexp-double-quoted-body':
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-common'
+      }
+      {
+        'include': '#regexp-character-class-double-quoted'
+      }
+    ]
+  'regexp-single-quoted-body':
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-common'
       }
       {
         'include': '#regexp-character-class-single-quoted'
-      }
-      {
-        'include': '#regexp-operators-basic'
       }
     ]
   'regex-double-quoted':
