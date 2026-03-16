@@ -417,6 +417,48 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should treat opening brackets as literals inside character classes in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            re[g[G]][e\\\\]
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: 're', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][2]).toEqual value: 'g', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][3]).toEqual value: '[', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][4]).toEqual value: 'G', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][6]).toEqual value: ']', scopes: regexScope
+          expect(lines[1][7]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][8]).toEqual value: 'e', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][9]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.escape.php']
+          expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should close character classes at the first unescaped bracket in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            r\\e[g[G]]e(x)
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: 'r', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '\\e', scopes: regexScope.concat ['constant.character.escape.regex.php']
+          expect(lines[1][2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][3]).toEqual value: 'g', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][4]).toEqual value: '[', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][5]).toEqual value: 'G', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][7]).toEqual value: ']e', scopes: regexScope
+          expect(lines[1][8]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][9]).toEqual value: 'x', scopes: regexpGroupScopes(regexScope)
+          expect(lines[1][10]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should tokenize negated POSIX classes and property escapes in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
