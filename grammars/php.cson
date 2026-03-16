@@ -3412,15 +3412,15 @@
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-    # Explicit REGEX/REGEXP heredocs interpolate like double-quoted strings,
-    # even inside character classes.
+    # Explicit REGEX/REGEXP heredocs use PHP heredoc escaping/interpolation,
+    # even inside character classes, before regex-only class tokens.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
-        'include': '#regexp-character-class-common-explicit-leading'
+        'include': '#interpolation'
       }
       {
-        'include': '#interpolation_variables_only'
+        'include': '#regexp-character-class-common-explicit-leading'
       }
       {
         'include': '#regexp-character-class-common-explicit-trailing'

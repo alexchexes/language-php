@@ -3524,10 +3524,10 @@
       "name": "meta.embedded.character-class.regexp.php",
       "patterns": [
         {
-          "include": "#regexp-character-class-common-explicit-leading"
+          "include": "#interpolation"
         },
         {
-          "include": "#interpolation_variables_only"
+          "include": "#regexp-character-class-common-explicit-leading"
         },
         {
           "include": "#regexp-character-class-common-explicit-trailing"
