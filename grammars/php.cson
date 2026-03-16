@@ -4281,6 +4281,38 @@
       '1':
         'name': 'constant.character.escape.regex.php'
     'name': 'meta.embedded.quoted-literal.regexp.php'
+  'regexp-quoted-literal-double-quoted':
+    'begin': '(\\\\Q)'
+    'beginCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'contentName': 'string.regexp.quoted-literal.php'
+    'end': '(\\\\E)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'name': 'meta.embedded.quoted-literal.regexp.php'
+    'patterns': [
+      {
+        'include': '#interpolation_double_quoted'
+      }
+    ]
+  'regexp-quoted-literal-single-quoted':
+    'begin': '(\\\\Q)'
+    'beginCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'contentName': 'string.regexp.quoted-literal.php'
+    'end': '(\\\\E)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '1':
+        'name': 'constant.character.escape.regex.php'
+    'name': 'meta.embedded.quoted-literal.regexp.php'
+    'patterns': [
+      {
+        'include': '#single_quote_escape_only'
+      }
+    ]
   'regexp-line-comment':
     # We are restrictive in what we allow to go after the comment to avoid false positives,
     # since the availability of comments depend on regexp flags.
@@ -4552,6 +4584,9 @@
   'regexp-double-quoted-common':
     'patterns': [
       {
+        'include': '#regexp-quoted-literal-double-quoted'
+      }
+      {
         'include': '#regexp-group-escape-explicit'
       }
       {
@@ -4594,6 +4629,9 @@
         'include': '#regexp-group-backreference-pcre-explicit'
       }
       {
+        'include': '#regexp-quoted-literal-single-quoted'
+      }
+      {
         'include': '#single_quote_regex_escape'
       }
       {
@@ -4625,7 +4663,7 @@
       }
     ]
   'regex-double-quoted':
-    'begin': '("/)(?=(?:\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
+    'begin': '("/)(?=(?:\\\\Q(?:(?!\\\\E|/[imsxeADSUXu]*"|").|\\\\.)*(?:\\\\E)?|\\\\.|\\[(?:\\^?\\])?(?:\\\\.|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
     'beginCaptures':
       '0':
         'name': 'string.regexp.double-quoted.php'
@@ -4646,7 +4684,7 @@
       }
     ]
   'regex-single-quoted':
-    'begin': '(\'/(?=(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\'))'
+    'begin': '(\'/(?=(?:\\\\Q(?:(?!\\\\E|/[imsxeADSUXu]*\'|\').|\\\\.)*(?:\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\'))'
     'beginCaptures':
       '0':
         'name': 'string.regexp.single-quoted.php'
@@ -4739,6 +4777,9 @@
   'single_quote_regex_escape':
     # Support both PHP string and regex escaping
     'match': '\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)'
+    'name': 'constant.character.escape.php'
+  'single_quote_escape_only':
+    'match': '\\\\[\\\\\']'
     'name': 'constant.character.escape.php'
   'sql-delimited-segments-heredoc':
     'patterns': [
