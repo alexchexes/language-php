@@ -2966,13 +2966,12 @@
   'regexp-character-class-letter-range-explicit':
     'captures':
       '1':
-        'name': 'constant.other.character-class.regexp.php'
+        'name': 'variable.other.constant.character-class.range.regexp.php'
       '2':
         'name': 'keyword.operator.range.regexp.php'
       '3':
-        'name': 'constant.other.character-class.regexp.php'
+        'name': 'variable.other.constant.character-class.range.regexp.php'
     'match': '([A-Za-z])(-)([A-Za-z])'
-    'name': 'variable.other.constant.character-class.range.regexp.php'
   'regexp-character-class-digit-range-explicit':
     'captures':
       '1':
