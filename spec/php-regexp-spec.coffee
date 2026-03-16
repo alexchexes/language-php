@@ -70,6 +70,12 @@ describe 'PHP regexp grammar', ->
     baseScope.concat regexpQuotedLiteralBoundaryScope
   regexpQuotedLiteralContentScopes = (baseScope) ->
     regexpQuotedLiteralBoundaryScopes(baseScope).concat ['string.regexp.quoted-literal.php']
+  regexpRangeQuantifierScopes = (baseScope) ->
+    baseScope.concat ['keyword.operator.quantifier.regexp.php']
+  regexpRangeQuantifierBeginScopes = (baseScope) ->
+    regexpRangeQuantifierScopes(baseScope).concat ['punctuation.definition.quantifier.begin.regexp.php']
+  regexpRangeQuantifierEndScopes = (baseScope) ->
+    regexpRangeQuantifierScopes(baseScope).concat ['punctuation.definition.quantifier.end.regexp.php']
 
   it 'parses the grammar', ->
     expect(grammar).toBeTruthy()
@@ -126,6 +132,26 @@ describe 'PHP regexp grammar', ->
       expect(tokens[2]).toEqual value: 'a/b', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope)
       expect(tokens[3]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
       expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize quoted regex range quantifiers without string-only legacy scopes', ->
+      singleQuoted = grammar.tokenizeLine "'/a{3,4}+/'"
+      doubleQuoted = grammar.tokenizeLine "\"/a{,4}?/\""
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[2]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: '3,4', scopes: regexpRangeQuantifierScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: '+', scopes: regexpRangeQuantifierScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[2]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: ',4', scopes: regexpRangeQuantifierScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: '?', scopes: regexpRangeQuantifierScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
   describe 'explicit REGEX and REGEXP blocks', ->
     it 'should tokenize a heredoc with embedded regex escaped bracket correctly', ->
@@ -828,9 +854,9 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][2]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
           expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupContentScopes(regexScope)
           expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-          expect(lines[1][5]).toEqual value: '{', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
-          expect(lines[1][6]).toEqual value: '2,3', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
-          expect(lines[1][7]).toEqual value: '}', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
+          expect(lines[1][5]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(regexScope)
+          expect(lines[1][6]).toEqual value: '2,3', scopes: regexpRangeQuantifierScopes(regexScope)
+          expect(lines[1][7]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(regexScope)
           expect(lines[1][8]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
@@ -909,10 +935,10 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][5]).toEqual value: '+?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
           expect(lines[1][6]).toEqual value: '|', scopes: regexScope.concat ['keyword.operator.or.regexp.php']
           expect(lines[1][7]).toEqual value: 'b', scopes: regexScope
-          expect(lines[1][8]).toEqual value: '{', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
-          expect(lines[1][9]).toEqual value: '2,4', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
-          expect(lines[1][10]).toEqual value: '}', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php', 'punctuation.definition.arbitrary-repitition.php']
-          expect(lines[1][11]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php', 'string.regexp.arbitrary-repitition.php']
+          expect(lines[1][8]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(regexScope)
+          expect(lines[1][9]).toEqual value: '2,4', scopes: regexpRangeQuantifierScopes(regexScope)
+          expect(lines[1][10]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(regexScope)
+          expect(lines[1][11]).toEqual value: '+', scopes: regexpRangeQuantifierScopes(regexScope)
           expect(lines[1][12]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
           expect(lines[1][13]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
