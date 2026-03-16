@@ -2473,6 +2473,28 @@
         ]
       }
     ]
+  'interpolation_variables_only':
+    'patterns': [
+      {
+        'begin': '{(?=\\$.*?})'
+        'name': 'meta.embedded.interpolation.php'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.variable.php'
+        'end': '}'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.variable.php'
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+      }
+      {
+        'include': '#variable-name'
+      }
+    ]
   'interpolation':
     # http://www.php.net/manual/en/language.types.string.php#language.types.string.parsing
     # http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
@@ -2494,23 +2516,7 @@
         'name': 'constant.character.escape.php'
       }
       {
-        'begin': '{(?=\\$.*?})'
-        'name': 'meta.embedded.interpolation.php'
-        'beginCaptures':
-          '0':
-            'name': 'punctuation.definition.variable.php'
-        'end': '}'
-        'endCaptures':
-          '0':
-            'name': 'punctuation.definition.variable.php'
-        'patterns': [
-          {
-            'include': '$self'
-          }
-        ]
-      }
-      {
-        'include': '#variable-name'
+        'include': '#interpolation_variables_only'
       }
     ]
   'interpolation_double_quoted':
@@ -3354,21 +3360,7 @@
       '1':
         'name': 'punctuation.definition.character-class.set.end.regexp.php'
     'name': 'meta.embedded.character-class.posix.regexp.php'
-  'regexp-character-class-explicit':
-    'begin': '((\\[))(\\^)?(?:\\])?'
-    'beginCaptures':
-      '1':
-        'name': 'punctuation.definition.character-class.regexp.php'
-      '3':
-        'name': 'keyword.operator.negation.regexp.php'
-    'contentName': 'constant.other.character-class.set.regexp.php'
-    'end': '((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
-    'endCaptures':
-      '1':
-        'name': 'punctuation.definition.character-class.regexp.php'
-    # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
-    # the standard regex "character-class set" scope for the content itself.
-    'name': 'meta.embedded.character-class.regexp.php'
+  'regexp-character-class-common-explicit-leading':
     'patterns': [
       {
         'include': '#regexp-character-class-posix-explicit'
@@ -3394,6 +3386,9 @@
       {
         'include': '#regexp-character-class-numeric-literal-explicit'
       }
+    ]
+  'regexp-character-class-common-explicit-trailing':
+    'patterns': [
       {
         'include': '#regexp-character-class-literal-explicit'
       }
@@ -3403,6 +3398,55 @@
       {
         'match': '(?<!\\[)-(?=[^\\]])'
         'name': 'keyword.operator.range.regexp.php'
+      }
+    ]
+  'regexp-character-class-heredoc':
+    'begin': '((\\[))(\\^)?(?:\\])?'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.character-class.regexp.php'
+      '3':
+        'name': 'keyword.operator.negation.regexp.php'
+    'contentName': 'constant.other.character-class.set.regexp.php'
+    'end': '((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.definition.character-class.regexp.php'
+    # Explicit REGEX/REGEXP heredocs interpolate like double-quoted strings,
+    # even inside character classes.
+    'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-common-explicit-leading'
+      }
+      {
+        'include': '#interpolation_variables_only'
+      }
+      {
+        'include': '#regexp-character-class-common-explicit-trailing'
+      }
+    ]
+  'regexp-character-class-explicit':
+    'begin': '((\\[))(\\^)?(?:\\])?'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.character-class.regexp.php'
+      '3':
+        'name': 'keyword.operator.negation.regexp.php'
+    'contentName': 'constant.other.character-class.set.regexp.php'
+    'end': '((\\]))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '1':
+        'name': 'punctuation.definition.character-class.regexp.php'
+    # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
+    # the standard regex "character-class set" scope for the content itself.
+    'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-common-explicit-leading'
+      }
+      {
+        'include': '#regexp-character-class-common-explicit-trailing'
       }
     ]
   'regexp-character-class-double-quoted':
@@ -3982,7 +4026,7 @@
         'include': '#regexp-group-heredoc'
       }
       {
-        'include': '#regexp-character-class-explicit'
+        'include': '#regexp-character-class-heredoc'
       }
       {
         'include': '#regexp-explicit-operators'
