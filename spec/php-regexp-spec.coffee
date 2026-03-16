@@ -30,7 +30,7 @@ describe 'PHP regexp grammar', ->
   regexpCharacterClassBoundaryNegationScopes = (baseScope) ->
     baseScope.concat regexpCharacterClassBoundaryScope.concat ['keyword.operator.negation.regexp.php']
   regexpCharacterClassLiteralScopes = (baseScope) ->
-    regexpCharacterClassScopes(baseScope).concat ['constant.other.character-class.regexp.php']
+    regexpCharacterClassScopes(baseScope)
   regexpCharacterClassNumericScopes = (baseScope) ->
     regexpCharacterClassScopes(baseScope).concat ['constant.numeric.regexp.php']
   regexpCharacterClassLetterRangeScopes = (baseScope) ->
@@ -38,7 +38,7 @@ describe 'PHP regexp grammar', ->
   regexpCharacterClassDigitRangeScopes = (baseScope) ->
     regexpCharacterClassScopes(baseScope).concat ['constant.numeric.character-class.range.regexp.php']
   regexpCharacterClassGenericRangeScopes = (baseScope) ->
-    regexpCharacterClassScopes(baseScope).concat ['constant.other.character-class.range.regexp.php']
+    regexpCharacterClassScopes(baseScope).concat ['constant.other.character-class.range.regexp.php', 'support.class.range.regexp.php']
   regexpCharacterClassHexRangeScopes = (baseScope) ->
     regexpCharacterClassScopes(baseScope).concat ['constant.other.character-class.range.regexp.php', 'support.class.range.regexp.php']
   regexpCharacterClassPosixScope = ['meta.embedded.character-class.posix.regexp.php', 'constant.other.character-class.posix.regexp.php']
@@ -390,14 +390,30 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
           expect(lines[1][2]).toEqual value: 'а', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
-          expect(lines[1][3]).toEqual value: '-', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+          expect(lines[1][3]).toEqual value: '-', scopes: regexpCharacterClassGenericRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
           expect(lines[1][4]).toEqual value: 'я', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
           expect(lines[1][5]).toEqual value: '😀', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
-          expect(lines[1][6]).toEqual value: '-', scopes: regexpCharacterClassScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+          expect(lines[1][6]).toEqual value: '-', scopes: regexpCharacterClassGenericRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
           expect(lines[1][7]).toEqual value: '🤓', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
           expect(lines[1][8]).toEqual value: 'Q', scopes: regexpCharacterClassLiteralScopes(regexScope)
           expect(lines[1][9]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
           expect(lines[1][10]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should treat trailing hyphens as plain class content in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /[q-]/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][2]).toEqual value: 'q', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][3]).toEqual value: '-', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][4]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][5]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
