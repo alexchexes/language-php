@@ -484,6 +484,65 @@ describe 'PHP regexp grammar', ->
       expect(lines[0].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(lines[1].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
+  describe 'PHP transport scopes in regex hosts', ->
+    # These tests only lock in the PHP transport layer for doubled backslashes.
+    # The richer decoded-regex meaning for forms like \\1 is intentionally left for a later step.
+    it 'should keep PHP transport scopes on doubled backslashes in quoted regex bodies', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\\\1\\\\x41\\\\d/";'
+      singleQuoted = grammar.tokenizeLine "'/\\\\1\\\\x41\\\\d/';"
+
+      expect(doubleQuoted.tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+
+      expect(singleQuoted.tokens[1]).toEqual value: '\\\\1', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[2]).toEqual value: '\\\\x', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\\\d', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
+
+    it 'should keep PHP transport scopes on doubled backslashes in quoted regex character classes', ->
+      doubleQuoted = grammar.tokenizeLine '"/[\\\\1\\\\x41\\\\d]/";'
+      singleQuoted = grammar.tokenizeLine "'/[\\\\1\\\\x41\\\\d]/';"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+
+      expect(singleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+
+    it 'should keep PHP transport scopes on doubled backslashes in REGEX heredoc bodies', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEX
+        /\\\\1\\\\x41\\\\d/
+        REGEX;
+      '''
+
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+      expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+      expect(lines[1][5]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+
+    it 'should keep PHP transport scopes on doubled backslashes in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\1\\\\x41\\\\d]/
+        REGEXP;
+      '''
+
+      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+
+    it 'should keep doubled backslashes regex-native in REGEXP nowdoc bodies', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /\\\\1/
+        REGEXP;
+      '''
+
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: nowdocRegexpScope.concat ['constant.character.escape.regex.php']
+      expect(lines[1][1].scopes.includes('constant.character.escape.php')).toBe false
+
   describe 'explicit REGEX and REGEXP blocks', ->
     it 'should tokenize a heredoc with embedded regex escaped bracket correctly', ->
       lines = grammar.tokenizeLines '''
