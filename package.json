@@ -13,7 +13,11 @@
   },
   "scripts": {
     "lint": "coffeelint --ext=cson grammars spec",
-    "test": "mocha"
+    "test": "mocha",
+    "preview:sync": "node ./tools/preview-vsix/scripts/build-full-grammars.mjs",
+    "preview:host": "pnpm run preview:sync && code --extensionDevelopmentPath ./tools/preview-vsix",
+    "preview:vsix": "pnpm run preview:sync && cd ./tools/preview-vsix && pnpm dlx @vscode/vsce package --allow-missing-repository --out ./language-php-preview.vsix",
+    "preview:install": "code --install-extension ./tools/preview-vsix/language-php-preview.vsix --force"
   },
   "devDependencies": {
     "@coffeelint/cli": "^5.2.11",
