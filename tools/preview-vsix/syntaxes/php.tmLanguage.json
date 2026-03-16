@@ -3374,6 +3374,20 @@
       },
       "match": "((\\\\\\\\))((v))"
     },
+    "regexp-decoded-character-type-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.class.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.class.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(([dDhHsSwW]|R))"
+    },
     "regexp-decoded-literal-escape-interpreted": {
       "captures": {
         "1": {
@@ -3398,6 +3412,9 @@
         },
         {
           "include": "#regexp-decoded-character-type-escape-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-character-type-redundant-interpreted"
         },
         {
           "include": "#regexp-decoded-literal-escape-interpreted"
@@ -5258,7 +5275,10 @@
           "include": "#regexp-decoded-overlap-escapes-interpreted"
         },
         {
-          "include": "#single_quote_regex_escape"
+          "include": "#regexp-explicit-escapes"
+        },
+        {
+          "include": "#single_quote_escape_only"
         },
         {
           "include": "#regexp-quoted-common"
@@ -5424,10 +5444,6 @@
           }
         }
       ]
-    },
-    "single_quote_regex_escape": {
-      "match": "\\\\(?:\\\\(?:\\\\[\\\\']?|[^'])|.)",
-      "name": "constant.character.escape.php"
     },
     "single_quote_escape_only": {
       "match": "\\\\[\\\\']",
