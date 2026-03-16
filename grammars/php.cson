@@ -4072,6 +4072,12 @@
   'regexp-heredoc-common':
     'patterns': [
       {
+        'include': '#regexp-quoted-literal-heredoc'
+      }
+      {
+        'include': '#interpolation'
+      }
+      {
         'include': '#regexp-backreference-numeric-explicit'
       }
       {
@@ -4087,13 +4093,7 @@
         'include': '#regexp-group-backreference-pcre-explicit'
       }
       {
-        'include': '#regexp-quoted-literal-heredoc'
-      }
-      {
         'include': '#regexp-explicit-escapes'
-      }
-      {
-        'include': '#interpolation'
       }
       {
         'include': '#regexp-comment-group-heredoc'
