@@ -166,10 +166,10 @@ describe 'PHP regexp grammar', ->
       {tokens} = grammar.tokenizeLine "\"/($value)/\""
 
       expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
-      expect(tokens[1]).toEqual value: '(', scopes: quotedDoubleRegexpScope
-      expect(tokens[2]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['variable.other.php', 'punctuation.definition.variable.php']
-      expect(tokens[3]).toEqual value: 'value', scopes: quotedDoubleRegexpScope.concat ['variable.other.php']
-      expect(tokens[4]).toEqual value: ')', scopes: quotedDoubleRegexpScope
+      expect(tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(tokens[2]).toEqual value: '$', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(tokens[3]).toEqual value: 'value', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope).concat ['variable.other.php']
+      expect(tokens[4]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
       expect(tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize interpolation inside double quoted regex character classes', ->
@@ -227,10 +227,11 @@ describe 'PHP regexp grammar', ->
       {tokens} = grammar.tokenizeLine "'/($value)/'"
 
       expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
-      expect(tokens[1]).toEqual value: '(', scopes: quotedSingleRegexpScope
-      expect(tokens[2]).toEqual value: '$', scopes: quotedSingleRegexpScope.concat ['keyword.operator.regexp.php']
-      expect(tokens[3]).toEqual value: 'value)', scopes: quotedSingleRegexpScope
-      expect(tokens[4]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(tokens[2]).toEqual value: '$', scopes: regexpGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.regexp.php']
+      expect(tokens[3]).toEqual value: 'value', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(tokens[4]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(tokens[5]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
       expect(tokens.some((token) -> 'variable.other.php' in token.scopes)).toBe false
 
     it 'should keep interpolation-like syntax raw in single quoted regex character classes', ->
@@ -275,6 +276,124 @@ describe 'PHP regexp grammar', ->
       expect(tokens[18]).toEqual value: '\\]', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
       expect(tokens[19]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
       expect(tokens[20]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize quoted regex groups and assertions', ->
+      doubleQuoted = grammar.tokenizeLine '"/(ab)(?<=cd)(?:ef)(?im:gh)/"'
+      singleQuoted = grammar.tokenizeLine "'/(ab)(?<=cd)(?:ef)(?im:gh)/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[2]).toEqual value: 'ab', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '?<=', scopes: regexpSpecificGroupPunctuationScopes(regexpAssertionGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.assertion.regexp.php')
+      expect(doubleQuoted.tokens[6]).toEqual value: 'cd', scopes: regexpAssertionGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[7]).toEqual value: ')', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[8]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[9]).toEqual value: '?:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.no-capture.regexp.php')
+      expect(doubleQuoted.tokens[10]).toEqual value: 'ef', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[11]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[12]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[13]).toEqual value: '?', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(doubleQuoted.tokens[14]).toEqual value: 'im', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['storage.modifier.regexp.php']
+      expect(doubleQuoted.tokens[15]).toEqual value: ':', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(doubleQuoted.tokens[16]).toEqual value: 'gh', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[17]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[18]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[2]).toEqual value: 'ab', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[5]).toEqual value: '?<=', scopes: regexpSpecificGroupPunctuationScopes(regexpAssertionGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.assertion.regexp.php')
+      expect(singleQuoted.tokens[6]).toEqual value: 'cd', scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[7]).toEqual value: ')', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[8]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[9]).toEqual value: '?:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.no-capture.regexp.php')
+      expect(singleQuoted.tokens[10]).toEqual value: 'ef', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[11]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[12]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[13]).toEqual value: '?', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(singleQuoted.tokens[14]).toEqual value: 'im', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['storage.modifier.regexp.php']
+      expect(singleQuoted.tokens[15]).toEqual value: ':', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(singleQuoted.tokens[16]).toEqual value: 'gh', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[17]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[18]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize quoted regex named groups and backreferences', ->
+      doubleQuoted = grammar.tokenizeLine '"/(?<name>ab)\\k<name>(?P=name)/"'
+      singleQuoted = grammar.tokenizeLine "'/(?<name>ab)\\1\\k<name>(?P=name)/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[2]).toEqual value: '?<', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')
+      expect(doubleQuoted.tokens[3]).toEqual value: 'name', scopes: regexpGroupNameScopes(regexpGroupScopes(quotedDoubleRegexpScope))
+      expect(doubleQuoted.tokens[4]).toEqual value: '>', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')
+      expect(doubleQuoted.tokens[5]).toEqual value: 'ab', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[7]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[8]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(doubleQuoted.tokens[9]).toEqual value: 'name', scopes: regexpNamedBackreferenceNameScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[10]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+      expect(doubleQuoted.tokens[11]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[12]).toEqual value: '?P=', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+      expect(doubleQuoted.tokens[13]).toEqual value: 'name', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']
+      expect(doubleQuoted.tokens[14]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[15]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[2]).toEqual value: '?<', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')
+      expect(singleQuoted.tokens[3]).toEqual value: 'name', scopes: regexpGroupNameScopes(regexpGroupScopes(quotedSingleRegexpScope))
+      expect(singleQuoted.tokens[4]).toEqual value: '>', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')
+      expect(singleQuoted.tokens[5]).toEqual value: 'ab', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[7]).toEqual value: '\\', scopes: quotedSingleRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+      expect(singleQuoted.tokens[8]).toEqual value: '1', scopes: quotedSingleRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+      expect(singleQuoted.tokens[9]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[10]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(singleQuoted.tokens[11]).toEqual value: 'name', scopes: regexpNamedBackreferenceNameScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[12]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+      expect(singleQuoted.tokens[13]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[14]).toEqual value: '?P=', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+      expect(singleQuoted.tokens[15]).toEqual value: 'name', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
+      expect(singleQuoted.tokens[16]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[17]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should keep double quoted numeric backreferences as PHP octal escapes', ->
+      {tokens} = grammar.tokenizeLine '"/\\1/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\\1', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.octal.php']
+      expect(tokens[2]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize comment groups in quoted regex strings', ->
+      doubleQuoted = grammar.tokenizeLine '"/(?#comment)/"'
+      singleQuoted = grammar.tokenizeLine "'/(?#comment)/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '(', scopes: regexpCommentGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.comment.begin.regexp.php']
+      expect(doubleQuoted.tokens[2]).toEqual value: '?#', scopes: regexpCommentGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.comment.begin.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: 'comment', scopes: regexpCommentGroupScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: ')', scopes: regexpCommentGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.comment.end.regexp.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '(', scopes: regexpCommentGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.comment.begin.regexp.php']
+      expect(singleQuoted.tokens[2]).toEqual value: '?#', scopes: regexpCommentGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.comment.begin.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: 'comment', scopes: regexpCommentGroupScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: ')', scopes: regexpCommentGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.comment.end.regexp.php']
+      expect(singleQuoted.tokens[5]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should not treat escaped parentheses as groups in double quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/\\(ab\\)/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\\(', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regex.php']
+      expect(tokens[2]).toEqual value: 'ab', scopes: quotedDoubleRegexpScope
+      expect(tokens[3]).toEqual value: '\\)', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regex.php']
+      expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should keep multiline slash-prefixed double quoted strings out of regex mode', ->
       lines = grammar.tokenizeLines "$r = \"/foo\nbar/\";"
