@@ -3264,25 +3264,22 @@
   'regexp-literal-escape-explicit':
     'match': '\\\\(?:\\\\|[0-7]{1,3}|c[A-Za-z]|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
     'name': 'constant.character.escape.regex.php'
-  'regexp-arbitrary-repitition-explicit':
-    # Keep string.regexp.arbitrary-repitition.php for BC while widening range quantifier support.
+  'regexp-arbitrary-repetition-explicit':
     'captures':
-      '0':
-        'name': 'string.regexp.arbitrary-repitition.php'
       '1':
-        'name': 'punctuation.definition.arbitrary-repitition.php'
+        'name': 'punctuation.definition.quantifier.begin.regexp.php'
       '2':
-        'name': 'punctuation.definition.arbitrary-repitition.php'
+        'name': 'punctuation.definition.quantifier.end.regexp.php'
     'match': '({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)'
     'name': 'keyword.operator.quantifier.regexp.php'
   'regexp-arbitrary-repetition-quoted':
     'captures':
       '1':
-        'name': 'punctuation.definition.arbitrary-repetition.php'
-      '3':
-        'name': 'punctuation.definition.arbitrary-repetition.php'
-    'match': '({)\\d+(,\\d+)?(})'
-    'name': 'string.regexp.arbitrary-repetition.php'
+        'name': 'punctuation.definition.quantifier.begin.regexp.php'
+      '2':
+        'name': 'punctuation.definition.quantifier.end.regexp.php'
+    'match': '({)(?:\\d+(?:,\\d*)?|,\\d+)(})([?+]?)'
+    'name': 'keyword.operator.quantifier.regexp.php'
   'regexp-character-class-hex-escape-explicit':
     'match': '\\\\x[0-9A-Fa-f]{2}'
     'name': 'constant.character.numeric.regexp.php'
@@ -3912,7 +3909,7 @@
         'include': '#regexp-anchor-explicit'
       }
       {
-        'include': '#regexp-arbitrary-repitition-explicit'
+        'include': '#regexp-arbitrary-repetition-explicit'
       }
       {
         'include': '#regexp-simple-quantifier-explicit'
