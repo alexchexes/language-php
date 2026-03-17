@@ -2948,6 +2948,9 @@
   'regexp-apostrophe-escape-explicit':
     'match': '\\\\\''
     'name': 'constant.character.escape.regexp.php'
+  'regexp-double-quote-escape-explicit':
+    'match': '\\\\"'
+    'name': 'constant.character.escape.regexp.php'
   'regexp-decoded-backreference-numeric-interpreted':
     'captures':
       '1':
@@ -3061,6 +3064,15 @@
       '3':
         'name': 'constant.character.escape.php'
     'match': '((\\\\\\\\))(\\\\\')'
+  'regexp-decoded-double-quote-escape-single-quoted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))(")'
   'regexp-decoded-literal-escape-interpreted':
     'captures':
       '1':
@@ -3320,6 +3332,9 @@
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
       }
       {
@@ -3373,6 +3388,9 @@
         'include': '#regexp-decoded-double-quote-escape-double-quoted'
       }
       {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
       }
       {
@@ -3401,6 +3419,9 @@
     'patterns': [
       {
         'include': '#regexp-decoded-apostrophe-escape-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-double-quote-escape-single-quoted'
       }
       {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
@@ -4389,6 +4410,9 @@
         'include': '#regexp-apostrophe-escape-explicit'
       }
       {
+        'include': '#regexp-double-quote-escape-explicit'
+      }
+      {
         'include': '#regexp-explicit-escapes'
       }
       {
@@ -4599,7 +4623,13 @@
         'include': '#regexp-decoded-apostrophe-escape-single-quoted'
       }
       {
+        'include': '#regexp-decoded-double-quote-escape-single-quoted'
+      }
+      {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
+      }
+      {
+        'include': '#regexp-double-quote-escape-explicit'
       }
       {
         'include': '#regexp-explicit-escapes'
