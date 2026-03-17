@@ -3360,6 +3360,34 @@
       },
       "match": "((\\\\\\\\))(x[0-9A-Fa-f]{2})"
     },
+    "regexp-decoded-braced-hex-escape-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.numeric.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.numeric.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\})"
+    },
+    "regexp-decoded-property-escape-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.class.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.class.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))([pP]\\{[^}]+\\})"
+    },
     "regexp-decoded-character-type-escape-interpreted": {
       "captures": {
         "1": {
@@ -3409,6 +3437,12 @@
         },
         {
           "include": "#regexp-decoded-hex-escape-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-braced-hex-escape-redundant-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-property-escape-redundant-interpreted"
         },
         {
           "include": "#regexp-decoded-character-type-escape-interpreted"
@@ -3559,6 +3593,28 @@
       },
       "match": "(\\\\\\\\)(x[0-9A-Fa-f]{2})"
     },
+    "regexp-character-class-decoded-braced-hex-escape-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.numeric.regexp.php"
+        }
+      },
+      "match": "(\\\\\\\\)(x\\{[0-9A-Fa-f]+\\})"
+    },
+    "regexp-character-class-decoded-property-escape-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.class.regexp.php"
+        }
+      },
+      "match": "(\\\\\\\\)([pP]\\{[^}]+\\})"
+    },
     "regexp-character-class-decoded-character-type-escape-interpreted": {
       "captures": {
         "1": {
@@ -3599,6 +3655,12 @@
         },
         {
           "include": "#regexp-character-class-decoded-hex-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-braced-hex-escape-redundant-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-property-escape-redundant-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-character-type-escape-interpreted"
