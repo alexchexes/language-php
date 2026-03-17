@@ -3034,7 +3034,7 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([dDhHsSwW]|R)'
-  'regexp-decoded-escaped-backslash-before-character-class-interpreted':
+  'regexp-decoded-escaped-backslash-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -3042,7 +3042,7 @@
         'name': 'constant.character.escape.php'
       '3':
         'name': 'constant.character.escape.regexp.php'
-    'match': '(\\\\\\\\)(((\\\\\\\\)))(?=\\[)'
+    'match': '(\\\\\\\\)(((\\\\\\\\)))'
   'regexp-decoded-apostrophe-escape-interpreted':
     'captures':
       '1':
@@ -3088,7 +3088,7 @@
         'include': '#regexp-decoded-character-type-redundant-interpreted'
       }
       {
-        'include': '#regexp-decoded-escaped-backslash-before-character-class-interpreted'
+        'include': '#regexp-decoded-escaped-backslash-interpreted'
       }
       {
         'include': '#regexp-decoded-literal-escape-interpreted'
@@ -3241,6 +3241,9 @@
       }
       {
         'include': '#regexp-character-class-decoded-character-type-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-escaped-backslash-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-literal-escape-interpreted'
