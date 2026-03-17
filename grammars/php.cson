@@ -3034,6 +3034,15 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([dDhHsSwW]|R)'
+  'regexp-decoded-escaped-backslash-before-character-class-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '(\\\\\\\\)(((\\\\\\\\)))(?=\\[)'
   'regexp-decoded-apostrophe-escape-interpreted':
     'captures':
       '1':
@@ -3051,7 +3060,7 @@
         'name': 'constant.character.escape.regexp.php'
       '3':
         'name': 'constant.character.escape.regexp.php'
-    'match': '((\\\\\\\\))([nrtfe$]|[^A-Za-z0-9\\s\'"$])'
+    'match': '((\\\\\\\\))([anrtfe$]|[^A-Za-z0-9\\s\'"$])'
   'regexp-decoded-overlap-escapes-interpreted':
     'patterns': [
       {
@@ -3077,6 +3086,9 @@
       }
       {
         'include': '#regexp-decoded-character-type-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-escaped-backslash-before-character-class-interpreted'
       }
       {
         'include': '#regexp-decoded-literal-escape-interpreted'
@@ -3209,7 +3221,7 @@
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.escape.regexp.php'
-    'match': '(\\\\\\\\)([nrtfe$])'
+    'match': '(\\\\\\\\)([anrtfe$])'
   'regexp-character-class-decoded-overlap-escapes-interpreted':
     'patterns': [
       {
