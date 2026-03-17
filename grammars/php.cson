@@ -3378,6 +3378,24 @@
       '3':
         'name': 'constant.character.escape.regexp.php'
     'match': '((\\\\\\\\))(\')'
+  'regexp-decoded-double-quote-escape-double-quoted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.php'
+    'match': '((\\\\\\\\))(\\\\")'
+  'regexp-decoded-apostrophe-escape-single-quoted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.php'
+    'match': '((\\\\\\\\))(\\\\\')'
   'regexp-decoded-literal-escape-interpreted':
     'captures':
       '1':
@@ -3548,6 +3566,9 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'match': '(\\\\\\\\)(\\\\)(?=[A-Za-z]-[A-Za-z])'
+  'regexp-character-class-apostrophe-escape-single-quoted':
+    'match': '\\\\\''
+    'name': 'constant.character.escape.php'
   'regexp-character-class-decoded-literal-escape-interpreted':
     'captures':
       '1':
@@ -3715,6 +3736,9 @@
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
+        'include': '#regexp-decoded-double-quote-escape-double-quoted'
+      }
+      {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
       }
       {
@@ -3742,7 +3766,13 @@
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
+        'include': '#regexp-decoded-apostrophe-escape-single-quoted'
+      }
+      {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-apostrophe-escape-single-quoted'
       }
       {
         'include': '#regexp-character-class-common-explicit-leading'
@@ -4868,6 +4898,9 @@
         'include': '#regexp-quoted-literal-double-quoted'
       }
       {
+        'include': '#regexp-decoded-double-quote-escape-double-quoted'
+      }
+      {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
@@ -4944,6 +4977,9 @@
       }
       {
         'include': '#regexp-quoted-literal-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-apostrophe-escape-single-quoted'
       }
       {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
