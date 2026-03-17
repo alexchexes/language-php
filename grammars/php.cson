@@ -3016,7 +3016,7 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([pP]\\{[^}]+\\})'
-  'regexp-decoded-character-type-escape-interpreted':
+  'regexp-decoded-character-type-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -3024,16 +3024,7 @@
         'name': 'constant.character.class.regexp.php'
       '3':
         'name': 'constant.character.class.regexp.php'
-    'match': '((\\\\\\\\))(v)'
-  'regexp-decoded-character-type-redundant-interpreted':
-    'captures':
-      '1':
-        'name': 'constant.character.escape.php'
-      '2':
-        'name': 'constant.character.class.regexp.php'
-      '3':
-        'name': 'constant.character.class.regexp.php'
-    'match': '((\\\\\\\\))([dDhHsSwW]|R)'
+    'match': '((\\\\\\\\))([dDhHsSvVwW]|R)'
   'regexp-decoded-escaped-backslash-interpreted':
     'captures':
       '1':
@@ -3093,6 +3084,8 @@
       {
         'include': '#regexp-decoded-hex-escape-interpreted'
       }
+      # Redundant interpreted forms are optional in PHP string hosts, but we still
+      # scope them so source transport and runtime regex meaning stay connected.
       {
         'include': '#regexp-decoded-braced-hex-escape-redundant-interpreted'
       }
@@ -3100,10 +3093,7 @@
         'include': '#regexp-decoded-property-escape-redundant-interpreted'
       }
       {
-        'include': '#regexp-decoded-character-type-escape-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-character-type-redundant-interpreted'
+        'include': '#regexp-decoded-character-type-interpreted'
       }
       {
         'include': '#regexp-decoded-escaped-backslash-interpreted'
@@ -3197,20 +3187,13 @@
       '2':
         'name': 'constant.character.class.regexp.php'
     'match': '(\\\\\\\\)([pP]\\{[^}]+\\})'
-  'regexp-character-class-decoded-character-type-escape-interpreted':
+  'regexp-character-class-decoded-character-type-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.class.regexp.php'
-    'match': '(\\\\\\\\)(v)'
-  'regexp-character-class-decoded-character-type-redundant-interpreted':
-    'captures':
-      '1':
-        'name': 'constant.character.escape.php'
-      '2':
-        'name': 'constant.character.class.regexp.php'
-    'match': '(\\\\\\\\)([dDhHsSwW]|R)'
+    'match': '(\\\\\\\\)([dDhHsSvVwW]|R)'
   'regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted':
     'captures':
       '1':
@@ -3236,6 +3219,8 @@
       {
         'include': '#regexp-character-class-decoded-hex-interpreted'
       }
+      # Same rationale as body rules above: redundant doubled forms are still
+      # highlighted in interpreted hosts even though the undoubled form would work too.
       {
         'include': '#regexp-character-class-decoded-braced-hex-escape-redundant-interpreted'
       }
@@ -3243,10 +3228,7 @@
         'include': '#regexp-character-class-decoded-property-escape-redundant-interpreted'
       }
       {
-        'include': '#regexp-character-class-decoded-character-type-escape-interpreted'
-      }
-      {
-        'include': '#regexp-character-class-decoded-character-type-redundant-interpreted'
+        'include': '#regexp-character-class-decoded-character-type-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted'
