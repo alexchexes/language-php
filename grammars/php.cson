@@ -3281,6 +3281,36 @@
       '4':
         'name': 'constant.numeric.regexp.php'
     'match': '((\\\\\\\\))(([1-9][0-9]*))'
+  'regexp-decoded-backreference-named-angle-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.back-reference.named.regexp.php'
+      '3':
+        'name': 'keyword.other.back-reference.named.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(k(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>))'
+  'regexp-decoded-backreference-named-single-quoted-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.back-reference.named.regexp.php'
+      '3':
+        'name': 'keyword.other.back-reference.named.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(k(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
   'regexp-decoded-hex-escape-interpreted':
     'captures':
       '1':
@@ -3339,6 +3369,12 @@
     'patterns': [
       {
         'include': '#regexp-decoded-backreference-numeric-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-backreference-named-angle-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-backreference-named-single-quoted-redundant-interpreted'
       }
       {
         'include': '#regexp-decoded-hex-escape-interpreted'
