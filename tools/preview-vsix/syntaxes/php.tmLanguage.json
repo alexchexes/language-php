@@ -3252,7 +3252,7 @@
         }
       }
     },
-    "regexp-basic-escape": {
+    "regexp-structural-escape": {
       "match": "\\\\[.$^\\[\\]{}]",
       "name": "constant.character.escape.regexp.php"
     },
@@ -3309,19 +3309,19 @@
       },
       "match": "(\\\\)k(')(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(')"
     },
-    "regexp-character-type-escape-explicit": {
+    "regexp-character-type-escape": {
       "match": "\\\\(?:[dDhHsSvVwW]|R)",
       "name": "constant.character.class.regexp.php"
     },
-    "regexp-property-escape-explicit": {
+    "regexp-property-escape": {
       "match": "\\\\[pP]\\{[^}]+\\}",
       "name": "constant.character.class.regexp.php"
     },
-    "regexp-hex-escape-explicit": {
+    "regexp-hex-escape": {
       "match": "\\\\x[0-9A-Fa-f]{2}",
       "name": "constant.character.numeric.regexp.php"
     },
-    "regexp-braced-hex-escape-explicit": {
+    "regexp-braced-hex-escape": {
       "match": "\\\\x\\{[0-9A-Fa-f]+\\}",
       "name": "constant.character.numeric.regexp.php"
     },
@@ -3331,6 +3331,10 @@
     },
     "regexp-apostrophe-escape-explicit": {
       "match": "\\\\'",
+      "name": "constant.character.escape.regexp.php"
+    },
+    "regexp-double-quote-escape-explicit": {
+      "match": "\\\\\"",
       "name": "constant.character.escape.regexp.php"
     },
     "regexp-decoded-backreference-numeric-interpreted": {
@@ -3438,7 +3442,7 @@
       },
       "match": "((\\\\\\\\))([pP]\\{[^}]+\\})"
     },
-    "regexp-decoded-character-type-escape-interpreted": {
+    "regexp-decoded-character-type-interpreted": {
       "captures": {
         "1": {
           "name": "constant.character.escape.php"
@@ -3450,21 +3454,7 @@
           "name": "constant.character.class.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))(v)"
-    },
-    "regexp-decoded-character-type-redundant-interpreted": {
-      "captures": {
-        "1": {
-          "name": "constant.character.escape.php"
-        },
-        "2": {
-          "name": "constant.character.class.regexp.php"
-        },
-        "3": {
-          "name": "constant.character.class.regexp.php"
-        }
-      },
-      "match": "((\\\\\\\\))([dDhHsSwW]|R)"
+      "match": "((\\\\\\\\))([dDhHsSvVwW]|R)"
     },
     "regexp-decoded-escaped-backslash-interpreted": {
       "captures": {
@@ -3522,6 +3512,20 @@
       },
       "match": "((\\\\\\\\))(\\\\')"
     },
+    "regexp-decoded-double-quote-escape-single-quoted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(\")"
+    },
     "regexp-decoded-literal-escape-interpreted": {
       "captures": {
         "1": {
@@ -3557,10 +3561,7 @@
           "include": "#regexp-decoded-property-escape-redundant-interpreted"
         },
         {
-          "include": "#regexp-decoded-character-type-escape-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-character-type-redundant-interpreted"
+          "include": "#regexp-decoded-character-type-interpreted"
         },
         {
           "include": "#regexp-decoded-escaped-backslash-interpreted"
@@ -3570,7 +3571,7 @@
         }
       ]
     },
-    "regexp-arbitrary-repetition-explicit": {
+    "regexp-range-quantifier": {
       "captures": {
         "1": {
           "name": "keyword.operator.quantifier.regexp.php"
@@ -3584,29 +3585,6 @@
       },
       "match": "((\\{)(?:\\d+(?:,\\d*)?|,\\d+)(\\})([?+]?))",
       "name": "meta.embedded.quantifier.range.regexp.php"
-    },
-    "regexp-arbitrary-repetition-quoted": {
-      "captures": {
-        "1": {
-          "name": "keyword.operator.quantifier.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.quantifier.begin.regexp.php"
-        },
-        "3": {
-          "name": "punctuation.definition.quantifier.end.regexp.php"
-        }
-      },
-      "match": "((\\{)(?:\\d+(?:,\\d*)?|,\\d+)(\\})([?+]?))",
-      "name": "meta.embedded.quantifier.range.regexp.php"
-    },
-    "regexp-character-class-hex-escape-explicit": {
-      "match": "\\\\x[0-9A-Fa-f]{2}",
-      "name": "constant.character.numeric.regexp.php"
-    },
-    "regexp-character-class-braced-hex-escape-explicit": {
-      "match": "\\\\x\\{[0-9A-Fa-f]+\\}",
-      "name": "constant.character.numeric.regexp.php"
     },
     "regexp-character-class-letter-range-explicit": {
       "captures": {
@@ -3674,14 +3652,6 @@
     "regexp-character-class-literal-explicit": {
       "match": "[^\\\\\\[\\]0-9-]"
     },
-    "regexp-character-class-character-type-escape-explicit": {
-      "match": "\\\\(?:[dDhHsSvVwW]|R)",
-      "name": "constant.character.class.regexp.php"
-    },
-    "regexp-character-class-property-escape-explicit": {
-      "match": "\\\\[pP]\\{[^}]+\\}",
-      "name": "constant.character.class.regexp.php"
-    },
     "regexp-character-class-literal-escape-explicit": {
       "match": "\\\\(?:[0-7]{1,3}|c[A-Za-z]|.)",
       "name": "constant.character.escape.regexp.php"
@@ -3697,7 +3667,7 @@
       },
       "match": "(\\\\\\\\)([0-7]{1,3})"
     },
-    "regexp-character-class-decoded-hex-interpreted": {
+    "regexp-character-class-decoded-hex-escape-interpreted": {
       "captures": {
         "1": {
           "name": "constant.character.escape.php"
@@ -3730,7 +3700,7 @@
       },
       "match": "(\\\\\\\\)([pP]\\{[^}]+\\})"
     },
-    "regexp-character-class-decoded-character-type-escape-interpreted": {
+    "regexp-character-class-decoded-character-type-interpreted": {
       "captures": {
         "1": {
           "name": "constant.character.escape.php"
@@ -3739,18 +3709,7 @@
           "name": "constant.character.class.regexp.php"
         }
       },
-      "match": "(\\\\\\\\)(v)"
-    },
-    "regexp-character-class-decoded-character-type-redundant-interpreted": {
-      "captures": {
-        "1": {
-          "name": "constant.character.escape.php"
-        },
-        "2": {
-          "name": "constant.character.class.regexp.php"
-        }
-      },
-      "match": "(\\\\\\\\)([dDhHsSwW]|R)"
+      "match": "(\\\\\\\\)([dDhHsSvVwW]|R)"
     },
     "regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted": {
       "captures": {
@@ -3784,7 +3743,7 @@
           "include": "#regexp-character-class-decoded-octal-interpreted"
         },
         {
-          "include": "#regexp-character-class-decoded-hex-interpreted"
+          "include": "#regexp-character-class-decoded-hex-escape-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-braced-hex-escape-redundant-interpreted"
@@ -3793,10 +3752,7 @@
           "include": "#regexp-character-class-decoded-property-escape-redundant-interpreted"
         },
         {
-          "include": "#regexp-character-class-decoded-character-type-escape-interpreted"
-        },
-        {
-          "include": "#regexp-character-class-decoded-character-type-redundant-interpreted"
+          "include": "#regexp-character-class-decoded-character-type-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted"
@@ -3852,10 +3808,10 @@
           "include": "#regexp-character-class-generic-range-explicit"
         },
         {
-          "include": "#regexp-character-class-braced-hex-escape-explicit"
+          "include": "#regexp-braced-hex-escape"
         },
         {
-          "include": "#regexp-character-class-hex-escape-explicit"
+          "include": "#regexp-hex-escape"
         },
         {
           "include": "#regexp-character-class-numeric-literal-explicit"
@@ -3868,10 +3824,10 @@
           "include": "#regexp-character-class-literal-explicit"
         },
         {
-          "include": "#regexp-character-class-character-type-escape-explicit"
+          "include": "#regexp-character-type-escape"
         },
         {
-          "include": "#regexp-character-class-property-escape-explicit"
+          "include": "#regexp-property-escape"
         },
         {
           "include": "#regexp-character-class-literal-escape-explicit"
@@ -3902,6 +3858,9 @@
       "name": "meta.embedded.character-class.regexp.php",
       "patterns": [
         {
+          "include": "#regexp-decoded-apostrophe-escape-interpreted"
+        },
+        {
           "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
         },
         {
@@ -3915,7 +3874,7 @@
         }
       ]
     },
-    "regexp-character-class-explicit": {
+    "regexp-character-class-nowdoc": {
       "begin": "((\\[))(\\^)?(?:\\])?",
       "beginCaptures": {
         "1": {
@@ -3962,6 +3921,9 @@
           "include": "#regexp-decoded-double-quote-escape-double-quoted"
         },
         {
+          "include": "#regexp-decoded-apostrophe-escape-interpreted"
+        },
+        {
           "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
         },
         {
@@ -3993,6 +3955,9 @@
       "patterns": [
         {
           "include": "#regexp-decoded-apostrophe-escape-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-double-quote-escape-single-quoted"
         },
         {
           "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
@@ -4526,32 +4491,7 @@
         }
       ]
     },
-    "regexp-comment-group-heredoc": {
-      "begin": "(\\()(\\?\\#)",
-      "beginCaptures": {
-        "0": {
-          "name": "comment.block.regexp.php"
-        },
-        "1": {
-          "name": "punctuation.definition.comment.begin.regexp.php"
-        },
-        "2": {
-          "name": "punctuation.definition.comment.begin.regexp.php"
-        }
-      },
-      "contentName": "comment.block.regexp.php",
-      "end": "(\\))|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-      "endCaptures": {
-        "0": {
-          "name": "comment.block.regexp.php"
-        },
-        "1": {
-          "name": "punctuation.definition.comment.end.regexp.php"
-        }
-      },
-      "name": "meta.embedded.group.regexp.php"
-    },
-    "regexp-comment-group-nowdoc": {
+    "regexp-comment-group-heredoc-nowdoc": {
       "begin": "(\\()(\\?\\#)",
       "beginCaptures": {
         "0": {
@@ -5002,7 +4942,7 @@
         }
       ]
     },
-    "regexp-group-backreference-pcre-explicit": {
+    "regexp-backreference-named-pcre-explicit": {
       "captures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5190,19 +5130,19 @@
     "regexp-explicit-escapes": {
       "patterns": [
         {
-          "include": "#regexp-character-type-escape-explicit"
+          "include": "#regexp-character-type-escape"
         },
         {
-          "include": "#regexp-property-escape-explicit"
+          "include": "#regexp-property-escape"
         },
         {
-          "include": "#regexp-braced-hex-escape-explicit"
+          "include": "#regexp-braced-hex-escape"
         },
         {
-          "include": "#regexp-hex-escape-explicit"
+          "include": "#regexp-hex-escape"
         },
         {
-          "include": "#regexp-basic-escape"
+          "include": "#regexp-structural-escape"
         },
         {
           "include": "#regexp-group-escape-explicit"
@@ -5218,7 +5158,7 @@
           "include": "#regexp-anchor-explicit"
         },
         {
-          "include": "#regexp-arbitrary-repetition-explicit"
+          "include": "#regexp-range-quantifier"
         },
         {
           "include": "#regexp-simple-quantifier-explicit"
@@ -5264,7 +5204,7 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
-          "include": "#regexp-group-backreference-pcre-explicit"
+          "include": "#regexp-backreference-named-pcre-explicit"
         },
         {
           "include": "#regexp-apostrophe-escape-explicit"
@@ -5273,7 +5213,7 @@
           "include": "#regexp-explicit-escapes"
         },
         {
-          "include": "#regexp-comment-group-heredoc"
+          "include": "#regexp-comment-group-heredoc-nowdoc"
         },
         {
           "include": "#regexp-group-assertion-heredoc"
@@ -5319,7 +5259,7 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
-          "include": "#regexp-group-backreference-pcre-explicit"
+          "include": "#regexp-backreference-named-pcre-explicit"
         },
         {
           "include": "#regexp-quoted-literal-nowdoc"
@@ -5328,10 +5268,13 @@
           "include": "#regexp-apostrophe-escape-explicit"
         },
         {
+          "include": "#regexp-double-quote-escape-explicit"
+        },
+        {
           "include": "#regexp-explicit-escapes"
         },
         {
-          "include": "#regexp-comment-group-nowdoc"
+          "include": "#regexp-comment-group-heredoc-nowdoc"
         },
         {
           "include": "#regexp-group-assertion-nowdoc"
@@ -5355,7 +5298,7 @@
           "include": "#regexp-group-nowdoc"
         },
         {
-          "include": "#regexp-character-class-explicit"
+          "include": "#regexp-character-class-nowdoc"
         },
         {
           "include": "#regexp-explicit-operators"
@@ -5382,7 +5325,7 @@
           "include": "#regexp-anchor-explicit"
         },
         {
-          "include": "#regexp-arbitrary-repetition-quoted"
+          "include": "#regexp-range-quantifier"
         },
         {
           "include": "#regexp-simple-quantifier-explicit"
@@ -5472,7 +5415,7 @@
           "include": "#regexp-group-escape-explicit"
         },
         {
-          "include": "#regexp-basic-escape"
+          "include": "#regexp-structural-escape"
         },
         {
           "include": "#regexp-apostrophe-escape-explicit"
@@ -5484,13 +5427,13 @@
           "include": "#regexp-literal-escape-explicit"
         },
         {
-          "include": "#regexp-character-type-escape-explicit"
+          "include": "#regexp-character-type-escape"
         },
         {
-          "include": "#regexp-property-escape-explicit"
+          "include": "#regexp-property-escape"
         },
         {
-          "include": "#regexp-braced-hex-escape-explicit"
+          "include": "#regexp-braced-hex-escape"
         },
         {
           "include": "#regexp-backreference-named-angle-explicit"
@@ -5502,7 +5445,7 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
-          "include": "#regexp-group-backreference-pcre-explicit"
+          "include": "#regexp-backreference-named-pcre-explicit"
         },
         {
           "include": "#regexp-quoted-common"
@@ -5524,19 +5467,19 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
-          "include": "#regexp-group-backreference-pcre-explicit"
+          "include": "#regexp-backreference-named-pcre-explicit"
         },
         {
-          "include": "#regexp-character-type-escape-explicit"
+          "include": "#regexp-character-type-escape"
         },
         {
-          "include": "#regexp-property-escape-explicit"
+          "include": "#regexp-property-escape"
         },
         {
-          "include": "#regexp-hex-escape-explicit"
+          "include": "#regexp-hex-escape"
         },
         {
-          "include": "#regexp-braced-hex-escape-explicit"
+          "include": "#regexp-braced-hex-escape"
         },
         {
           "include": "#regexp-quoted-literal-single-quoted"
@@ -5545,7 +5488,13 @@
           "include": "#regexp-decoded-apostrophe-escape-single-quoted"
         },
         {
+          "include": "#regexp-decoded-double-quote-escape-single-quoted"
+        },
+        {
           "include": "#regexp-decoded-overlap-escapes-interpreted"
+        },
+        {
+          "include": "#regexp-double-quote-escape-explicit"
         },
         {
           "include": "#regexp-explicit-escapes"
