@@ -2944,6 +2944,9 @@
   'regexp-literal-escape-explicit':
     'match': '\\\\(?:\\\\|[0-7]{1,3}|c[A-Za-z]|[aefnrt]|[/.+*?|\\-\\[\\]{}()$^#])'
     'name': 'constant.character.escape.regexp.php'
+  'regexp-apostrophe-escape-explicit':
+    'match': '\\\\\''
+    'name': 'constant.character.escape.regexp.php'
   'regexp-decoded-backreference-numeric-interpreted':
     'captures':
       '1':
@@ -3030,6 +3033,15 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([dDhHsSwW]|R)'
+  'regexp-decoded-apostrophe-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))(\')'
   'regexp-decoded-literal-escape-interpreted':
     'captures':
       '1':
@@ -4297,6 +4309,9 @@
         'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
         'include': '#interpolation'
       }
       {
@@ -4313,6 +4328,9 @@
       }
       {
         'include': '#regexp-group-backreference-pcre-explicit'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
       }
       {
         'include': '#regexp-explicit-escapes'
@@ -4367,6 +4385,9 @@
       }
       {
         'include': '#regexp-quoted-literal-nowdoc'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
       }
       {
         'include': '#regexp-explicit-escapes'
@@ -4498,10 +4519,16 @@
         'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
         'include': '#regexp-group-escape-explicit'
       }
       {
         'include': '#regexp-basic-escape'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
       }
       {
         'include': '#interpolation_double_quoted'
