@@ -1785,12 +1785,30 @@ describe 'PHP regexp grammar', ->
             expect(decodedLines[1][2]).toEqual value: '\'', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
             expect(decodedLines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
 
+          it 'should tokenize decoded double-quote escapes in REGEX heredoc', ->
+            lines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + '\\'.repeat(2) + '"'+ '/', 'REGEX;'].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: '"', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
+
           it 'should tokenize decoded apostrophe escapes in REGEX heredoc character classes', ->
             lines = grammar.tokenizeLines ['$r = <<<REGEX', '/[' + '\\'.repeat(2) + "'a-z]/", 'REGEX;'].join "\n"
 
             expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
             expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
             expect(lines[1][3]).toEqual value: '\'', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
+            expect(lines[1][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
+            expect(lines[1][5]).toEqual value: '-', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['keyword.operator.range.regexp.php']
+            expect(lines[1][6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
+
+          it 'should tokenize decoded double-quote escapes in REGEX heredoc character classes', ->
+            lines = grammar.tokenizeLines ['$r = <<<REGEX', '/[' + '\\'.repeat(2) + '"a-z]/', 'REGEX;'].join "\n"
+
+            expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+            expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '"', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
             expect(lines[1][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
             expect(lines[1][5]).toEqual value: '-', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['keyword.operator.range.regexp.php']
             expect(lines[1][6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
