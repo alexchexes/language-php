@@ -259,7 +259,7 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[3]).toEqual value: 'a', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[4]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
-    it 'should tokenize decoded shorthand class escapes in quoted regex character classes', ->
+    it 'should tokenize decoded character-type escapes in quoted regex character classes', ->
       doubleQuoted = grammar.tokenizeLine '"/[\\\\d]/"'
       singleQuoted = grammar.tokenizeLine "'/[\\\\d]/'"
 
@@ -415,7 +415,7 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[1]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(singleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
 
-    it 'should tokenize decoded shorthand character-type escapes in quoted regexes', ->
+    it 'should tokenize decoded character-type escapes in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\d/"'
       singleQuoted = grammar.tokenizeLine "'/\\\\d/'"
 
@@ -1670,7 +1670,7 @@ describe 'PHP regexp grammar', ->
             expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
             expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-          it "should not treat doubled backslashes as backreferences or shorthand escapes in #{description}", ->
+          it "should not treat doubled backslashes as backreferences or character-type escapes in #{description}", ->
             lines = grammar.tokenizeLines """
               $r = #{opener}
               /\\\\1\\\\d/
