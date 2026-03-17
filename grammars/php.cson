@@ -3079,9 +3079,15 @@
     'name': 'constant.numeric.regexp.php'
   'regexp-character-class-literal-explicit':
     'match': '[^\\\\\\[\\]0-9-]'
-  'regexp-character-class-escape-explicit':
-    'match': '\\\\(?:[0-7]{1,3}|c[A-Za-z]|[pP]\\{[^}]+\\}|.)'
-    'name': 'constant.character.escape.php'
+  'regexp-character-class-character-type-escape-explicit':
+    'match': '\\\\(?:[dDhHsSvVwW]|R)'
+    'name': 'constant.character.class.regexp.php'
+  'regexp-character-class-property-escape-explicit':
+    'match': '\\\\[pP]\\{[^}]+\\}'
+    'name': 'constant.character.class.regexp.php'
+  'regexp-character-class-literal-escape-explicit':
+    'match': '\\\\(?:[0-7]{1,3}|c[A-Za-z]|.)'
+    'name': 'constant.character.escape.regexp.php'
   'regexp-character-class-decoded-octal-interpreted':
     'captures':
       '1':
@@ -3096,13 +3102,27 @@
       '2':
         'name': 'constant.character.numeric.regexp.php'
     'match': '(\\\\\\\\)(x[0-9A-Fa-f]{2})'
+  'regexp-character-class-decoded-character-type-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.class.regexp.php'
+    'match': '(\\\\\\\\)(v)'
+  'regexp-character-class-decoded-character-type-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.class.regexp.php'
+    'match': '(\\\\\\\\)([dDhHsSwW]|R)'
   'regexp-character-class-decoded-literal-escape-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
-        'name': 'constant.character.escape.php'
-    'match': '(\\\\\\\\)([nrtfev$])'
+        'name': 'constant.character.escape.regexp.php'
+    'match': '(\\\\\\\\)([nrtfe$])'
   'regexp-character-class-decoded-overlap-escapes-interpreted':
     'patterns': [
       {
@@ -3110,6 +3130,12 @@
       }
       {
         'include': '#regexp-character-class-decoded-hex-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-character-type-escape-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-character-type-redundant-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-literal-escape-interpreted'
@@ -3165,7 +3191,13 @@
         'include': '#regexp-character-class-literal-explicit'
       }
       {
-        'include': '#regexp-character-class-escape-explicit'
+        'include': '#regexp-character-class-character-type-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-property-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-literal-escape-explicit'
       }
       {
         'match': '(?<!\\[)-(?=[^\\]])'
