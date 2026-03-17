@@ -3512,7 +3512,7 @@
       },
       "match": "((\\\\\\\\))(\\\\')"
     },
-    "regexp-decoded-double-quote-escape-single-quoted": {
+    "regexp-decoded-double-quote-escape-regex-interpreted": {
       "captures": {
         "1": {
           "name": "constant.character.escape.php"
@@ -3858,6 +3858,9 @@
       "name": "meta.embedded.character-class.regexp.php",
       "patterns": [
         {
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
+        },
+        {
           "include": "#regexp-decoded-apostrophe-escape-interpreted"
         },
         {
@@ -3957,7 +3960,7 @@
           "include": "#regexp-decoded-apostrophe-escape-single-quoted"
         },
         {
-          "include": "#regexp-decoded-double-quote-escape-single-quoted"
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-overlap-escapes-interpreted"
@@ -5183,6 +5186,9 @@
           "include": "#regexp-quoted-literal-heredoc"
         },
         {
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
+        },
+        {
           "include": "#regexp-decoded-overlap-escapes-interpreted"
         },
         {
@@ -5488,7 +5494,7 @@
           "include": "#regexp-decoded-apostrophe-escape-single-quoted"
         },
         {
-          "include": "#regexp-decoded-double-quote-escape-single-quoted"
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
         },
         {
           "include": "#regexp-decoded-overlap-escapes-interpreted"
