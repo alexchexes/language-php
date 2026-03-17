@@ -2890,7 +2890,7 @@
         ]
       '2':
         'name': 'keyword.other.array.phpdoc.php'
-  'regexp-basic-escape':
+  'regexp-structural-escape':
     # Raw regex source: a single backslash can escape structural punctuation here.
     # Doubled backslashes must stay separate so constructs like `\\[` (`\\\[`) can still open a class after `\\`.
     'match': '\\\\[.$^\\[\\]{}]'
@@ -3102,7 +3102,7 @@
         'include': '#regexp-decoded-literal-escape-interpreted'
       }
     ]
-  'regexp-arbitrary-repetition':
+  'regexp-range-quantifier':
     'captures':
       '1':
         'name': 'keyword.operator.quantifier.regexp.php'
@@ -3166,7 +3166,7 @@
       '2':
         'name': 'constant.numeric.regexp.php'
     'match': '(\\\\\\\\)([0-7]{1,3})'
-  'regexp-character-class-decoded-hex-interpreted':
+  'regexp-character-class-decoded-hex-escape-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -3217,7 +3217,7 @@
         'include': '#regexp-character-class-decoded-octal-interpreted'
       }
       {
-        'include': '#regexp-character-class-decoded-hex-interpreted'
+        'include': '#regexp-character-class-decoded-hex-escape-interpreted'
       }
       # Same rationale as body rules above: redundant doubled forms are still
       # highlighted in interpreted hosts even though the undoubled form would work too.
@@ -3332,7 +3332,7 @@
         'include': '#regexp-character-class-common-explicit-trailing'
       }
     ]
-  'regexp-character-class-explicit':
+  'regexp-character-class-nowdoc':
     'begin': '((\\[))(\\^)?(?:\\])?'
     'beginCaptures':
       '1':
@@ -4114,7 +4114,7 @@
         'include': '#regexp-nowdoc-common'
       }
     ]
-  'regexp-group-backreference-pcre-explicit':
+  'regexp-backreference-named-pcre-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4266,7 +4266,7 @@
         'include': '#regexp-hex-escape'
       }
       {
-        'include': '#regexp-basic-escape'
+        'include': '#regexp-structural-escape'
       }
       {
         'include': '#regexp-group-escape-explicit'
@@ -4281,7 +4281,7 @@
         'include': '#regexp-anchor-explicit'
       }
       {
-        'include': '#regexp-arbitrary-repetition'
+        'include': '#regexp-range-quantifier'
       }
       {
         'include': '#regexp-simple-quantifier-explicit'
@@ -4326,7 +4326,7 @@
         'include': '#regexp-option-toggle-explicit'
       }
       {
-        'include': '#regexp-group-backreference-pcre-explicit'
+        'include': '#regexp-backreference-named-pcre-explicit'
       }
       {
         'include': '#regexp-apostrophe-escape-explicit'
@@ -4380,7 +4380,7 @@
         'include': '#regexp-option-toggle-explicit'
       }
       {
-        'include': '#regexp-group-backreference-pcre-explicit'
+        'include': '#regexp-backreference-named-pcre-explicit'
       }
       {
         'include': '#regexp-quoted-literal-nowdoc'
@@ -4416,7 +4416,7 @@
         'include': '#regexp-group-nowdoc'
       }
       {
-        'include': '#regexp-character-class-explicit'
+        'include': '#regexp-character-class-nowdoc'
       }
       {
         'include': '#regexp-explicit-operators'
@@ -4440,7 +4440,7 @@
         'include': '#regexp-anchor-explicit'
       }
       {
-        'include': '#regexp-arbitrary-repetition'
+        'include': '#regexp-range-quantifier'
       }
       {
         'include': '#regexp-simple-quantifier-explicit'
@@ -4527,7 +4527,7 @@
         'include': '#regexp-group-escape-explicit'
       }
       {
-        'include': '#regexp-basic-escape'
+        'include': '#regexp-structural-escape'
       }
       {
         'include': '#regexp-apostrophe-escape-explicit'
@@ -4557,7 +4557,7 @@
         'include': '#regexp-option-toggle-explicit'
       }
       {
-        'include': '#regexp-group-backreference-pcre-explicit'
+        'include': '#regexp-backreference-named-pcre-explicit'
       }
       {
         'include': '#regexp-quoted-common'
@@ -4578,7 +4578,7 @@
         'include': '#regexp-option-toggle-explicit'
       }
       {
-        'include': '#regexp-group-backreference-pcre-explicit'
+        'include': '#regexp-backreference-named-pcre-explicit'
       }
       {
         'include': '#regexp-character-type-escape'
