@@ -3192,6 +3192,58 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x[0-9A-Fa-f]{2})'
+  'regexp-character-class-braced-hex-range-decoded-left-interpreted':
+    'captures':
+      '0':
+        'name': 'support.class.range.regexp.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+      '4':
+        'name': 'constant.character.numeric.regexp.php'
+      '5':
+        'name': 'keyword.operator.range.regexp.php'
+      '6':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '(((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\}))(-)(\\\\x\\{[0-9A-Fa-f]+\\})'
+    'name': 'constant.other.character-class.range.regexp.php'
+  'regexp-character-class-braced-hex-range-decoded-right-interpreted':
+    'captures':
+      '0':
+        'name': 'support.class.range.regexp.php'
+      '1':
+        'name': 'constant.character.numeric.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '4':
+        'name': 'constant.character.escape.php'
+      '5':
+        'name': 'constant.character.numeric.regexp.php'
+      '6':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '(\\\\x\\{[0-9A-Fa-f]+\\})(-)(((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\}))'
+    'name': 'constant.other.character-class.range.regexp.php'
+  'regexp-character-class-braced-hex-range-decoded-both-interpreted':
+    'captures':
+      '0':
+        'name': 'support.class.range.regexp.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+      '4':
+        'name': 'constant.character.numeric.regexp.php'
+      '5':
+        'name': 'keyword.operator.range.regexp.php'
+      '7':
+        'name': 'constant.character.escape.php'
+      '8':
+        'name': 'constant.character.numeric.regexp.php'
+      '9':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '(((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\}))(-)(((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\}))'
+    'name': 'constant.other.character-class.range.regexp.php'
   'regexp-character-class-decoded-braced-hex-escape-redundant-interpreted':
     'captures':
       '1':
@@ -3277,6 +3329,15 @@
       }
       {
         'include': '#regexp-character-class-decoded-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-braced-hex-range-decoded-left-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-braced-hex-range-decoded-right-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-braced-hex-range-decoded-both-interpreted'
       }
       # Same rationale as body rules above: redundant doubled forms are still
       # highlighted in interpreted hosts even though the undoubled form would work too.
