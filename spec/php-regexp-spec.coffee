@@ -313,6 +313,50 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[5]).toEqual value: 'x{41}', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.numeric.regexp.php']
       expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize interpreted braced hex ranges in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/[' + body + ']/"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/[" + body + "]/'"
+        }
+      ]
+
+      for {regexScope, wrap} in quotedHosts
+        rangeScopes = regexpCharacterClassHexRangeScopes(regexScope)
+        decodedTransportScopes = rangeScopes.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
+        numericRangeScopes = rangeScopes.concat ['constant.character.numeric.regexp.php']
+        rangeOperatorScopes = rangeScopes.concat ['keyword.operator.range.regexp.php']
+
+        rawDecoded = grammar.tokenizeLine(wrap '\\x{42}-' + '\\'.repeat(2) + 'x{44}').tokens
+        decodedRaw = grammar.tokenizeLine(wrap '\\'.repeat(2) + 'x{42}-\\x{44}').tokens
+        decodedBoth = grammar.tokenizeLine(wrap '\\'.repeat(2) + 'x{42}-' + '\\'.repeat(2) + 'x{44}').tokens
+
+        expect(rawDecoded[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(rawDecoded[2]).toEqual value: '\\x{42}', scopes: numericRangeScopes
+        expect(rawDecoded[3]).toEqual value: '-', scopes: rangeOperatorScopes
+        expect(rawDecoded[4]).toEqual value: '\\\\', scopes: decodedTransportScopes
+        expect(rawDecoded[5]).toEqual value: 'x{44}', scopes: numericRangeScopes
+        expect(rawDecoded[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(decodedRaw[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(decodedRaw[2]).toEqual value: '\\\\', scopes: decodedTransportScopes
+        expect(decodedRaw[3]).toEqual value: 'x{42}', scopes: numericRangeScopes
+        expect(decodedRaw[4]).toEqual value: '-', scopes: rangeOperatorScopes
+        expect(decodedRaw[5]).toEqual value: '\\x{44}', scopes: numericRangeScopes
+        expect(decodedRaw[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(decodedBoth[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(decodedBoth[2]).toEqual value: '\\\\', scopes: decodedTransportScopes
+        expect(decodedBoth[3]).toEqual value: 'x{42}', scopes: numericRangeScopes
+        expect(decodedBoth[4]).toEqual value: '-', scopes: rangeOperatorScopes
+        expect(decodedBoth[5]).toEqual value: '\\\\', scopes: decodedTransportScopes
+        expect(decodedBoth[6]).toEqual value: 'x{44}', scopes: numericRangeScopes
+        expect(decodedBoth[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
     it 'should keep interpolation-like syntax raw in single quoted regex bodies', ->
       {tokens} = grammar.tokenizeLine "'/($value)/'"
 
@@ -2620,6 +2664,38 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][5]).toEqual value: 'x{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
       expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should tokenize interpreted braced hex ranges in REGEXP heredoc character classes', ->
+      rangeScopes = regexpCharacterClassHexRangeScopes(heredocRegexpScope)
+      decodedTransportScopes = rangeScopes.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
+      numericRangeScopes = rangeScopes.concat ['constant.character.numeric.regexp.php']
+      rangeOperatorScopes = rangeScopes.concat ['keyword.operator.range.regexp.php']
+
+      rawDecodedLines = grammar.tokenizeLines ['$r = <<<REGEXP', '/[\\x{42}-' + '\\'.repeat(2) + 'x{44}]/', 'REGEXP;'].join "\n"
+      decodedRawLines = grammar.tokenizeLines ['$r = <<<REGEXP', '/[' + '\\'.repeat(2) + 'x{42}-\\x{44}]/', 'REGEXP;'].join "\n"
+      decodedBothLines = grammar.tokenizeLines ['$r = <<<REGEXP', '/[' + '\\'.repeat(2) + 'x{42}-' + '\\'.repeat(2) + 'x{44}]/', 'REGEXP;'].join "\n"
+
+      expect(rawDecodedLines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(rawDecodedLines[1][2]).toEqual value: '\\x{42}', scopes: numericRangeScopes
+      expect(rawDecodedLines[1][3]).toEqual value: '-', scopes: rangeOperatorScopes
+      expect(rawDecodedLines[1][4]).toEqual value: '\\\\', scopes: decodedTransportScopes
+      expect(rawDecodedLines[1][5]).toEqual value: 'x{44}', scopes: numericRangeScopes
+      expect(rawDecodedLines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+
+      expect(decodedRawLines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(decodedRawLines[1][2]).toEqual value: '\\\\', scopes: decodedTransportScopes
+      expect(decodedRawLines[1][3]).toEqual value: 'x{42}', scopes: numericRangeScopes
+      expect(decodedRawLines[1][4]).toEqual value: '-', scopes: rangeOperatorScopes
+      expect(decodedRawLines[1][5]).toEqual value: '\\x{44}', scopes: numericRangeScopes
+      expect(decodedRawLines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+
+      expect(decodedBothLines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(decodedBothLines[1][2]).toEqual value: '\\\\', scopes: decodedTransportScopes
+      expect(decodedBothLines[1][3]).toEqual value: 'x{42}', scopes: numericRangeScopes
+      expect(decodedBothLines[1][4]).toEqual value: '-', scopes: rangeOperatorScopes
+      expect(decodedBothLines[1][5]).toEqual value: '\\\\', scopes: decodedTransportScopes
+      expect(decodedBothLines[1][6]).toEqual value: 'x{44}', scopes: numericRangeScopes
+      expect(decodedBothLines[1][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
 
     it 'should tokenize raw double-quote escapes in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines ["$r = <<<REGEXP", '/[\\"a-z]/', 'REGEXP;'].join "\n"
