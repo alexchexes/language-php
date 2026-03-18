@@ -263,6 +263,18 @@ describe 'PHP regexp grammar', ->
       expect(tokens[12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
       expect(tokens[13]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should keep transported PHP code-point escapes PHP-first in double quoted regex character classes', ->
+      {tokens} = grammar.tokenizeLine '"/[' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}]/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[3]).toEqual value: '\\x21', scopes: regexpCharacterClassPhpHexEscapeScopes(quotedDoubleRegexpScope)
+      expect(tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(tokens[5]).toEqual value: '\\u{21}', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.unicode.php']
+      expect(tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[7]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize decoded bell escapes in interpreted quoted regex character classes', ->
       doubleQuoted = grammar.tokenizeLine '"/[\\\\a]/"'
       singleQuoted = grammar.tokenizeLine "'/[\\\\a]/'"
@@ -477,6 +489,16 @@ describe 'PHP regexp grammar', ->
       expect(tokens[9]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(tokens[10]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[11]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should keep transported PHP code-point escapes PHP-first in double quoted regex bodies', ->
+      {tokens} = grammar.tokenizeLine '"/' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[2]).toEqual value: '\\x21', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.hex.php']
+      expect(tokens[3]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[4]).toEqual value: '\\u{21}', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.unicode.php']
+      expect(tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize decoded bell escapes in interpreted quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\a/"'
@@ -1933,6 +1955,20 @@ describe 'PHP regexp grammar', ->
             expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
             expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+          it 'should keep transported PHP code-point escapes PHP-first in REGEX heredoc bodies', ->
+            lines = grammar.tokenizeLines [
+              '$r = <<<REGEX'
+              '/' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}/'
+              'REGEX;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][2]).toEqual value: '\\x21', scopes: heredocRegexpScope.concat ['constant.character.escape.hex.php']
+            expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][4]).toEqual value: '\\u{21}', scopes: heredocRegexpScope.concat ['constant.character.escape.unicode.php']
+            expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+
         if description is 'REGEXP nowdoc'
           it 'should keep overlapping single-backslash escapes regex-first in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines """
@@ -2612,6 +2648,22 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][9]).toEqual value: '\\x{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
       expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should keep transported PHP code-point escapes PHP-first in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines [
+        '$r = <<<REGEXP'
+        '/[' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}]/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][3]).toEqual value: '\\x21', scopes: regexpCharacterClassPhpHexEscapeScopes(heredocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
+      expect(lines[1][5]).toEqual value: '\\u{21}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.unicode.php']
+      expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'should tokenize decoded overlapping escapes in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines '''
