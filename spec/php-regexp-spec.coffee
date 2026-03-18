@@ -1859,28 +1859,53 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         if description is 'REGEXP nowdoc'
-          it "should keep character classes after escaped backslashes in #{description}", ->
-            lines = grammar.tokenizeLines """
-              $r = #{opener}
-              /\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f]/
-              #{label};
-            """
+          it "should tokenize supported structural opener parity in #{description} from fixtures", ->
+            structuralOpeners = [
+              {
+                structuralOpener: '['
+                suffix: 'a]'
+                assertStructured: (tokens) ->
+                  expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+                  expect(tokens[3]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(regexScope)
+                  expect(tokens[4]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+              }
+              {
+                structuralOpener: '('
+                suffix: 'a)'
+                assertStructured: (tokens) ->
+                  expect(tokens[2]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+                  expect(tokens[3]).toEqual value: 'a', scopes: regexpGroupContentScopes(regexScope)
+                  expect(tokens[4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              }
+              {
+                # `{` only becomes structural in this bucket when followed by a valid quantifier body.
+                structuralOpener: '{'
+                suffix: '1}'
+                assertStructured: (tokens) ->
+                  expect(tokens[2]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(regexScope)
+                  expect(tokens[3]).toEqual value: '1', scopes: regexpRangeQuantifierScopes(regexScope)
+                  expect(tokens[4]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(regexScope)
+              }
+            ]
 
-            expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
-            expect(lines[1][2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
-            expect(lines[1][3]).toEqual value: '\\x01', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][4]).toEqual value: '-', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
-            expect(lines[1][5]).toEqual value: '\\x09', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][6]).toEqual value: '\\x0b', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][7]).toEqual value: '\\x0c', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][8]).toEqual value: '\\x0e', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][9]).toEqual value: '-', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
-            expect(lines[1][10]).toEqual value: '\\x7f', scopes: regexpCharacterClassHexRangeScopes(regexScope).concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
-            expect(lines[1][12]).toEqual value: '/', scopes: regexScope
-            expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-            expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+            for {structuralOpener, suffix, assertStructured} in structuralOpeners
+              oneBackslashLines = grammar.tokenizeLines ['$r = ' + opener, '/' + '\\'.repeat(1) + structuralOpener + suffix + '/', label + ';'].join "\n"
+              twoBackslashLines = grammar.tokenizeLines ['$r = ' + opener, '/' + '\\'.repeat(2) + structuralOpener + suffix + '/', label + ';'].join "\n"
+              threeBackslashLines = grammar.tokenizeLines ['$r = ' + opener, '/' + '\\'.repeat(3) + structuralOpener + suffix + '/', label + ';'].join "\n"
+
+              expect(oneBackslashLines[1][0]).toEqual value: '/', scopes: regexScope
+              expect(oneBackslashLines[1][1]).toEqual value: '\\' + structuralOpener, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+              expect(oneBackslashLines[1][2]).toEqual value: suffix + '/', scopes: regexScope
+
+              expect(twoBackslashLines[1][0]).toEqual value: '/', scopes: regexScope
+              expect(twoBackslashLines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+              assertStructured twoBackslashLines[1]
+              expect(twoBackslashLines[1][5]).toEqual value: '/', scopes: regexScope
+
+              expect(threeBackslashLines[1][0]).toEqual value: '/', scopes: regexScope
+              expect(threeBackslashLines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+              expect(threeBackslashLines[1][2]).toEqual value: '\\' + structuralOpener, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+              expect(threeBackslashLines[1][3]).toEqual value: suffix + '/', scopes: regexScope
 
           it "should keep dot operators and anchors after escaped backslashes in #{description}", ->
             lines = grammar.tokenizeLines """
@@ -1916,25 +1941,6 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         if description is 'REGEXP nowdoc'
-          it "should keep groups and quantifiers after escaped backslashes in #{description}", ->
-            lines = grammar.tokenizeLines """
-              $r = #{opener}
-              /\\\\(ab){2,3}/
-              #{label};
-            """
-
-            expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
-            expect(lines[1][2]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-            expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupContentScopes(regexScope)
-            expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-            expect(lines[1][5]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(regexScope)
-            expect(lines[1][6]).toEqual value: '2,3', scopes: regexpRangeQuantifierScopes(regexScope)
-            expect(lines[1][7]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(regexScope)
-            expect(lines[1][8]).toEqual value: '/', scopes: regexScope
-            expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-            expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
-
           it "should not treat doubled backslashes as backreferences or character-type escapes in #{description}", ->
             lines = grammar.tokenizeLines """
               $r = #{opener}
