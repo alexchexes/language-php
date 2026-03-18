@@ -3177,35 +3177,45 @@
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.numeric.regexp.php'
-    'match': '(\\\\\\\\)([0-7]{1,3})'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+    'match': '((\\\\\\\\))([0-7]{1,3})'
   'regexp-character-class-decoded-hex-escape-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.numeric.regexp.php'
-    'match': '(\\\\\\\\)(x[0-9A-Fa-f]{2})'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(x[0-9A-Fa-f]{2})'
   'regexp-character-class-decoded-braced-hex-escape-redundant-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.numeric.regexp.php'
-    'match': '(\\\\\\\\)(x\\{[0-9A-Fa-f]+\\})'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\})'
   'regexp-character-class-decoded-property-escape-redundant-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.class.regexp.php'
-    'match': '(\\\\\\\\)([pP]\\{[^}]+\\})'
+      '3':
+        'name': 'constant.character.class.regexp.php'
+    'match': '((\\\\\\\\))([pP]\\{[^}]+\\})'
   'regexp-character-class-decoded-character-type-interpreted':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.class.regexp.php'
-    'match': '(\\\\\\\\)([dDhHsSvVwW]|R)'
+      '3':
+        'name': 'constant.character.class.regexp.php'
+    'match': '((\\\\\\\\))([dDhHsSvVwW]|R)'
   'regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted':
     'captures':
       '1':
@@ -3222,7 +3232,9 @@
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.escape.regexp.php'
-    'match': '(\\\\\\\\)([anrtfe$])'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))([anrtfe$])'
   'regexp-character-class-decoded-overlap-escapes-interpreted':
     'patterns': [
       {
