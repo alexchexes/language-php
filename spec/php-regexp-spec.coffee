@@ -2095,25 +2095,56 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][2]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
             expect(lines[1][3]).toEqual value: ';/', scopes: heredocRegexpScope
 
-          it 'should tokenize structural character-class opener parity in REGEX heredoc', ->
-            twoBackslashes = '\\'.repeat 2
-            threeBackslashes = '\\'.repeat 3
-            fourBackslashes = '\\'.repeat 4
-            twoLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + twoBackslashes + '[a-z]/', 'REGEX;'].join "\n"
-            threeLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + threeBackslashes + '[a-z]/', 'REGEX;'].join "\n"
-            fourLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + fourBackslashes + '[a-z]/', 'REGEX;'].join "\n"
+          it 'should tokenize supported structural opener parity in REGEX heredoc from fixtures', ->
+            structuralOpeners = [
+              {
+                structuralOpener: '['
+                suffix: 'a]'
+                assertStructured: (tokens) ->
+                  expect(tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+                  expect(tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(heredocRegexpScope)
+                  expect(tokens[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+              }
+              {
+                structuralOpener: '('
+                suffix: 'a)'
+                assertStructured: (tokens) ->
+                  expect(tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+                  expect(tokens[4]).toEqual value: 'a', scopes: regexpGroupContentScopes(heredocRegexpScope)
+                  expect(tokens[5]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+              }
+              {
+                # `{` only becomes structural in this bucket when followed by a valid quantifier body.
+                structuralOpener: '{'
+                suffix: '1}'
+                assertStructured: (tokens) ->
+                  expect(tokens[3]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(heredocRegexpScope)
+                  expect(tokens[4]).toEqual value: '1', scopes: regexpRangeQuantifierScopes(heredocRegexpScope)
+                  expect(tokens[5]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(heredocRegexpScope)
+              }
+            ]
 
-            expect(twoLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-            expect(twoLines[1][2]).toEqual value: '[', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
-            expect(twoLines[1][3]).toEqual value: 'a-z]/', scopes: heredocRegexpScope
+            for {structuralOpener, suffix, assertStructured} in structuralOpeners
+              twoLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + '\\'.repeat(2) + structuralOpener + suffix + '/', 'REGEX;'].join "\n"
+              threeLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + '\\'.repeat(3) + structuralOpener + suffix + '/', 'REGEX;'].join "\n"
+              fourLines = grammar.tokenizeLines ['$r = <<<REGEX', '/' + '\\'.repeat(4) + structuralOpener + suffix + '/', 'REGEX;'].join "\n"
 
-            expect(threeLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-            expect(threeLines[1][2]).toEqual value: '\\', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
-            expect(threeLines[1][3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+              expect(twoLines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+              expect(twoLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+              expect(twoLines[1][2]).toEqual value: structuralOpener, scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+              expect(twoLines[1][3]).toEqual value: suffix + '/', scopes: heredocRegexpScope
 
-            expect(fourLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(fourLines[1][2]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-            expect(fourLines[1][3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+              expect(threeLines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+              expect(threeLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+              expect(threeLines[1][2]).toEqual value: '\\', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+              assertStructured threeLines[1]
+              expect(threeLines[1][6]).toEqual value: '/', scopes: heredocRegexpScope
+
+              expect(fourLines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+              expect(fourLines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+              expect(fourLines[1][2]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+              assertStructured fourLines[1]
+              expect(fourLines[1][6]).toEqual value: '/', scopes: heredocRegexpScope
 
           it 'should decompose repeated interpreted backslashes inside REGEX heredoc character classes', ->
             fourBackslashes = '\\'.repeat 4
