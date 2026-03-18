@@ -501,6 +501,37 @@ describe 'PHP regexp grammar', ->
       expect(tokens[16]).toEqual value: '\\)', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[17]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures', ->
+      supportedEscapedOperators = ['.', '*', '+', '?', '^', '|']
+      quotedHosts = [
+        {
+          beginValue: '"/'
+          endValue: '/"'
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/' + body + '/"'
+        }
+        {
+          beginValue: '\'/'
+          endValue: '/\''
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/" + body + "/'"
+        }
+      ]
+
+      for {beginValue, endValue, regexScope, wrap} in quotedHosts
+        for symbol in supportedEscapedOperators
+          raw = grammar.tokenizeLine wrap '\\' + symbol
+          decoded = grammar.tokenizeLine wrap '\\'.repeat(2) + symbol
+
+          expect(raw.tokens[0]).toEqual value: beginValue, scopes: regexScope.concat ['punctuation.definition.string.begin.php']
+          expect(raw.tokens[1]).toEqual value: '\\' + symbol, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(raw.tokens[2]).toEqual value: endValue, scopes: regexScope.concat ['punctuation.definition.string.end.php']
+
+          expect(decoded.tokens[0]).toEqual value: beginValue, scopes: regexScope.concat ['punctuation.definition.string.begin.php']
+          expect(decoded.tokens[1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+          expect(decoded.tokens[2]).toEqual value: symbol, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(decoded.tokens[3]).toEqual value: endValue, scopes: regexScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize apostrophe escapes according to quoted PHP host rules', ->
       # Build the PHP strings from pieces so apostrophe transport stays readable and exact.
       doubleQuotedRaw = grammar.tokenizeLine "\"/" + "\\'" + "/\""
