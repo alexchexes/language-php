@@ -622,41 +622,72 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[2]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(singleQuoted.tokens[3]).toEqual value: ';', scopes: quotedSingleRegexpScope
 
-    it 'should tokenize structural character-class opener parity in interpreted quoted regexes', ->
-      twoBackslashes = '\\'.repeat 2
-      threeBackslashes = '\\'.repeat 3
-      fourBackslashes = '\\'.repeat 4
+    it 'should tokenize supported structural opener parity in interpreted quoted regexes from fixtures', ->
+      structuralOpeners = [
+        {
+          opener: '['
+          suffix: 'a]'
+          assertStructured: (tokens, regexScope) ->
+            expect(tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+            expect(tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(regexScope)
+            expect(tokens[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        }
+        {
+          opener: '('
+          suffix: 'a)'
+          assertStructured: (tokens, regexScope) ->
+            expect(tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(tokens[4]).toEqual value: 'a', scopes: regexpGroupContentScopes(regexScope)
+            expect(tokens[5]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+        }
+        {
+          # `{` only becomes structural in this bucket when followed by a valid quantifier body.
+          opener: '{'
+          suffix: '1}'
+          assertStructured: (tokens, regexScope) ->
+            expect(tokens[3]).toEqual value: '{', scopes: regexpRangeQuantifierBeginScopes(regexScope)
+            expect(tokens[4]).toEqual value: '1', scopes: regexpRangeQuantifierScopes(regexScope)
+            expect(tokens[5]).toEqual value: '}', scopes: regexpRangeQuantifierEndScopes(regexScope)
+        }
+      ]
+      quotedHosts = [
+        {
+          beginValue: '"/'
+          endValue: '/"'
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/' + body + '/"'
+        }
+        {
+          beginValue: '\'/'
+          endValue: '/\''
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/" + body + "/'"
+        }
+      ]
 
-      doubleQuotedTwo = grammar.tokenizeLine '"/' + twoBackslashes + '[a-z]/"'
-      doubleQuotedThree = grammar.tokenizeLine '"/' + threeBackslashes + '[a-z]/"'
-      doubleQuotedFour = grammar.tokenizeLine '"/' + fourBackslashes + '[a-z]/"'
-      singleQuotedTwo = grammar.tokenizeLine "'/" + twoBackslashes + "[a-z]/'"
-      singleQuotedThree = grammar.tokenizeLine "'/" + threeBackslashes + "[a-z]/'"
-      singleQuotedFour = grammar.tokenizeLine "'/" + fourBackslashes + "[a-z]/'"
+      for {opener, suffix, assertStructured} in structuralOpeners
+        for {beginValue, endValue, regexScope, wrap} in quotedHosts
+          twoBackslashes = grammar.tokenizeLine wrap '\\'.repeat(2) + opener + suffix
+          threeBackslashes = grammar.tokenizeLine wrap '\\'.repeat(3) + opener + suffix
+          fourBackslashes = grammar.tokenizeLine wrap '\\'.repeat(4) + opener + suffix
 
-      expect(doubleQuotedTwo.tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(doubleQuotedTwo.tokens[2]).toEqual value: '[', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(doubleQuotedTwo.tokens[3]).toEqual value: 'a-z]', scopes: quotedDoubleRegexpScope
+          expect(twoBackslashes.tokens[0]).toEqual value: beginValue, scopes: regexScope.concat ['punctuation.definition.string.begin.php']
+          expect(twoBackslashes.tokens[1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+          expect(twoBackslashes.tokens[2]).toEqual value: opener, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(twoBackslashes.tokens[3]).toEqual value: suffix, scopes: regexScope
+          expect(twoBackslashes.tokens[4]).toEqual value: endValue, scopes: regexScope.concat ['punctuation.definition.string.end.php']
 
-      expect(doubleQuotedThree.tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(doubleQuotedThree.tokens[2]).toEqual value: '\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(doubleQuotedThree.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+          expect(threeBackslashes.tokens[0]).toEqual value: beginValue, scopes: regexScope.concat ['punctuation.definition.string.begin.php']
+          expect(threeBackslashes.tokens[1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+          expect(threeBackslashes.tokens[2]).toEqual value: '\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          assertStructured threeBackslashes.tokens, regexScope
+          expect(threeBackslashes.tokens[6]).toEqual value: endValue, scopes: regexScope.concat ['punctuation.definition.string.end.php']
 
-      expect(doubleQuotedFour.tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
-      expect(doubleQuotedFour.tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(doubleQuotedFour.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
-
-      expect(singleQuotedTwo.tokens[1]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(singleQuotedTwo.tokens[2]).toEqual value: '[', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(singleQuotedTwo.tokens[3]).toEqual value: 'a-z]', scopes: quotedSingleRegexpScope
-
-      expect(singleQuotedThree.tokens[1]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(singleQuotedThree.tokens[2]).toEqual value: '\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(singleQuotedThree.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
-
-      expect(singleQuotedFour.tokens[1]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
-      expect(singleQuotedFour.tokens[2]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(singleQuotedFour.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+          expect(fourBackslashes.tokens[0]).toEqual value: beginValue, scopes: regexScope.concat ['punctuation.definition.string.begin.php']
+          expect(fourBackslashes.tokens[1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php']
+          expect(fourBackslashes.tokens[2]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+          assertStructured fourBackslashes.tokens, regexScope
+          expect(fourBackslashes.tokens[6]).toEqual value: endValue, scopes: regexScope.concat ['punctuation.definition.string.end.php']
 
     it 'should decompose repeated interpreted backslashes inside quoted regex character classes', ->
       fourBackslashes = '\\'.repeat 4
