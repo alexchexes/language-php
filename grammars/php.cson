@@ -3718,10 +3718,12 @@
       }
     ]
   'regexp-character-class-double-quoted':
-    'begin': '((\\[))(?:\\^?\\])?'
+    'begin': '((\\[))(\\^)?(?:\\])?'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
+      '3':
+        'name': 'keyword.operator.negation.regexp.php'
     'contentName': 'constant.other.character-class.set.regexp.php'
     'end': '((\\]))|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
@@ -3751,10 +3753,12 @@
       }
     ]
   'regexp-character-class-single-quoted':
-    'begin': '((\\[))(?:\\^?\\])?'
+    'begin': '((\\[))(\\^)?(?:\\])?'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
+      '3':
+        'name': 'keyword.operator.negation.regexp.php'
     'contentName': 'constant.other.character-class.set.regexp.php'
     'end': '((\\]))|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
