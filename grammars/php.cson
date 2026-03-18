@@ -3233,6 +3233,13 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'match': '(\\\\\\\\)(\\\\)(?=\\])'
+  'regexp-character-class-decoded-escaped-backslash-before-posix-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '(\\\\\\\\)(\\\\)(?=\\[:\\^?[A-Za-z]+:\\])'
   'regexp-character-class-decoded-closing-bracket-escape-interpreted':
     'captures':
       '1':
@@ -3242,6 +3249,15 @@
       '3':
         'name': 'constant.character.escape.regexp.php'
     'match': '((\\\\\\\\))(\\])'
+  'regexp-character-class-decoded-posix-opening-bracket-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))(\\[)(?=:\\^?[A-Za-z]+:\\])'
   'regexp-character-class-apostrophe-escape-single-quoted':
     'match': '\\\\\''
     'name': 'constant.character.escape.php'
@@ -3280,10 +3296,16 @@
         'include': '#regexp-character-class-decoded-escaped-backslash-before-closing-bracket-interpreted'
       }
       {
+        'include': '#regexp-character-class-decoded-escaped-backslash-before-posix-interpreted'
+      }
+      {
         'include': '#regexp-decoded-escaped-backslash-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-closing-bracket-escape-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-posix-opening-bracket-escape-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-literal-escape-interpreted'
