@@ -3001,6 +3001,23 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x[0-9A-Fa-f]{2})'
+  # In interpreted hosts, source like `\\\x21` / `\\\u{21}` first spends one
+  # backslash pair on PHP transport, and the remaining code-point escape is
+  # still PHP string syntax rather than source-level regex syntax.
+  'regexp-transported-php-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.hex.php'
+    'match': '(\\\\\\\\)(\\\\x[0-9A-Fa-f]{1,2})'
+  'regexp-transported-php-unicode-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.unicode.php'
+    'match': '(\\\\\\\\)(\\\\u\\{[0-9A-Fa-f]+\\})'
   'regexp-decoded-braced-hex-escape-redundant-interpreted':
     'captures':
       '1':
@@ -3458,6 +3475,12 @@
         'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
       }
       {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
       }
       {
@@ -3514,6 +3537,12 @@
     'patterns': [
       {
         'include': '#regexp-decoded-double-quote-escape-double-quoted'
+      }
+      {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
       }
       {
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
@@ -4459,6 +4488,12 @@
         'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
       }
       {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
@@ -4673,6 +4708,12 @@
       }
       {
         'include': '#regexp-decoded-double-quote-escape-double-quoted'
+      }
+      {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
       }
       {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
