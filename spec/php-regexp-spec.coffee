@@ -22,7 +22,7 @@ describe 'PHP regexp grammar', ->
   nowdocRegexpBoundaryScope = ['source.php', 'string.unquoted.nowdoc.php', 'meta.embedded.regexp.php']
   nowdocRegexpScope = nowdocRegexpBoundaryScope.concat ['string.regexp.nowdoc.php']
   regexpCharacterClassBoundaryScope = ['meta.embedded.character-class.regexp.php']
-  regexpCharacterClassScope = ['meta.embedded.character-class.regexp.php', 'constant.other.character-class.set.regexp.php']
+  regexpCharacterClassScope = ['meta.embedded.character-class.regexp.php', 'string.regexp.character-class.php', 'constant.other.character-class.set.regexp.php']
   regexpCharacterClassScopes = (baseScope) ->
     baseScope.concat regexpCharacterClassScope
   regexpCharacterClassPunctuationScopes = (baseScope) ->
