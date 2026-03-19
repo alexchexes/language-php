@@ -1662,13 +1662,13 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
           expect(lines[1][2]).toEqual value: '!', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
-          expect(lines[1][3]).toEqual value: '-', scopes: regexpCharacterClassGenericRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+          expect(lines[1][3]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(regexScope)
           expect(lines[1][4]).toEqual value: '~', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
           expect(lines[1][5]).toEqual value: 'а', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
-          expect(lines[1][6]).toEqual value: '-', scopes: regexpCharacterClassGenericRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+          expect(lines[1][6]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(regexScope)
           expect(lines[1][7]).toEqual value: 'я', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
           expect(lines[1][8]).toEqual value: '😀', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
-          expect(lines[1][9]).toEqual value: '-', scopes: regexpCharacterClassGenericRangeScopes(regexScope).concat ['keyword.operator.range.regexp.php']
+          expect(lines[1][9]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(regexScope)
           expect(lines[1][10]).toEqual value: '🤓', scopes: regexpCharacterClassGenericRangeScopes(regexScope)
           expect(lines[1][11]).toEqual value: 'Q', scopes: regexpCharacterClassLiteralScopes(regexScope)
           expect(lines[1][12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)

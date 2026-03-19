@@ -3713,11 +3713,14 @@
     },
     "regexp-character-class-generic-range-explicit": {
       "captures": {
-        "0": {
+        "1": {
           "name": "support.class.range.regexp.php"
         },
         "2": {
           "name": "keyword.operator.range.regexp.php"
+        },
+        "3": {
+          "name": "support.class.range.regexp.php"
         }
       },
       "match": "([^\\\\\\[\\]0-9-])(-)([^\\\\\\[\\]0-9-])",

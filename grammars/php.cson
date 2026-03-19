@@ -3536,10 +3536,12 @@
     'match': '(\\\\[0-7]{1,3})(-)(\\\\[0-7]{1,3})'
   'regexp-character-class-generic-range-explicit':
     'captures':
-      '0':
+      '1':
         'name': 'support.class.range.regexp.php'
       '2':
         'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'support.class.range.regexp.php'
     'match': '([^\\\\\\[\\]0-9-])(-)([^\\\\\\[\\]0-9-])'
     'name': 'constant.other.character-class.range.regexp.php'
   'regexp-character-class-numeric-literal-explicit':
