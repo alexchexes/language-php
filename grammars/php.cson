@@ -3187,7 +3187,6 @@
       '3':
         'name': 'constant.numeric.regexp.php'
     'match': '([0-9])(-)([0-9])'
-    'name': 'constant.numeric.character-class.range.regexp.php'
   'regexp-character-class-hex-range-explicit':
     'captures':
       '0':
@@ -3211,7 +3210,6 @@
       '3':
         'name': 'constant.numeric.regexp.php'
     'match': '(\\\\[0-7]{1,3})(-)(\\\\[0-7]{1,3})'
-    'name': 'constant.numeric.character-class.range.regexp.php'
   'regexp-character-class-generic-range-explicit':
     'captures':
       '0':
