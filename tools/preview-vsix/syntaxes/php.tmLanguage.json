@@ -4097,7 +4097,7 @@
           "name": "keyword.operator.negation.regexp.php"
         }
       },
-      "contentName": "constant.other.character-class.set.regexp.php",
+      "contentName": "string.regexp.character-class.php constant.other.character-class.set.regexp.php",
       "end": "(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
       "endCaptures": {
         "1": {
@@ -4151,7 +4151,7 @@
           "name": "keyword.operator.negation.regexp.php"
         }
       },
-      "contentName": "constant.other.character-class.set.regexp.php",
+      "contentName": "string.regexp.character-class.php constant.other.character-class.set.regexp.php",
       "end": "(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
       "endCaptures": {
         "1": {
@@ -4178,7 +4178,7 @@
           "name": "keyword.operator.negation.regexp.php"
         }
       },
-      "contentName": "constant.other.character-class.set.regexp.php",
+      "contentName": "string.regexp.character-class.php constant.other.character-class.set.regexp.php",
       "end": "(\\])|(?=/[imsxeADSUXu]*\")|(?=$)",
       "endCaptures": {
         "1": {
@@ -4232,7 +4232,7 @@
           "name": "keyword.operator.negation.regexp.php"
         }
       },
-      "contentName": "constant.other.character-class.set.regexp.php",
+      "contentName": "string.regexp.character-class.php constant.other.character-class.set.regexp.php",
       "end": "(\\])|(?=/[imsxeADSUXu]*')|(?=$)",
       "endCaptures": {
         "1": {
