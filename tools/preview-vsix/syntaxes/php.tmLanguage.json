@@ -5984,6 +5984,9 @@
           "include": "#regexp-double-quote-escape-explicit"
         },
         {
+          "include": "#regexp-quoted-literal-end-explicit"
+        },
+        {
           "include": "#regexp-explicit-escapes"
         },
         {
