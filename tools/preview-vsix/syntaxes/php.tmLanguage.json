@@ -3651,13 +3651,13 @@
           "name": "constant.other.character-class.range.regexp.php"
         },
         "1": {
-          "name": "variable.other.constant.character-class.range.regexp.php"
+          "name": "variable.other.constant.range.regexp.php"
         },
         "2": {
           "name": "keyword.operator.range.regexp.php"
         },
         "3": {
-          "name": "variable.other.constant.character-class.range.regexp.php"
+          "name": "variable.other.constant.range.regexp.php"
         }
       },
       "match": "([A-Za-z])(-)([A-Za-z])"
@@ -3681,9 +3681,6 @@
     },
     "regexp-character-class-hex-range-explicit": {
       "captures": {
-        "0": {
-          "name": "support.class.range.regexp.php"
-        },
         "1": {
           "name": "constant.character.numeric.regexp.php"
         },
@@ -3771,9 +3768,6 @@
     },
     "regexp-character-class-braced-hex-range-decoded-left-interpreted": {
       "captures": {
-        "0": {
-          "name": "support.class.range.regexp.php"
-        },
         "2": {
           "name": "constant.character.escape.php"
         },
@@ -3795,9 +3789,6 @@
     },
     "regexp-character-class-braced-hex-range-decoded-right-interpreted": {
       "captures": {
-        "0": {
-          "name": "support.class.range.regexp.php"
-        },
         "1": {
           "name": "constant.character.numeric.regexp.php"
         },
@@ -3819,9 +3810,6 @@
     },
     "regexp-character-class-braced-hex-range-decoded-both-interpreted": {
       "captures": {
-        "0": {
-          "name": "support.class.range.regexp.php"
-        },
         "2": {
           "name": "constant.character.escape.php"
         },
