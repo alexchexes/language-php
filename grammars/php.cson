@@ -3039,6 +3039,9 @@
       '2':
         'name': 'constant.character.escape.unicode.php'
     'match': '(\\\\\\\\)(\\\\u\\{[0-9A-Fa-f]+\\})'
+  'regexp-transported-backslash-before-interpolation-interpreted':
+    'match': '\\\\\\\\(?=(?:\\{(?=\\$.*?\\})|\\$+[a-z_\\x{7f}-\\x{10ffff}]))'
+    'name': 'constant.character.escape.php'
   'regexp-decoded-braced-hex-escape-redundant-interpreted':
     'captures':
       '1':
@@ -3508,6 +3511,9 @@
         'include': '#regexp-transported-php-unicode-escape-interpreted'
       }
       {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
+      }
+      {
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
       }
       {
@@ -3576,6 +3582,9 @@
       }
       {
         'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
       }
       {
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
@@ -4533,6 +4542,9 @@
         'include': '#regexp-transported-php-unicode-escape-interpreted'
       }
       {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
+      }
+      {
         'include': '#regexp-decoded-overlap-escapes-interpreted'
       }
       {
@@ -4762,6 +4774,9 @@
       }
       {
         'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
       }
       {
         'include': '#regexp-decoded-overlap-escapes-interpreted'

@@ -84,6 +84,13 @@ describe 'PHP regexp grammar', ->
     regexpRangeQuantifierScopes(baseScope).concat ['punctuation.definition.quantifier.begin.regexp.php']
   regexpRangeQuantifierEndScopes = (baseScope) ->
     regexpRangeQuantifierScopes(baseScope).concat ['punctuation.definition.quantifier.end.regexp.php']
+  interpretedTransportBackslashScopes = (baseScope, slashes) ->
+    [0...(slashes / 2)].map (pairIndex) ->
+      scopes = baseScope.concat ['constant.character.escape.php']
+      if pairIndex % 2 is 1
+        scopes.concat ['constant.character.escape.regexp.php']
+      else
+        scopes
 
   it 'parses the grammar', ->
     expect(grammar).toBeTruthy()
@@ -176,6 +183,19 @@ describe 'PHP regexp grammar', ->
       expect(tokens[4]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
       expect(tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should keep interpolation after interpreted backslash transport in double quoted regex bodies', ->
+      [2, 4, 6, 8].forEach (slashes) ->
+        expectedBackslashes = interpretedTransportBackslashScopes quotedDoubleRegexpScope, slashes
+        {tokens} = grammar.tokenizeLine '"/' + '\\'.repeat(slashes) + '$a/"'
+
+        expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+        for scopes, i in expectedBackslashes
+          expect(tokens[i + 1]).toEqual value: '\\\\', scopes: scopes
+        variableIndex = expectedBackslashes.length + 1
+        expect(tokens[variableIndex]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[variableIndex + 1]).toEqual value: 'a', scopes: quotedDoubleRegexpScope.concat ['variable.other.php']
+        expect(tokens[variableIndex + 2]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize interpolation inside double quoted regex character classes', ->
       {tokens} = grammar.tokenizeLine "\"/[{$value}\\d]/\""
 
@@ -188,6 +208,21 @@ describe 'PHP regexp grammar', ->
       expect(tokens[6]).toEqual value: '\\d', scopes: regexpCharacterClassClassEscapeScopes(quotedDoubleRegexpScope)
       expect(tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
       expect(tokens[8]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should keep interpolation after interpreted backslash transport in double quoted regex character classes', ->
+      [2, 4, 6, 8].forEach (slashes) ->
+        expectedBackslashes = interpretedTransportBackslashScopes regexpCharacterClassScopes(quotedDoubleRegexpScope), slashes
+        {tokens} = grammar.tokenizeLine '"/[' + '\\'.repeat(slashes) + '$a]/"'
+
+        expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+        expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+        for scopes, i in expectedBackslashes
+          expect(tokens[i + 2]).toEqual value: '\\\\', scopes: scopes
+        variableIndex = expectedBackslashes.length + 2
+        expect(tokens[variableIndex]).toEqual value: '$', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+        expect(tokens[variableIndex + 1]).toEqual value: 'a', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php']
+        expect(tokens[variableIndex + 2]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+        expect(tokens[variableIndex + 3]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize rich character class constructs in double quoted regexes', ->
       {tokens} = grammar.tokenizeLine '"/[a-z0-9\\x{4A}-\\x{4f}J[:digit:]\\d\\p{L}\\-\\]]/"'
@@ -2003,6 +2038,23 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][8]).toEqual value: '\\$', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
             expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
 
+          it 'should keep interpolation after interpreted backslash transport in REGEX heredoc bodies', ->
+            [2, 4, 6, 8].forEach (slashes) ->
+              expectedBackslashes = interpretedTransportBackslashScopes heredocRegexpScope, slashes
+              lines = grammar.tokenizeLines [
+                '$r = <<<REGEX'
+                '/' + '\\'.repeat(slashes) + '$a/'
+                'REGEX;'
+              ].join "\n"
+
+              expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+              for scopes, i in expectedBackslashes
+                expect(lines[1][i + 1]).toEqual value: '\\\\', scopes: scopes
+              variableIndex = expectedBackslashes.length + 1
+              expect(lines[1][variableIndex]).toEqual value: '$', scopes: heredocRegexpScope.concat ['variable.other.php', 'punctuation.definition.variable.php']
+              expect(lines[1][variableIndex + 1]).toEqual value: 'a', scopes: heredocRegexpScope.concat ['variable.other.php']
+              expect(lines[1][variableIndex + 2]).toEqual value: '/', scopes: heredocRegexpScope
+
         if description is 'REGEXP nowdoc'
           it 'should keep overlapping single-backslash escapes regex-first in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines """
@@ -2662,6 +2714,25 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][6]).toEqual value: '\\d', scopes: regexpCharacterClassClassEscapeScopes(heredocRegexpScope)
       expect(lines[1][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][8]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should keep interpolation after interpreted backslash transport in REGEXP heredoc character classes', ->
+      [2, 4, 6, 8].forEach (slashes) ->
+        expectedBackslashes = interpretedTransportBackslashScopes regexpCharacterClassScopes(heredocRegexpScope), slashes
+        lines = grammar.tokenizeLines [
+          '$r = <<<REGEXP'
+          '/[' + '\\'.repeat(slashes) + '$a]/'
+          'REGEXP;'
+        ].join "\n"
+
+        expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+        for scopes, i in expectedBackslashes
+          expect(lines[1][i + 2]).toEqual value: '\\\\', scopes: scopes
+        variableIndex = expectedBackslashes.length + 2
+        expect(lines[1][variableIndex]).toEqual value: '$', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+        expect(lines[1][variableIndex + 1]).toEqual value: 'a', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php']
+        expect(lines[1][variableIndex + 2]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+        expect(lines[1][variableIndex + 3]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'should keep single-backslash overlapping escapes PHP-first in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines '''
