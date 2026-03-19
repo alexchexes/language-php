@@ -3816,6 +3816,13 @@
         'name': 'keyword.operator.range.regexp.php'
       }
     ]
+  # Character-class content needs two nested scopes:
+  # - "string.*" so VS Code does not treat escaped/literal class contents like `\]`, `[` or `{`
+  #   as real bracket tokens
+  # - "constant.other.character-class.set.*" for the normal regex class-set semantics/themes
+  # We avoid space-joined scope names for compatibility, so each host keeps a tiny
+  # nested "...set-..." wrapper that mirrors the outer host-specific end
+  # condition and stops right before the real closing `]`.
   'regexp-character-class-heredoc':
     'begin': '(\\[)(\\^)?(?:\\])?'
     'beginCaptures':
@@ -3823,7 +3830,7 @@
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
-    'contentName': 'string.regexp.character-class.php constant.other.character-class.set.regexp.php'
+    'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '1':
@@ -3831,6 +3838,15 @@
     # Explicit REGEX/REGEXP heredocs keep doubled source backslashes available
     # for decoded regex escapes, but single-backslash overlap stays PHP-first.
     'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-set-heredoc'
+      }
+    ]
+  'regexp-character-class-set-heredoc':
+    'begin': '(?=[^\\]])'
+    'end': '(?=\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
         'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
@@ -3873,7 +3889,7 @@
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
-    'contentName': 'string.regexp.character-class.php constant.other.character-class.set.regexp.php'
+    'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '1':
@@ -3881,6 +3897,15 @@
     # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
     # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-set-nowdoc'
+      }
+    ]
+  'regexp-character-class-set-nowdoc':
+    'begin': '(?=[^\\]])'
+    'end': '(?=\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
         'include': '#regexp-character-class-common-explicit-leading'
@@ -3896,7 +3921,7 @@
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
-    'contentName': 'string.regexp.character-class.php constant.other.character-class.set.regexp.php'
+    'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
       '1':
@@ -3904,6 +3929,15 @@
     # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
     # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-set-double-quoted'
+      }
+    ]
+  'regexp-character-class-set-double-quoted':
+    'begin': '(?=[^\\]])'
+    'end': '(?=\\])|(?=/[imsxeADSUXu]*")|(?=$)'
+    'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
         'include': '#regexp-decoded-double-quote-escape-double-quoted'
@@ -3946,7 +3980,7 @@
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
-    'contentName': 'string.regexp.character-class.php constant.other.character-class.set.regexp.php'
+    'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
       '1':
@@ -3954,6 +3988,15 @@
     # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
     # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-character-class-set-single-quoted'
+      }
+    ]
+  'regexp-character-class-set-single-quoted':
+    'begin': '(?=[^\\]])'
+    'end': '(?=\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
         'include': '#regexp-decoded-apostrophe-escape-single-quoted'
