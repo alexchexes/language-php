@@ -2951,9 +2951,13 @@
   'regexp-double-quote-escape-explicit':
     'match': '\\\\"'
     'name': 'constant.character.escape.regexp.php'
-  'regexp-dollar-escape-double-quoted-php':
-    'match': '\\\\\\$'
-    'name': 'constant.character.escape.php'
+  'regexp-dollar-anchor-php-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.control.anchor.regexp.php'
+    'match': '((\\\\\\$))'
   'regexp-decoded-backreference-numeric-interpreted':
     'captures':
       '1':
@@ -4535,6 +4539,9 @@
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
       }
       {
+        'include': '#regexp-dollar-anchor-php-interpreted'
+      }
+      {
         'include': '#interpolation'
       }
       {
@@ -4763,7 +4770,7 @@
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
       }
       {
-        'include': '#regexp-dollar-escape-double-quoted-php'
+        'include': '#regexp-dollar-anchor-php-interpreted'
       }
       {
         'include': '#regexp-group-escape-explicit'
