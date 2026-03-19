@@ -3167,6 +3167,8 @@
     'name': 'meta.embedded.quantifier.range.regexp.php'
   'regexp-character-class-letter-range-explicit':
     'captures':
+      '0':
+        'name': 'constant.other.character-class.range.regexp.php'
       '1':
         'name': 'variable.other.constant.character-class.range.regexp.php'
       '2':
@@ -3176,6 +3178,8 @@
     'match': '([A-Za-z])(-)([A-Za-z])'
   'regexp-character-class-digit-range-explicit':
     'captures':
+      '0':
+        'name': 'constant.other.character-class.range.regexp.php'
       '1':
         'name': 'constant.numeric.regexp.php'
       '2':
@@ -3196,6 +3200,18 @@
         'name': 'constant.character.numeric.regexp.php'
     'match': '(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})(-)(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})'
     'name': 'constant.other.character-class.range.regexp.php'
+  'regexp-character-class-octal-range-explicit':
+    'captures':
+      '0':
+        'name': 'constant.other.character-class.range.regexp.php'
+      '1':
+        'name': 'constant.numeric.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+    'match': '(\\\\[0-7]{1,3})(-)(\\\\[0-7]{1,3})'
+    'name': 'constant.numeric.character-class.range.regexp.php'
   'regexp-character-class-generic-range-explicit':
     'captures':
       '0':
@@ -3437,6 +3453,9 @@
       }
       {
         'include': '#regexp-character-class-hex-range-explicit'
+      }
+      {
+        'include': '#regexp-character-class-octal-range-explicit'
       }
       {
         'include': '#regexp-character-class-digit-range-explicit'
