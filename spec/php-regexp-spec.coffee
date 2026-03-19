@@ -500,6 +500,20 @@ describe 'PHP regexp grammar', ->
       expect(tokens[4]).toEqual value: '\\u{21}', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.unicode.php']
       expect(tokens[5]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should keep transported PHP octal and simple escapes PHP-first in double quoted regex bodies', ->
+      {tokens} = grammar.tokenizeLine '"/' + '\\'.repeat(3) + '1' + '\\'.repeat(3) + 'n' + '\\'.repeat(3) + 'v' + '\\'.repeat(3) + '$/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[2]).toEqual value: '\\1', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.octal.php']
+      expect(tokens[3]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[4]).toEqual value: '\\n', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[5]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[6]).toEqual value: '\\v', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[7]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[8]).toEqual value: '\\$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[9]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize decoded bell escapes in interpreted quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\a/"'
       singleQuoted = grammar.tokenizeLine "'/\\\\a/'"
@@ -1968,6 +1982,24 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
             expect(lines[1][4]).toEqual value: '\\u{21}', scopes: heredocRegexpScope.concat ['constant.character.escape.unicode.php']
             expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+
+          it 'should keep transported PHP octal and simple escapes PHP-first in REGEX heredoc bodies', ->
+            lines = grammar.tokenizeLines [
+              '$r = <<<REGEX'
+              '/' + '\\'.repeat(3) + '1' + '\\'.repeat(3) + 'n' + '\\'.repeat(3) + 'v' + '\\'.repeat(3) + '$/'
+              'REGEX;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][2]).toEqual value: '\\1', scopes: heredocRegexpScope.concat ['constant.character.escape.octal.php']
+            expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][4]).toEqual value: '\\n', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][5]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][6]).toEqual value: '\\v', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][7]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][8]).toEqual value: '\\$', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
 
         if description is 'REGEXP nowdoc'
           it 'should keep overlapping single-backslash escapes regex-first in REGEXP nowdoc', ->
