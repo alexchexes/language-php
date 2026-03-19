@@ -3236,6 +3236,11 @@
   'regexp-character-class-octal-escape-explicit':
     'match': '\\\\[0-7]{1,3}'
     'name': 'constant.numeric.regexp.php'
+  'regexp-character-class-invalid-escape-explicit':
+    # Raw class escapes that PCRE rejects outright; keep them distinct from the
+    # valid shorthand/class families and from odd literalized cases like `\\g`
+    'match': '\\\\(?:c(?![A-Za-z])|[iklmopquyzABCEFGIKLMNOQRTUXYZ]|p(?!\\{)|P(?!\\{))'
+    'name': 'invalid.illegal.escape.regexp.php'
   'regexp-character-class-literal-escape-explicit':
     'match': '\\\\(?:[0-7]{1,3}|c[A-Za-z]|.)'
     'name': 'constant.character.escape.regexp.php'
@@ -3625,6 +3630,9 @@
       }
       {
         'include': '#regexp-property-escape'
+      }
+      {
+        'include': '#regexp-character-class-invalid-escape-explicit'
       }
       {
         'include': '#regexp-character-class-octal-escape-explicit'
