@@ -84,6 +84,12 @@ describe 'PHP regexp grammar', ->
     regexpQuotedLiteralBoundaryScopes(baseScope).concat ['constant.character.escape.php']
   regexpQuotedLiteralContentScopes = (baseScope) ->
     regexpQuotedLiteralBoundaryScopes(baseScope).concat ['string.regexp.quoted-literal.php']
+  regexpCharacterClassQuotedLiteralBoundaryScopes = (baseScope) ->
+    regexpCharacterClassScopes(baseScope).concat regexpQuotedLiteralBoundaryScope
+  regexpCharacterClassDecodedQuotedLiteralTransportScopes = (baseScope) ->
+    regexpCharacterClassQuotedLiteralBoundaryScopes(baseScope).concat ['constant.character.escape.php']
+  regexpCharacterClassQuotedLiteralContentScopes = (baseScope) ->
+    regexpCharacterClassQuotedLiteralBoundaryScopes(baseScope).concat ['string.regexp.quoted-literal.php']
   regexpRangeQuantifierScopes = (baseScope) ->
     baseScope.concat ['meta.embedded.quantifier.range.regexp.php', 'keyword.operator.quantifier.regexp.php']
   regexpRangeQuantifierBeginScopes = (baseScope) ->
@@ -308,6 +314,64 @@ describe 'PHP regexp grammar', ->
       expect(negatedSingleQuoted.tokens[5]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedSingleRegexpScope)
       expect(negatedSingleQuoted.tokens[6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
       expect(negatedSingleQuoted.tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
+    it 'should tokenize quoted literals inside quoted regex character classes', ->
+      doubleQuoted = grammar.tokenizeLine ['"/[', '\\Q', '[', '\\"', ']', '\\E', 'a]/"'].join ''
+      singleQuoted = grammar.tokenizeLine ["'/[", '\\Q', '[', "\\'", ']', '\\E', "a]/'"].join ''
+
+      expect(doubleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\"', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[7]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[8]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: '\\\'', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[5]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[7]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[8]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
+    it 'should tokenize decoded and asymmetric quoted-literal boundaries in quoted regex character classes', ->
+      decodedStartDoubleQuoted = grammar.tokenizeLine ['"/[', '\\\\', 'Q', '[', '\\"', ']', '\\E', 'a]/"'].join ''
+      rawStartDoubleQuoted = grammar.tokenizeLine ['"/[', '\\Q', '[', '\\"', ']', '\\\\', 'E', 'a]/"'].join ''
+      decodedStartSingleQuoted = grammar.tokenizeLine ["'/[", '\\\\', 'Q', '[', "\\'", ']', '\\E', "a]/'"].join ''
+      rawStartSingleQuoted = grammar.tokenizeLine ["'/[", '\\Q', '[', "\\'", ']', '\\\\', 'E', "a]/'"].join ''
+
+      expect(decodedStartDoubleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(decodedStartDoubleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(quotedDoubleRegexpScope)
+      expect(decodedStartDoubleQuoted.tokens[3]).toEqual value: 'Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(decodedStartDoubleQuoted.tokens[4]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(decodedStartDoubleQuoted.tokens[5]).toEqual value: '\\"', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(decodedStartDoubleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(decodedStartDoubleQuoted.tokens[7]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(rawStartDoubleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(rawStartDoubleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(rawStartDoubleQuoted.tokens[4]).toEqual value: '\\"', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(rawStartDoubleQuoted.tokens[5]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(rawStartDoubleQuoted.tokens[6]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(quotedDoubleRegexpScope)
+      expect(rawStartDoubleQuoted.tokens[7]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(decodedStartSingleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(decodedStartSingleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(quotedSingleRegexpScope)
+      expect(decodedStartSingleQuoted.tokens[3]).toEqual value: 'Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(decodedStartSingleQuoted.tokens[4]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(decodedStartSingleQuoted.tokens[5]).toEqual value: '\\\'', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(decodedStartSingleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(decodedStartSingleQuoted.tokens[7]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(rawStartSingleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(rawStartSingleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(rawStartSingleQuoted.tokens[4]).toEqual value: '\\\'', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(rawStartSingleQuoted.tokens[5]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(rawStartSingleQuoted.tokens[6]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(quotedSingleRegexpScope)
+      expect(rawStartSingleQuoted.tokens[7]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
 
     it 'should keep PHP string escapes inside double quoted regex character classes', ->
       {tokens} = grammar.tokenizeLine '"/[\\x01-\\x09\\n\\r\\$]/"'
@@ -2916,6 +2980,51 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][8]).toEqual value: '/', scopes: heredocRegexpScope
 
+    it 'should tokenize quoted literals inside REGEXP heredoc character classes', ->
+      rawLines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\Q[']\\Ea]/
+        REGEXP;
+      '''
+      decodedLines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\Q[']\\\\Ea]/
+        REGEXP;
+      '''
+      decodedStartLines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\Q[']\\Ea]/
+        REGEXP;
+      '''
+      rawStartLines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\Q[']\\\\Ea]/
+        REGEXP;
+      '''
+
+      expect(rawLines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(rawLines[1][2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(rawLines[1][3]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
+      expect(rawLines[1][4]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(rawLines[1][5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(heredocRegexpScope)
+      expect(rawLines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+
+      expect(decodedLines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(heredocRegexpScope)
+      expect(decodedLines[1][3]).toEqual value: 'Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(decodedLines[1][4]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
+      expect(decodedLines[1][5]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(heredocRegexpScope)
+      expect(decodedLines[1][6]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(decodedStartLines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(heredocRegexpScope)
+      expect(decodedStartLines[1][3]).toEqual value: 'Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(decodedStartLines[1][4]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
+      expect(decodedStartLines[1][5]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(rawStartLines[1][2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(rawStartLines[1][3]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
+      expect(rawStartLines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(heredocRegexpScope)
+      expect(rawStartLines[1][5]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+
     it 'should keep interpolation after interpreted backslash transport in REGEXP heredoc character classes', ->
       [2, 4, 6, 8].forEach (slashes) ->
         expectedBackslashes = interpretedTransportBackslashScopes regexpCharacterClassScopes(heredocRegexpScope), slashes
@@ -3083,6 +3192,28 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
       expect(lines[1][12]).toEqual value: '/', scopes: nowdocRegexpScope
       expect(lines[1].some((token) -> 'variable.other.php' in token.scopes)).toBe false
+
+    it 'should tokenize quoted literals inside REGEXP nowdoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[\\Q[]\\Ea]/
+        /[\\Q[']\\Ea]/
+        REGEXP;
+      '''
+
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(nowdocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[1][3]).toEqual value: '[]', scopes: regexpCharacterClassQuotedLiteralContentScopes(nowdocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(nowdocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[1][5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(nowdocRegexpScope)
+      expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+
+      expect(lines[2][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[2][2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(nowdocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[2][3]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(nowdocRegexpScope)
+      expect(lines[2][4]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(nowdocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[2][5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(nowdocRegexpScope)
+      expect(lines[2][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
 
     it 'should keep overlapping single-backslash escapes raw-regex in REGEXP nowdoc character classes', ->
       lines = grammar.tokenizeLines '''
