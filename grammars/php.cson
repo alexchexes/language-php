@@ -3277,6 +3277,9 @@
   'regexp-double-quote-escape-explicit':
     'match': '\\\\"'
     'name': 'constant.character.escape.regexp.php'
+  'regexp-dollar-escape-double-quoted-php':
+    'match': '\\\\\\$'
+    'name': 'constant.character.escape.php'
   'regexp-decoded-backreference-numeric-interpreted':
     'captures':
       '1':
@@ -5084,6 +5087,9 @@
       }
       {
         'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
+        'include': '#regexp-dollar-escape-double-quoted-php'
       }
       {
         'include': '#regexp-group-escape-explicit'

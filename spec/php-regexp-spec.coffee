@@ -233,7 +233,7 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
     it 'should keep PHP string escapes inside double quoted regex character classes', ->
-      {tokens} = grammar.tokenizeLine '"/[\\x01-\\x09\\n\\r]/"'
+      {tokens} = grammar.tokenizeLine '"/[\\x01-\\x09\\n\\r\\$]/"'
 
       expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
       expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
@@ -242,8 +242,9 @@ describe 'PHP regexp grammar', ->
       expect(tokens[4]).toEqual value: '\\x09', scopes: regexpCharacterClassPhpHexEscapeScopes(quotedDoubleRegexpScope)
       expect(tokens[5]).toEqual value: '\\n', scopes: regexpCharacterClassPhpEscapeScopes(quotedDoubleRegexpScope)
       expect(tokens[6]).toEqual value: '\\r', scopes: regexpCharacterClassPhpEscapeScopes(quotedDoubleRegexpScope)
-      expect(tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
-      expect(tokens[8]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(tokens[7]).toEqual value: '\\$', scopes: regexpCharacterClassPhpEscapeScopes(quotedDoubleRegexpScope)
+      expect(tokens[8]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(tokens[9]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize decoded overlapping escapes in double quoted regex character classes', ->
       {tokens} = grammar.tokenizeLine '"/[\\\\1\\\\x41\\\\n\\\\v\\\\$]/"'
@@ -467,12 +468,13 @@ describe 'PHP regexp grammar', ->
       expect(tokens[9]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should keep PHP string escapes while adding regex body escapes in double quoted regexes', ->
-      {tokens} = grammar.tokenizeLine '"/\\n\\d/"'
+      {tokens} = grammar.tokenizeLine '"/\\n\\$\\d/"'
 
       expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
       expect(tokens[1]).toEqual value: '\\n', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
-      expect(tokens[2]).toEqual value: '\\d', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(tokens[3]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(tokens[2]).toEqual value: '\\$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(tokens[3]).toEqual value: '\\d', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize decoded overlapping escapes in double quoted regexes', ->
       {tokens} = grammar.tokenizeLine '"/\\\\1\\\\x41\\\\n\\\\v\\\\$/"'
