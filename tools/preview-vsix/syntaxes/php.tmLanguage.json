@@ -4048,6 +4048,193 @@
       },
       "name": "meta.embedded.character-class.posix.regexp.php"
     },
+    "regexp-character-class-quoted-literal-heredoc": {
+      "begin": "(\\\\Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "2": {
+          "name": "constant.character.escape.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#interpolation"
+        }
+      ]
+    },
+    "regexp-character-class-decoded-quoted-literal-heredoc": {
+      "begin": "(\\\\\\\\)(Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#interpolation"
+        }
+      ]
+    },
+    "regexp-character-class-quoted-literal-nowdoc": {
+      "begin": "(\\\\Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\E)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php"
+    },
+    "regexp-character-class-quoted-literal-double-quoted": {
+      "begin": "(\\\\Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "2": {
+          "name": "constant.character.escape.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#interpolation_double_quoted"
+        }
+      ]
+    },
+    "regexp-character-class-decoded-quoted-literal-double-quoted": {
+      "begin": "(\\\\\\\\)(Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#interpolation_double_quoted"
+        }
+      ]
+    },
+    "regexp-character-class-quoted-literal-single-quoted": {
+      "begin": "(\\\\Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "2": {
+          "name": "constant.character.escape.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#single_quote_escape_only"
+        }
+      ]
+    },
+    "regexp-character-class-decoded-quoted-literal-single-quoted": {
+      "begin": "(\\\\\\\\)(Q)",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.quoted-literal.php",
+      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "name": "meta.embedded.quoted-literal.regexp.php",
+      "patterns": [
+        {
+          "include": "#single_quote_escape_only"
+        }
+      ]
+    },
     "regexp-character-class-common-explicit-leading": {
       "patterns": [
         {
@@ -4138,6 +4325,12 @@
       "name": "constant.other.character-class.set.regexp.php",
       "patterns": [
         {
+          "include": "#regexp-character-class-quoted-literal-heredoc"
+        },
+        {
+          "include": "#regexp-character-class-decoded-quoted-literal-heredoc"
+        },
+        {
           "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
         },
         {
@@ -4208,6 +4401,9 @@
       "name": "constant.other.character-class.set.regexp.php",
       "patterns": [
         {
+          "include": "#regexp-character-class-quoted-literal-nowdoc"
+        },
+        {
           "include": "#regexp-character-class-common-explicit-leading"
         },
         {
@@ -4250,6 +4446,12 @@
       "end": "(?=\\])|(?=/[imsxeADSUXu]*\")|(?=$)",
       "name": "constant.other.character-class.set.regexp.php",
       "patterns": [
+        {
+          "include": "#regexp-character-class-quoted-literal-double-quoted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-quoted-literal-double-quoted"
+        },
         {
           "include": "#regexp-decoded-double-quote-escape-double-quoted"
         },
@@ -4320,6 +4522,12 @@
       "end": "(?=\\])|(?=/[imsxeADSUXu]*')|(?=$)",
       "name": "constant.other.character-class.set.regexp.php",
       "patterns": [
+        {
+          "include": "#regexp-character-class-quoted-literal-single-quoted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-quoted-literal-single-quoted"
+        },
         {
           "include": "#regexp-decoded-apostrophe-escape-single-quoted"
         },
