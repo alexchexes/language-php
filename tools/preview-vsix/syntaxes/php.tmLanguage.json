@@ -4088,13 +4088,19 @@
       ]
     },
     "regexp-character-class-heredoc": {
-      "begin": "(\\[)(\\^)?(?:\\])?",
+      "begin": "(\\[)(\\^)?((\\])?)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
         },
         "2": {
           "name": "keyword.operator.negation.regexp.php"
+        },
+        "3": {
+          "name": "string.regexp.character-class.php"
+        },
+        "4": {
+          "name": "constant.other.character-class.set.regexp.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
@@ -4152,13 +4158,19 @@
       ]
     },
     "regexp-character-class-nowdoc": {
-      "begin": "(\\[)(\\^)?(?:\\])?",
+      "begin": "(\\[)(\\^)?((\\])?)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
         },
         "2": {
           "name": "keyword.operator.negation.regexp.php"
+        },
+        "3": {
+          "name": "string.regexp.character-class.php"
+        },
+        "4": {
+          "name": "constant.other.character-class.set.regexp.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
@@ -4189,13 +4201,19 @@
       ]
     },
     "regexp-character-class-double-quoted": {
-      "begin": "(\\[)(\\^)?(?:\\])?",
+      "begin": "(\\[)(\\^)?((\\])?)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
         },
         "2": {
           "name": "keyword.operator.negation.regexp.php"
+        },
+        "3": {
+          "name": "string.regexp.character-class.php"
+        },
+        "4": {
+          "name": "constant.other.character-class.set.regexp.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
@@ -4253,13 +4271,19 @@
       ]
     },
     "regexp-character-class-single-quoted": {
-      "begin": "(\\[)(\\^)?(?:\\])?",
+      "begin": "(\\[)(\\^)?((\\])?)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.character-class.regexp.php"
         },
         "2": {
           "name": "keyword.operator.negation.regexp.php"
+        },
+        "3": {
+          "name": "string.regexp.character-class.php"
+        },
+        "4": {
+          "name": "constant.other.character-class.set.regexp.php"
         }
       },
       "contentName": "string.regexp.character-class.php",
