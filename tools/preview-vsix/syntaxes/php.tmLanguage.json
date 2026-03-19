@@ -3414,6 +3414,28 @@
       },
       "match": "((\\\\\\\\))(x[0-9A-Fa-f]{2})"
     },
+    "regexp-transported-php-octal-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.octal.php"
+        }
+      },
+      "match": "(\\\\\\\\)(\\\\[0-7]{1,3})"
+    },
+    "regexp-transported-php-basic-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.php"
+        }
+      },
+      "match": "(\\\\\\\\)(\\\\[nrtvef$])"
+    },
     "regexp-transported-php-hex-escape-interpreted": {
       "captures": {
         "1": {
@@ -4057,6 +4079,12 @@
           "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
         },
         {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
+        },
+        {
           "include": "#regexp-transported-php-hex-escape-interpreted"
         },
         {
@@ -4127,6 +4155,12 @@
       "patterns": [
         {
           "include": "#regexp-decoded-double-quote-escape-double-quoted"
+        },
+        {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
         },
         {
           "include": "#regexp-transported-php-hex-escape-interpreted"
@@ -5403,6 +5437,12 @@
           "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
         },
         {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
+        },
+        {
           "include": "#regexp-transported-php-hex-escape-interpreted"
         },
         {
@@ -5630,6 +5670,12 @@
         },
         {
           "include": "#regexp-decoded-double-quote-escape-double-quoted"
+        },
+        {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
         },
         {
           "include": "#regexp-transported-php-hex-escape-interpreted"
