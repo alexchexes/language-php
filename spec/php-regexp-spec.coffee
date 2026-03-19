@@ -271,6 +271,42 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[5]).toEqual value: '9', scopes: regexpCharacterClassDigitRangeScopes(quotedSingleRegexpScope).concat ['constant.numeric.regexp.php']
       expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
+    it 'should treat a leading closing bracket as literal class content in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/[]a-z]/"'
+      negatedDoubleQuoted = grammar.tokenizeLine '"/[^]a-z]/"'
+      singleQuoted = grammar.tokenizeLine "'/[]a-z]/'"
+      negatedSingleQuoted = grammar.tokenizeLine "'/[^]a-z]/'"
+
+      expect(doubleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+
+      expect(negatedDoubleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[2]).toEqual value: '^', scopes: regexpCharacterClassBoundaryNegationScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[3]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[5]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+      expect(negatedDoubleQuoted.tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
+      expect(negatedSingleQuoted.tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[2]).toEqual value: '^', scopes: regexpCharacterClassBoundaryNegationScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[3]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[5]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+      expect(negatedSingleQuoted.tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
     it 'should keep PHP string escapes inside double quoted regex character classes', ->
       {tokens} = grammar.tokenizeLine '"/[\\x01-\\x09\\n\\r\\$]/"'
 
@@ -1651,6 +1687,35 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][14]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should treat a leading closing bracket as literal class content in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /[]a-z]/
+            /[^]a-z]/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][2]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][3]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(regexScope)
+          expect(lines[1][4]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(regexScope)
+          expect(lines[1][5]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(regexScope)
+          expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][7]).toEqual value: '/', scopes: regexScope
+
+          expect(lines[2][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[2][2]).toEqual value: '^', scopes: regexpCharacterClassBoundaryNegationScopes(regexScope)
+          expect(lines[2][3]).toEqual value: ']', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[2][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(regexScope)
+          expect(lines[2][5]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(regexScope)
+          expect(lines[2][6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(regexScope)
+          expect(lines[2][7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[2][8]).toEqual value: '/', scopes: regexScope
+          expect(lines[3][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[3][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize generic literal ranges in #{description}", ->
           lines = grammar.tokenizeLines """

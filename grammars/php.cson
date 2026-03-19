@@ -3498,12 +3498,16 @@
   # nested "...set-..." wrapper that mirrors the outer host-specific end
   # condition and stops right before the real closing `]`.
   'regexp-character-class-heredoc':
-    'begin': '(\\[)(\\^)?(?:\\])?'
+    'begin': '(\\[)(\\^)?((\\])?)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
+      '3':
+        'name': 'string.regexp.character-class.php'
+      '4':
+        'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
@@ -3557,12 +3561,16 @@
       }
     ]
   'regexp-character-class-nowdoc':
-    'begin': '(\\[)(\\^)?(?:\\])?'
+    'begin': '(\\[)(\\^)?((\\])?)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
+      '3':
+        'name': 'string.regexp.character-class.php'
+      '4':
+        'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
@@ -3589,12 +3597,16 @@
       }
     ]
   'regexp-character-class-double-quoted':
-    'begin': '(\\[)(\\^)?(?:\\])?'
+    'begin': '(\\[)(\\^)?((\\])?)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
+      '3':
+        'name': 'string.regexp.character-class.php'
+      '4':
+        'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
@@ -3648,12 +3660,16 @@
       }
     ]
   'regexp-character-class-single-quoted':
-    'begin': '(\\[)(\\^)?(?:\\])?'
+    'begin': '(\\[)(\\^)?((\\])?)'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
       '2':
         'name': 'keyword.operator.negation.regexp.php'
+      '3':
+        'name': 'string.regexp.character-class.php'
+      '4':
+        'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
     'end': '(\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
