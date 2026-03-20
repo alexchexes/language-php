@@ -726,6 +726,30 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[7]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should literalize odd decoded backslashes before x and u in double quoted regex character classes', ->
+      for payload in ['x', 'u']
+        {tokens} = grammar.tokenizeLine '"/[' + '\\'.repeat(3) + payload + ']/"'
+
+        expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+        expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+        expect(tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassPhpEscapeScopes(quotedDoubleRegexpScope)
+        expect(tokens[3]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(quotedDoubleRegexpScope)
+        expect(tokens[4]).toEqual value: payload, scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+        expect(tokens[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+        expect(tokens[6]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should literalize odd decoded backslashes before selected overlap escapes in single quoted regex character classes', ->
+      for payload in ['e', 'f', 'n', 'r', 't', 'v', 'x', 'u']
+        {tokens} = grammar.tokenizeLine "'/[" + '\\'.repeat(3) + payload + "]/'"
+
+        expect(tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+        expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+        expect(tokens[2]).toEqual value: '\\\\', scopes: regexpCharacterClassPhpEscapeScopes(quotedSingleRegexpScope)
+        expect(tokens[3]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
+        expect(tokens[4]).toEqual value: payload, scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+        expect(tokens[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+        expect(tokens[6]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize richer body escapes and operators in double quoted regexes', ->
       {tokens} = grammar.tokenizeLine '"/^\\d|\\p{L}.+\\x{4A}$/"'
 
@@ -3725,6 +3749,18 @@ describe 'PHP regexp grammar', ->
       expect(lines[1][5]).toEqual value: 'x', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
       expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should literalize odd decoded backslashes before x and u in REGEXP heredoc character classes', ->
+      for payload in ['x', 'u']
+        lines = grammar.tokenizeLines ['$r = <<<REGEXP', '/[' + '\\'.repeat(3) + payload + ']/', 'REGEXP;'].join "\n"
+
+        expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+        expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassPhpEscapeScopes(heredocRegexpScope)
+        expect(lines[1][3]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
+        expect(lines[1][4]).toEqual value: payload, scopes: regexpCharacterClassLiteralScopes(heredocRegexpScope)
+        expect(lines[1][5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+        expect(lines[1][6]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'should tokenize decoded bell escapes in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines '''
