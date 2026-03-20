@@ -1518,6 +1518,31 @@ describe 'PHP regexp grammar', ->
         expect(fourBackslashes[4]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
         expect(fourBackslashes[5]).toEqual value: 'a]', scopes: regexScope
 
+    it 'should keep odd backslash parity before closing brackets after class-side \\c in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (slashes) -> '"/[a' + '\\'.repeat(slashes) + 'c]/"'
+          terminator: '/"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (slashes) -> "'/[a" + '\\'.repeat(slashes) + "c]/'"
+          terminator: "/'"
+        }
+      ]
+
+      for {regexScope, wrap, terminator} in quotedHosts
+        for slashCount in [3, 5]
+          {tokens} = grammar.tokenizeLine wrap slashCount
+          controlIndex = tokens.findIndex (token) -> token.value is '\\c'
+
+          expect(tokens[1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(controlIndex).to.be.greaterThan 1
+          expect(tokens[controlIndex]).toEqual value: '\\c', scopes: regexpCharacterClassEscapeScopes(regexScope)
+          expect(tokens[controlIndex + 1]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(tokens[tokens.length - 1]).toEqual value: terminator, scopes: regexScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize quoted regex groups and assertions', ->
       doubleQuoted = grammar.tokenizeLine '"/(ab)(?<=cd)(?:ef)(?im:gh)/"'
       singleQuoted = grammar.tokenizeLine "'/(ab)(?<=cd)(?:ef)(?im:gh)/'"
@@ -3035,6 +3060,17 @@ describe 'PHP regexp grammar', ->
             expect(fourBackslashLines[1][4]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
             expect(fourBackslashLines[1][5]).toEqual value: 'a]/', scopes: heredocRegexpScope
 
+          it 'should keep odd backslash parity before closing brackets after class-side \\c in REGEX heredoc character classes', ->
+            for slashCount in [3, 5]
+              lines = grammar.tokenizeLines ['$r = <<<REGEX', '/[a' + '\\'.repeat(slashCount) + 'c]/', 'REGEX;'].join "\n"
+              controlIndex = lines[1].findIndex (token) -> token.value is '\\c'
+
+              expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+              expect(controlIndex).to.be.greaterThan 1
+              expect(lines[1][controlIndex]).toEqual value: '\\c', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
+              expect(lines[1][controlIndex + 1]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+              expect(lines[1][lines[1].length - 1]).toEqual value: '/', scopes: heredocRegexpScope
+
           it 'should tokenize decoded named backreferences in REGEX heredoc', ->
             lines = grammar.tokenizeLines """
               $r = <<<REGEX
@@ -3823,6 +3859,17 @@ describe 'PHP regexp grammar', ->
       expect(fourBackslashLines[1][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(nowdocRegexpScope)
       expect(fourBackslashLines[1][5]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(nowdocRegexpScope)
       expect(fourBackslashLines[1][6]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(nowdocRegexpScope)
+
+    it 'should keep odd backslash parity before closing brackets after class-side \\c in REGEXP nowdoc character classes', ->
+      for slashCount in [3, 5]
+        lines = grammar.tokenizeLines ["$r = <<<'REGEXP'", '/[a' + '\\'.repeat(slashCount) + 'c]/', 'REGEXP;'].join "\n"
+        controlIndex = lines[1].findIndex (token) -> token.value is '\\c'
+
+        expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+        expect(controlIndex).to.be.greaterThan 1
+        expect(lines[1][controlIndex]).toEqual value: '\\c', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+        expect(lines[1][controlIndex + 1]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+        expect(lines[1][lines[1].length - 1]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'should tokenize single-quoted named groups in REGEXP heredoc', ->
       lines = grammar.tokenizeLines '''

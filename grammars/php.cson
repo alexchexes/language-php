@@ -3291,6 +3291,9 @@
     # `\\o{...}`, and `\\Q...\\E` inside character classes.
     'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
     'name': 'invalid.illegal.escape.regexp.php'
+  'regexp-character-class-control-prefix-before-closing-bracket-explicit':
+    'match': '(?<=\\\\\\\\)\\\\c(?=\\])'
+    'name': 'constant.character.escape.regexp.php'
   'regexp-character-class-literal-escape-explicit':
     'match': '\\\\(?:[0-7]{1,3}|c[ -~]|.)'
     'name': 'constant.character.escape.regexp.php'
@@ -3710,6 +3713,9 @@
       }
       {
         'include': '#regexp-character-class-invalid-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-control-prefix-before-closing-bracket-explicit'
       }
       {
         'include': '#regexp-character-class-octal-escape-explicit'
