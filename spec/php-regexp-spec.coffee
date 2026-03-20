@@ -1005,6 +1005,14 @@ describe 'PHP regexp grammar', ->
       expect(tokens[8]).toEqual value: '\\$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
       expect(tokens[9]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should tokenize decoded octal zero in double quoted regex bodies', ->
+      {tokens} = grammar.tokenizeLine '"/\\\\0/"'
+
+      expect(tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(tokens[2]).toEqual value: '0', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(tokens[3]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize decoded bell escapes in interpreted quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\a/"'
       singleQuoted = grammar.tokenizeLine "'/\\\\a/'"
@@ -2708,6 +2716,18 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][7]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
             expect(lines[1][8]).toEqual value: '\\$', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
             expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
+
+          it 'should tokenize decoded octal zero in REGEX heredoc bodies', ->
+            lines = grammar.tokenizeLines [
+              '$r = <<<REGEX'
+              '/\\\\0/'
+              'REGEX;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: '0', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
 
           it 'should keep interpolation after interpreted backslash transport in REGEX heredoc bodies', ->
             [2, 4, 6, 8].forEach (slashes) ->
