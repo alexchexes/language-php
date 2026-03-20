@@ -2933,6 +2933,9 @@
   'regexp-character-type-escape':
     'match': '\\\\(?:[dDhHsSvVwW]|R)'
     'name': 'constant.character.class.regexp.php'
+  'regexp-special-character-type-body-explicit':
+    'match': '\\\\(?:C|X|N(?!\\{))'
+    'name': 'constant.character.class.regexp.php'
   'regexp-property-escape':
     'match': '\\\\[pP](?:\\{[^}]+\\}|[A-Za-z])'
     'name': 'constant.character.class.regexp.php'
@@ -2945,6 +2948,9 @@
   'regexp-quoted-literal-end-explicit':
     'match': '\\\\E'
     'name': 'constant.character.escape.regexp.php'
+  'regexp-reset-start-explicit':
+    'match': '\\\\K'
+    'name': 'keyword.control.regexp.php'
   'regexp-invalid-escape-explicit':
     # Invalid raw body escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
@@ -3086,7 +3092,7 @@
         'name': 'constant.character.class.regexp.php'
       '3':
         'name': 'constant.character.class.regexp.php'
-    'match': '((\\\\\\\\))([dDhHsSvVwW]|R)'
+    'match': '((\\\\\\\\))([dDhHsSvVwW]|R|C|X|N(?!\\{))'
   'regexp-decoded-escaped-backslash-interpreted':
     'captures':
       '1':
@@ -3139,6 +3145,13 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'match': '(\\\\\\\\)(E)'
+  'regexp-decoded-reset-start-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.control.regexp.php'
+    'match': '(\\\\\\\\)(K)'
   'regexp-decoded-invalid-escape-interpreted':
     # Invalid decoded body escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`, stray
@@ -3187,6 +3200,9 @@
       }
       {
         'include': '#regexp-decoded-character-type-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-reset-start-interpreted'
       }
       {
         'include': '#regexp-decoded-invalid-escape-interpreted'
@@ -4867,6 +4883,12 @@
         'include': '#regexp-property-escape'
       }
       {
+        'include': '#regexp-special-character-type-body-explicit'
+      }
+      {
+        'include': '#regexp-reset-start-explicit'
+      }
+      {
         'include': '#regexp-braced-hex-escape'
       }
       {
@@ -5206,6 +5228,9 @@
         'include': '#regexp-quoted-literal-end-explicit'
       }
       {
+        'include': '#regexp-reset-start-explicit'
+      }
+      {
         'include': '#interpolation_double_quoted'
       }
       {
@@ -5213,6 +5238,9 @@
       }
       {
         'include': '#regexp-character-type-escape'
+      }
+      {
+        'include': '#regexp-special-character-type-body-explicit'
       }
       {
         'include': '#regexp-property-escape'
