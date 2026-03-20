@@ -3234,6 +3234,13 @@
       '1':
         'name': 'constant.numeric.regexp.php'
     'match': '\\\\([1-9][0-9]*)'
+  'regexp-backreference-numeric-double-quoted':
+    'captures':
+      '0':
+        'name': 'keyword.other.back-reference.regexp.php'
+      '1':
+        'name': 'constant.numeric.regexp.php'
+    'match': '\\\\([89][0-9]*)'
   'regexp-backreference-named-angle-explicit':
     'captures':
       '0':
@@ -3267,6 +3274,9 @@
     'name': 'constant.character.class.regexp.php'
   'regexp-hex-escape':
     'match': '\\\\x[0-9A-Fa-f]{2}'
+    'name': 'constant.character.numeric.regexp.php'
+  'regexp-short-hex-escape-explicit':
+    'match': '\\\\x(?!\\{|[0-9A-Fa-f])'
     'name': 'constant.character.numeric.regexp.php'
   'regexp-braced-hex-escape':
     'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
@@ -3349,6 +3359,15 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x[0-9A-Fa-f]{2})'
+  'regexp-decoded-short-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.numeric.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])'
   # In interpreted hosts, source like `\\\1`, `\\\n`, `\\\x21`, or `\\\u{21}`
   # first spends one backslash pair on PHP transport, and the remaining escape
   # is still PHP string syntax rather than source-level regex syntax.
@@ -3410,6 +3429,15 @@
       '3':
         'name': 'constant.character.escape.regexp.php'
     'match': '((\\\\\\\\))(c(?:[ -.]|[0-~]))'
+  'regexp-decoded-anchor-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.control.anchor.regexp.php'
+      '3':
+        'name': 'keyword.control.anchor.regexp.php'
+    'match': '((\\\\\\\\))([bBAZzG])'
   'regexp-decoded-character-type-interpreted':
     'captures':
       '1':
@@ -3513,6 +3541,9 @@
       {
         'include': '#regexp-decoded-hex-escape-interpreted'
       }
+      {
+        'include': '#regexp-decoded-short-hex-escape-interpreted'
+      }
       # Redundant interpreted forms are optional in PHP string hosts, but we still
       # scope them so source transport and runtime regex meaning stay connected.
       {
@@ -3523,6 +3554,9 @@
       }
       {
         'include': '#regexp-decoded-control-escape-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-anchor-interpreted'
       }
       {
         'include': '#regexp-decoded-character-type-interpreted'
@@ -3611,6 +3645,9 @@
   'regexp-character-class-octal-escape-explicit':
     'match': '\\\\[0-7]{1,3}'
     'name': 'constant.numeric.regexp.php'
+  'regexp-character-class-short-hex-escape-explicit':
+    'match': '\\\\x(?!\\{|[0-9A-Fa-f])'
+    'name': 'constant.character.numeric.regexp.php'
   'regexp-character-class-invalid-escape-explicit':
     # Invalid raw class escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
@@ -3720,6 +3757,24 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([dDhHsSvVwW]|R)'
+  'regexp-character-class-decoded-backspace-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))(b)'
+  'regexp-character-class-decoded-short-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.numeric.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])'
   'regexp-character-class-decoded-invalid-escape-interpreted':
     # Invalid decoded class escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`,
@@ -3821,6 +3876,12 @@
       }
       {
         'include': '#regexp-character-class-decoded-control-escape-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-short-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-backspace-escape-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-character-type-interpreted'
@@ -4053,6 +4114,9 @@
       }
       {
         'include': '#regexp-character-class-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-short-hex-escape-explicit'
       }
       {
         'include': '#regexp-character-class-literal-escape-explicit'
@@ -5235,6 +5299,9 @@
         'include': '#regexp-hex-escape'
       }
       {
+        'include': '#regexp-short-hex-escape-explicit'
+      }
+      {
         'include': '#regexp-invalid-escape-explicit'
       }
       {
@@ -5574,6 +5641,9 @@
         'include': '#interpolation_double_quoted'
       }
       {
+        'include': '#regexp-backreference-numeric-double-quoted'
+      }
+      {
         'include': '#regexp-literal-escape-explicit'
       }
       {
@@ -5586,7 +5656,13 @@
         'include': '#regexp-property-escape'
       }
       {
+        'include': '#regexp-short-hex-escape-explicit'
+      }
+      {
         'include': '#regexp-braced-hex-escape'
+      }
+      {
+        'include': '#regexp-hex-escape'
       }
       {
         'include': '#regexp-invalid-escape-explicit'
