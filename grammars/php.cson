@@ -3653,6 +3653,15 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([pP](?:\\{[^}]+\\}|[A-Za-z]))'
+  'regexp-character-class-decoded-control-escape-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+      '3':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '((\\\\\\\\))(c[ -~])'
   'regexp-character-class-decoded-character-type-interpreted':
     'captures':
       '1':
@@ -3662,6 +3671,18 @@
       '3':
         'name': 'constant.character.class.regexp.php'
     'match': '((\\\\\\\\))([dDhHsSvVwW]|R)'
+  'regexp-character-class-decoded-invalid-escape-interpreted':
+    # Invalid decoded class escapes for PHP's default PCRE2 behavior.
+    # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`,
+    # `\\o{...}`, and `\\Q...\\E`.
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'invalid.illegal.escape.regexp.php'
+      '3':
+        'name': 'invalid.illegal.escape.regexp.php'
+    'match': '((\\\\\\\\))((?:c(?![ -~])|[iklmquyzABCEFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z])))'
   'regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted':
     'captures':
       '1':
@@ -3739,7 +3760,13 @@
         'include': '#regexp-character-class-decoded-property-escape-redundant-interpreted'
       }
       {
+        'include': '#regexp-character-class-decoded-control-escape-redundant-interpreted'
+      }
+      {
         'include': '#regexp-character-class-decoded-character-type-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-invalid-escape-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted'
