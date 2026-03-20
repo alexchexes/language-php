@@ -3329,6 +3329,10 @@
       "match": "\\\\E",
       "name": "constant.character.escape.regexp.php"
     },
+    "regexp-invalid-escape-explicit": {
+      "match": "\\\\(?:c(?![ -~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
+      "name": "invalid.illegal.escape.regexp.php"
+    },
     "regexp-literal-escape-explicit": {
       "match": "\\\\(?:\\\\|[0-7]{1,3}|c[ -~]|[aefnrt]|[^A-Za-z0-9\\s'\"$])",
       "name": "constant.character.escape.regexp.php"
@@ -3505,6 +3509,20 @@
       },
       "match": "((\\\\\\\\))([pP](?:\\{[^}]+\\}|[A-Za-z]))"
     },
+    "regexp-decoded-control-escape-redundant-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(c[ -~])"
+    },
     "regexp-decoded-character-type-interpreted": {
       "captures": {
         "1": {
@@ -3600,6 +3618,20 @@
       },
       "match": "(\\\\\\\\)(E)"
     },
+    "regexp-decoded-invalid-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(c(?![ -~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))"
+    },
     "regexp-decoded-literal-escape-interpreted": {
       "captures": {
         "1": {
@@ -3635,7 +3667,13 @@
           "include": "#regexp-decoded-property-escape-redundant-interpreted"
         },
         {
+          "include": "#regexp-decoded-control-escape-redundant-interpreted"
+        },
+        {
           "include": "#regexp-decoded-character-type-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-invalid-escape-interpreted"
         },
         {
           "include": "#regexp-decoded-escaped-backslash-interpreted"
@@ -5866,6 +5904,9 @@
           "include": "#regexp-hex-escape"
         },
         {
+          "include": "#regexp-invalid-escape-explicit"
+        },
+        {
           "include": "#regexp-structural-escape"
         },
         {
@@ -6218,6 +6259,9 @@
         },
         {
           "include": "#regexp-braced-hex-escape"
+        },
+        {
+          "include": "#regexp-invalid-escape-explicit"
         },
         {
           "include": "#regexp-backreference-named-angle-explicit"

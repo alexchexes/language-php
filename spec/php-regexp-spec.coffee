@@ -75,6 +75,10 @@ describe 'PHP regexp grammar', ->
     baseScope.concat ['keyword.other.back-reference.named.regexp.php']
   regexpNamedBackreferenceNameScopes = (baseScope) ->
     regexpNamedBackreferenceScopes(baseScope).concat ['variable.other.regexp.php']
+  regexpInvalidEscapeScopes = (baseScope) ->
+    baseScope.concat ['invalid.illegal.escape.regexp.php']
+  regexpDecodedInvalidTransportScopes = (baseScope) ->
+    baseScope.concat ['constant.character.escape.php', 'invalid.illegal.escape.regexp.php']
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
   regexpAssertionGroupScopes = (baseScope) ->
     baseScope.concat regexpAssertionGroupScope
@@ -713,6 +717,42 @@ describe 'PHP regexp grammar', ->
       expect(tokens[3]).toEqual value: '\\d', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
       expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should keep valid raw body escapes, stray \\E, and invalid ones distinct in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\c;\\pL\\E\\L\\g\\k\\o\\p\\u\\z\\A\\B\\G/"'
+      singleQuoted = grammar.tokenizeLine "'/\\c;\\pL\\E\\L\\g\\k\\o\\p\\u\\z\\A\\B\\G/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '\\c;', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\pL', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\E', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\L', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: '\\g', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '\\k', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[7]).toEqual value: '\\o', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[8]).toEqual value: '\\p', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[9]).toEqual value: '\\u', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[10]).toEqual value: '\\z', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[11]).toEqual value: '\\A', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[12]).toEqual value: '\\B', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[13]).toEqual value: '\\G', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[14]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '\\c;', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[2]).toEqual value: '\\pL', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: '\\E', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\L', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: '\\g', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '\\k', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[7]).toEqual value: '\\o', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[8]).toEqual value: '\\p', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[9]).toEqual value: '\\u', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[10]).toEqual value: '\\z', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[11]).toEqual value: '\\A', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[12]).toEqual value: '\\B', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[13]).toEqual value: '\\G', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[14]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize decoded overlapping escapes in double quoted regexes', ->
       {tokens} = grammar.tokenizeLine '"/\\\\1\\\\x41\\\\n\\\\v\\\\$/"'
 
@@ -728,6 +768,52 @@ describe 'PHP regexp grammar', ->
       expect(tokens[9]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(tokens[10]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[11]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should keep valid decoded body escapes, stray \\\\E, and invalid ones distinct in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\\\c;\\\\pL\\\\E\\\\L\\\\g\\\\k\\\\o\\\\p\\\\u/"'
+      singleQuoted = grammar.tokenizeLine "'/\\\\c;\\\\pL\\\\E\\\\L\\\\g\\\\k\\\\o\\\\p\\\\u/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[2]).toEqual value: 'c;', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: 'pL', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[6]).toEqual value: 'E', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[8]).toEqual value: 'L', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[9]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[10]).toEqual value: 'g', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[11]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[12]).toEqual value: 'k', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[13]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[14]).toEqual value: 'o', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[15]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[16]).toEqual value: 'p', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[17]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[18]).toEqual value: 'u', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[19]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[2]).toEqual value: 'c;', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: 'pL', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(singleQuoted.tokens[5]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[6]).toEqual value: 'E', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[8]).toEqual value: 'L', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[9]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[10]).toEqual value: 'g', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[11]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[12]).toEqual value: 'k', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[13]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[14]).toEqual value: 'o', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[15]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[16]).toEqual value: 'p', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[17]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[18]).toEqual value: 'u', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[19]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should keep transported PHP code-point escapes PHP-first in double quoted regex bodies', ->
       {tokens} = grammar.tokenizeLine '"/' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}/"'
@@ -2878,6 +2964,34 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
             expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
 
+          it 'should keep valid decoded body escapes, stray \\\\E, and invalid ones distinct in REGEX heredoc', ->
+            lines = grammar.tokenizeLines '''
+              $r = <<<REGEX
+              /\\\\c;\\\\pL\\\\E\\\\L\\\\g\\\\k\\\\o\\\\p\\\\u/
+              REGEX;
+            '''
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: 'c;', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+            expect(lines[1][4]).toEqual value: 'pL', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+            expect(lines[1][5]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+            expect(lines[1][6]).toEqual value: 'E', scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][8]).toEqual value: 'L', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][9]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][10]).toEqual value: 'g', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][11]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][12]).toEqual value: 'k', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][13]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][14]).toEqual value: 'o', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][15]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][16]).toEqual value: 'p', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][17]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][18]).toEqual value: 'u', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][19]).toEqual value: '/', scopes: heredocRegexpScope
+
         if description is 'REGEXP nowdoc'
           it 'should tokenize raw apostrophe escapes in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines '''
@@ -2896,6 +3010,29 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
             expect(lines[1][1]).toEqual value: '\\"', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
             expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should keep valid raw body escapes, stray \\E, and invalid ones distinct in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines '''
+              $r = <<<'REGEXP'
+              /\\c;\\pL\\E\\L\\g\\k\\o\\p\\u\\z\\A\\B\\G/
+              REGEXP;
+            '''
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\c;', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: '\\pL', scopes: nowdocRegexpScope.concat ['constant.character.class.regexp.php']
+            expect(lines[1][3]).toEqual value: '\\E', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][4]).toEqual value: '\\L', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][5]).toEqual value: '\\g', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][6]).toEqual value: '\\k', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][7]).toEqual value: '\\o', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][8]).toEqual value: '\\p', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][9]).toEqual value: '\\u', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][10]).toEqual value: '\\z', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+            expect(lines[1][11]).toEqual value: '\\A', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+            expect(lines[1][12]).toEqual value: '\\B', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+            expect(lines[1][13]).toEqual value: '\\G', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+            expect(lines[1][14]).toEqual value: '/', scopes: nowdocRegexpScope
 
           it 'should tokenize neutral non-alnum punctuation escapes in REGEXP nowdoc', ->
             # Build these raw nowdoc fixtures from pieces so CoffeeScript does not collapse the backslashes.
