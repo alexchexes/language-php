@@ -3818,7 +3818,14 @@
         'name': 'constant.character.escape.php'
       '2':
         'name': 'constant.character.escape.regexp.php'
-    'match': '(\\\\\\\\)(\\\\)(?=[^0-7nrtvefxu\\s\'"$\\]-])'
+    'match': '(\\\\\\\\)(\\\\)(?=[^0-7nrtvef\\s\'"$\\]-])'
+  'regexp-character-class-decoded-escaped-backslash-before-basic-literalized-single-quoted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.escape.regexp.php'
+    'match': '(\\\\\\\\)(\\\\)(?=[efnrtv])'
   'regexp-character-class-decoded-closing-bracket-escape-interpreted':
     'captures':
       '1':
@@ -4350,6 +4357,9 @@
       }
       {
         'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-escaped-backslash-before-basic-literalized-single-quoted'
       }
       {
         'include': '#regexp-character-class-decoded-overlap-escapes-interpreted'
