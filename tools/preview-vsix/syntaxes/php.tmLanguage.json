@@ -3396,6 +3396,20 @@
       },
       "match": "((\\\\\\\\))(([1-9][0-9]*))"
     },
+    "regexp-decoded-octal-zero-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.character.escape.regexp.php"
+        },
+        "3": {
+          "name": "constant.character.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))((0[0-7]{0,2}))"
+    },
     "regexp-decoded-backreference-named-angle-redundant-interpreted": {
       "captures": {
         "1": {
@@ -3710,6 +3724,9 @@
     },
     "regexp-decoded-overlap-escapes-interpreted": {
       "patterns": [
+        {
+          "include": "#regexp-decoded-octal-zero-interpreted"
+        },
         {
           "include": "#regexp-decoded-backreference-numeric-interpreted"
         },
