@@ -755,6 +755,18 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[13]).toEqual value: '\\G', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
       expect(singleQuoted.tokens[14]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should not let raw \\c consume the regex terminator in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\c/"'
+      singleQuoted = grammar.tokenizeLine "'/\\c/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '\\c', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '\\c', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
     it 'should tokenize raw body escapes \\C, \\N, and \\X in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\C\\N\\X/"'
       singleQuoted = grammar.tokenizeLine "'/\\C\\N\\X/'"
@@ -844,6 +856,20 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[17]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[18]).toEqual value: 'u', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[19]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should not let decoded \\\\c consume the regex terminator in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\\\c/"'
+      singleQuoted = grammar.tokenizeLine "'/\\\\c/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: 'c', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: 'c', scopes: regexpInvalidEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize decoded body escapes \\\\C, \\\\N, and \\\\X in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\C\\\\N\\\\X/"'
@@ -3058,6 +3084,18 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][18]).toEqual value: 'u', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
             expect(lines[1][19]).toEqual value: '/', scopes: heredocRegexpScope
 
+          it 'should not let decoded \\\\c consume the regex terminator in REGEX heredoc', ->
+            lines = grammar.tokenizeLines '''
+              $r = <<<REGEX
+              /\\\\c/
+              REGEX;
+            '''
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+            expect(lines[1][2]).toEqual value: 'c', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+            expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
+
           it 'should tokenize decoded body escapes \\\\C, \\\\N, and \\\\X in REGEX heredoc', ->
             lines = grammar.tokenizeLines '''
               $r = <<<REGEX
@@ -3127,6 +3165,17 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][12]).toEqual value: '\\B', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
             expect(lines[1][13]).toEqual value: '\\G', scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
             expect(lines[1][14]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should not let raw \\c consume the regex terminator in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines '''
+              $r = <<<'REGEXP'
+              /\\c/
+              REGEXP;
+            '''
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\c', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+            expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
 
           it 'should tokenize raw body escapes \\C, \\N, and \\X in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines '''
