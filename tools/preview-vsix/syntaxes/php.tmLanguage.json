@@ -3338,11 +3338,11 @@
       "name": "keyword.control.regexp.php"
     },
     "regexp-invalid-escape-explicit": {
-      "match": "\\\\(?:c(?![ -~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
+      "match": "\\\\(?:c(?=/)|c(?![ -.0-~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
       "name": "invalid.illegal.escape.regexp.php"
     },
     "regexp-literal-escape-explicit": {
-      "match": "\\\\(?:\\\\|[0-7]{1,3}|c[ -~]|[aefnrt]|[^A-Za-z0-9\\s'\"$])",
+      "match": "\\\\(?:\\\\|[0-7]{1,3}|c(?:[ -.]|[0-~])|[aefnrt]|[^A-Za-z0-9\\s'\"$])",
       "name": "constant.character.escape.regexp.php"
     },
     "regexp-apostrophe-escape-explicit": {
@@ -3529,7 +3529,7 @@
           "name": "constant.character.escape.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))(c[ -~])"
+      "match": "((\\\\\\\\))(c(?:[ -.]|[0-~]))"
     },
     "regexp-decoded-character-type-interpreted": {
       "captures": {
@@ -3649,7 +3649,7 @@
           "name": "invalid.illegal.escape.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))(c(?![ -~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))"
+      "match": "((\\\\\\\\))(c(?=/)|c(?![ -.0-~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))"
     },
     "regexp-decoded-literal-escape-interpreted": {
       "captures": {
