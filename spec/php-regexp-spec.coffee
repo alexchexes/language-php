@@ -1828,6 +1828,32 @@ describe 'PHP regexp grammar', ->
       expect(tokens[3]).toEqual value: '\\)', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[4]).toEqual value: '/"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
 
+    it 'should keep closing-delimiter slash parity consistent in quoted regex wrappers', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (slashes) -> '"/a' + '\\'.repeat(slashes) + '/"'
+          terminator: '/"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (slashes) -> "'/a" + '\\'.repeat(slashes) + "/'"
+          terminator: "/'"
+        }
+      ]
+      validSlashCounts = [0, 3, 4, 7]
+
+      for {regexScope, wrap, terminator} in quotedHosts
+        for slashCount in [0..7]
+          {tokens} = grammar.tokenizeLine wrap slashCount
+          entersRegex = tokens.some (token) -> 'meta.embedded.regexp.php' in token.scopes
+
+          if slashCount in validSlashCounts
+            expect(entersRegex).toBe true
+            expect(tokens[tokens.length - 1]).toEqual value: terminator, scopes: regexScope.concat ['punctuation.definition.string.end.php']
+          else
+            expect(entersRegex).toBe false
+
     it 'should keep multiline slash-prefixed double quoted strings out of regex mode', ->
       lines = grammar.tokenizeLines "$r = \"/foo\nbar/\";"
 
