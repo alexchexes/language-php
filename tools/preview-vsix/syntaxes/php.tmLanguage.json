@@ -3753,7 +3753,7 @@
       "name": "constant.numeric.regexp.php"
     },
     "regexp-character-class-invalid-escape-explicit": {
-      "match": "\\\\(?:c(?![ -~])|[iklmquyzABCEFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
+      "match": "\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
       "name": "invalid.illegal.escape.regexp.php"
     },
     "regexp-character-class-literal-escape-explicit": {
@@ -3925,7 +3925,7 @@
           "name": "invalid.illegal.escape.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))((?:c(?![ -~])|[iklmquyzABCEFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z])))"
+      "match": "((\\\\\\\\))((?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z])))"
     },
     "regexp-character-class-decoded-escaped-backslash-before-letter-range-interpreted": {
       "captures": {
@@ -4004,7 +4004,7 @@
           "name": "constant.character.escape.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))([anrtfe$])"
+      "match": "((\\\\\\\\))([aEnrtfe$])"
     },
     "regexp-character-class-decoded-overlap-escapes-interpreted": {
       "patterns": [
