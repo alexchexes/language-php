@@ -3313,6 +3313,10 @@
       "match": "\\\\(?:[dDhHsSvVwW]|R)",
       "name": "constant.character.class.regexp.php"
     },
+    "regexp-special-character-type-body-explicit": {
+      "match": "\\\\(?:C|X|N(?!\\{))",
+      "name": "constant.character.class.regexp.php"
+    },
     "regexp-property-escape": {
       "match": "\\\\[pP](?:\\{[^}]+\\}|[A-Za-z])",
       "name": "constant.character.class.regexp.php"
@@ -3328,6 +3332,10 @@
     "regexp-quoted-literal-end-explicit": {
       "match": "\\\\E",
       "name": "constant.character.escape.regexp.php"
+    },
+    "regexp-reset-start-explicit": {
+      "match": "\\\\K",
+      "name": "keyword.control.regexp.php"
     },
     "regexp-invalid-escape-explicit": {
       "match": "\\\\(?:c(?![ -~])|g(?![-+0-9{<\\'])|k(?![<\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
@@ -3535,7 +3543,7 @@
           "name": "constant.character.class.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))([dDhHsSvVwW]|R)"
+      "match": "((\\\\\\\\))([dDhHsSvVwW]|R|C|X|N(?!\\{))"
     },
     "regexp-decoded-escaped-backslash-interpreted": {
       "captures": {
@@ -3618,6 +3626,17 @@
       },
       "match": "(\\\\\\\\)(E)"
     },
+    "regexp-decoded-reset-start-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "keyword.control.regexp.php"
+        }
+      },
+      "match": "(\\\\\\\\)(K)"
+    },
     "regexp-decoded-invalid-escape-interpreted": {
       "captures": {
         "1": {
@@ -3671,6 +3690,9 @@
         },
         {
           "include": "#regexp-decoded-character-type-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-reset-start-interpreted"
         },
         {
           "include": "#regexp-decoded-invalid-escape-interpreted"
@@ -5898,6 +5920,12 @@
           "include": "#regexp-property-escape"
         },
         {
+          "include": "#regexp-special-character-type-body-explicit"
+        },
+        {
+          "include": "#regexp-reset-start-explicit"
+        },
+        {
           "include": "#regexp-braced-hex-escape"
         },
         {
@@ -6246,6 +6274,9 @@
           "include": "#regexp-quoted-literal-end-explicit"
         },
         {
+          "include": "#regexp-reset-start-explicit"
+        },
+        {
           "include": "#interpolation_double_quoted"
         },
         {
@@ -6253,6 +6284,9 @@
         },
         {
           "include": "#regexp-character-type-escape"
+        },
+        {
+          "include": "#regexp-special-character-type-body-explicit"
         },
         {
           "include": "#regexp-property-escape"
