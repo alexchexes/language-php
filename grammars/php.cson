@@ -4396,6 +4396,9 @@
   'regexp-braced-hex-escape':
     'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
     'name': 'constant.character.numeric.regexp.php'
+  'regexp-unicode-code-point-escape':
+    'match': '\\\\N\\{U\\+[0-9A-Fa-f]+\\}'
+    'name': 'constant.character.numeric.regexp.php'
   'regexp-quoted-literal-end-explicit':
     'match': '\\\\E'
     'name': 'constant.character.escape.regexp.php'
@@ -4576,6 +4579,15 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\})'
+  'regexp-decoded-unicode-code-point-escape-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.numeric.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(N\\{U\\+[0-9A-Fa-f]+\\})'
   'regexp-decoded-property-escape-redundant-interpreted':
     'captures':
       '1':
@@ -4725,6 +4737,9 @@
       # scope them so source transport and runtime regex meaning stay connected.
       {
         'include': '#regexp-decoded-braced-hex-escape-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-unicode-code-point-escape-redundant-interpreted'
       }
       {
         'include': '#regexp-decoded-property-escape-redundant-interpreted'
@@ -4907,6 +4922,15 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x\\{[0-9A-Fa-f]+\\})'
+  'regexp-character-class-decoded-unicode-code-point-escape-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'constant.character.numeric.regexp.php'
+      '3':
+        'name': 'constant.character.numeric.regexp.php'
+    'match': '((\\\\\\\\))(N\\{U\\+[0-9A-Fa-f]+\\})'
   'regexp-character-class-decoded-property-escape-redundant-interpreted':
     'captures':
       '1':
@@ -5054,6 +5078,9 @@
       # highlighted in interpreted hosts even though the undoubled form would work too.
       {
         'include': '#regexp-character-class-decoded-braced-hex-escape-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-unicode-code-point-escape-redundant-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-property-escape-redundant-interpreted'
@@ -5274,6 +5301,9 @@
       }
       {
         'include': '#regexp-braced-hex-escape'
+      }
+      {
+        'include': '#regexp-unicode-code-point-escape'
       }
       {
         'include': '#regexp-hex-escape'
@@ -6517,6 +6547,9 @@
         'include': '#regexp-braced-hex-escape'
       }
       {
+        'include': '#regexp-unicode-code-point-escape'
+      }
+      {
         'include': '#regexp-hex-escape'
       }
       {
@@ -6955,6 +6988,9 @@
         'include': '#regexp-braced-hex-escape'
       }
       {
+        'include': '#regexp-unicode-code-point-escape'
+      }
+      {
         'include': '#regexp-hex-escape'
       }
       {
@@ -7022,6 +7058,9 @@
       }
       {
         'include': '#regexp-braced-hex-escape'
+      }
+      {
+        'include': '#regexp-unicode-code-point-escape'
       }
       {
         'include': '#regexp-quoted-literal-single-quoted'
