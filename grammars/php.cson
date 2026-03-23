@@ -4429,15 +4429,15 @@
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.group.assertion.regexp.php'
       '3':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-ahead.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
       '5':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-behind.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
       '0':
@@ -4455,15 +4455,15 @@
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.group.assertion.regexp.php'
       '3':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-ahead.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
       '5':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-behind.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
       '0':
@@ -4786,15 +4786,15 @@
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.group.assertion.regexp.php'
       '3':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-ahead.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
       '5':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-behind.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
@@ -4812,15 +4812,15 @@
       '1':
         'name': 'punctuation.definition.group.regexp.php'
       '2':
-        'name': 'punctuation.definition.group.regexp.php'
+        'name': 'punctuation.definition.group.assertion.regexp.php'
       '3':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-ahead.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
       '5':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.look-behind.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.assertion.regexp.php'
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
