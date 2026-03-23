@@ -89,6 +89,8 @@ describe 'PHP regexp grammar', ->
     baseScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
   regexpDecodedAnchorTransportScopes = (baseScope) ->
     baseScope.concat ['constant.character.escape.php', 'keyword.control.anchor.regexp.php']
+  regexpWildcardScopes = (baseScope) ->
+    baseScope.concat ['constant.character.class.regexp.php', 'keyword.operator.wildcard.regexp.php']
   regexpControlKeywordScopes = (baseScope) ->
     baseScope.concat ['keyword.control.regexp.php']
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
@@ -772,7 +774,7 @@ describe 'PHP regexp grammar', ->
       expect(tokens[2]).toEqual value: '\\d', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
       expect(tokens[3]).toEqual value: '|', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.or.regexp.php']
       expect(tokens[4]).toEqual value: '\\p{L}', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(tokens[5]).toEqual value: '.', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(tokens[5]).toEqual value: '.', scopes: regexpWildcardScopes(quotedDoubleRegexpScope)
       expect(tokens[6]).toEqual value: '+', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
       expect(tokens[7]).toEqual value: '\\x{4A}', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
       expect(tokens[8]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
@@ -1115,7 +1117,7 @@ describe 'PHP regexp grammar', ->
       expect(tokens[3]).toEqual value: '|', scopes: quotedSingleRegexpScope.concat ['keyword.operator.or.regexp.php']
       expect(tokens[4]).toEqual value: '\\pL', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
       expect(tokens[5]).toEqual value: '\\p{L}', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(tokens[6]).toEqual value: '.', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(tokens[6]).toEqual value: '.', scopes: regexpWildcardScopes(quotedSingleRegexpScope)
       expect(tokens[7]).toEqual value: '+', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
       expect(tokens[8]).toEqual value: '\\x41', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
       expect(tokens[9]).toEqual value: '\\x{4A}', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
@@ -2909,7 +2911,7 @@ describe 'PHP regexp grammar', ->
 
             expect(lines[1][0]).toEqual value: '/', scopes: regexScope
             expect(lines[1][1]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.regexp.php']
-            expect(lines[1][2]).toEqual value: '.', scopes: regexScope.concat ['constant.character.class.regexp.php']
+            expect(lines[1][2]).toEqual value: '.', scopes: regexpWildcardScopes(regexScope)
             expect(lines[1][3]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
             expect(lines[1][4]).toEqual value: '/', scopes: regexScope
             expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
@@ -3552,7 +3554,7 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           expect(lines[1][1]).toEqual value: '^', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
           expect(lines[1][2]).toEqual value: '\\A', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
-          expect(lines[1][3]).toEqual value: '.', scopes: regexScope.concat ['constant.character.class.regexp.php']
+          expect(lines[1][3]).toEqual value: '.', scopes: regexpWildcardScopes(regexScope)
           expect(lines[1][4]).toEqual value: 'a', scopes: regexScope
           expect(lines[1][5]).toEqual value: '+?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
           expect(lines[1][6]).toEqual value: '|', scopes: regexScope.concat ['keyword.operator.or.regexp.php']
