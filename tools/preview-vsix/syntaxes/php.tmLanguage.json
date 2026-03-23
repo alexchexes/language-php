@@ -6582,6 +6582,9 @@
         },
         "1": {
           "name": "punctuation.definition.string.end.php"
+        },
+        "3": {
+          "name": "storage.modifier.regexp.php"
         }
       },
       "name": "meta.embedded.regexp.php",
@@ -6609,6 +6612,9 @@
         },
         "1": {
           "name": "punctuation.definition.string.end.php"
+        },
+        "3": {
+          "name": "storage.modifier.regexp.php"
         }
       },
       "name": "meta.embedded.regexp.php",
