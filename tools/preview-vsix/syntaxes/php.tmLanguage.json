@@ -6155,13 +6155,13 @@
       "match": "(\\()(\\?[imsxADJUXunr-]+)(\\))",
       "name": "meta.embedded.group.regexp.php"
     },
-    "regexp-backtracking-verb-named-explicit": {
+    "regexp-backtracking-verb-mark-short-explicit": {
       "captures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
         },
         "2": {
-          "name": "keyword.control.backtracking.regexp.php"
+          "name": "keyword.control.backtracking.mark.regexp.php"
         },
         "3": {
           "name": "variable.other.regexp.php"
@@ -6170,7 +6170,25 @@
           "name": "punctuation.definition.group.regexp.php"
         }
       },
-      "match": "(\\()((?:\\*(?:ACCEPT|FAIL|F|MARK|COMMIT|PRUNE|SKIP|THEN):|\\*:))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((\\)))",
+      "match": "(\\()(\\*:)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "name": "meta.embedded.group.regexp.php"
+    },
+    "regexp-backtracking-verb-named-explicit": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "keyword.control.backtracking.${3:/downcase}.regexp.php"
+        },
+        "4": {
+          "name": "variable.other.regexp.php"
+        },
+        "5": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "match": "(\\()(\\*(ACCEPT|FAIL|F|MARK|COMMIT|PRUNE|SKIP|THEN):)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
       "name": "meta.embedded.group.regexp.php"
     },
     "regexp-backtracking-verb-explicit": {
@@ -6179,13 +6197,13 @@
           "name": "punctuation.definition.group.regexp.php"
         },
         "2": {
-          "name": "keyword.control.backtracking.regexp.php"
+          "name": "keyword.control.backtracking.${3:/downcase}.regexp.php"
         },
-        "3": {
+        "4": {
           "name": "punctuation.definition.group.regexp.php"
         }
       },
-      "match": "(\\()((?:\\*(?:ACCEPT|FAIL|F|COMMIT|PRUNE|SKIP|THEN)))(\\))",
+      "match": "(\\()(\\*(ACCEPT|FAIL|F|COMMIT|PRUNE|SKIP|THEN))(\\))",
       "name": "meta.embedded.group.regexp.php"
     },
     "regexp-simple-quantifier-explicit": {
@@ -6325,6 +6343,9 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
           "include": "#regexp-backtracking-verb-named-explicit"
         },
         {
@@ -6350,6 +6371,9 @@
         },
         {
           "include": "#regexp-group-assertion-heredoc"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
         },
         {
           "include": "#regexp-backtracking-verb-named-explicit"
@@ -6407,6 +6431,9 @@
           "include": "#regexp-option-toggle-explicit"
         },
         {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
           "include": "#regexp-backtracking-verb-named-explicit"
         },
         {
@@ -6438,6 +6465,9 @@
         },
         {
           "include": "#regexp-group-assertion-nowdoc"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
         },
         {
           "include": "#regexp-backtracking-verb-named-explicit"
