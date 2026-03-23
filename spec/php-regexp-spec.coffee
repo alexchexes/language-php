@@ -103,6 +103,12 @@ describe 'PHP regexp grammar', ->
     baseScope.concat ['constant.character.class.wildcard.regexp.php']
   regexpControlKeywordScopes = (baseScope) ->
     baseScope.concat ['keyword.control.regexp.php']
+  regexpBacktrackingVerbScopes = (baseScope, verb) ->
+    normalizedVerb = if verb is '*:'
+      'mark'
+    else
+      verb.replace(/^\*/, '').replace(/:$/, '').toLowerCase()
+    regexpGroupScopes(baseScope).concat ["keyword.control.backtracking.#{normalizedVerb}.regexp.php"]
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
   regexpAssertionGroupScopes = (baseScope) ->
     baseScope.concat regexpAssertionGroupScope
@@ -1984,7 +1990,7 @@ describe 'PHP regexp grammar', ->
       doubleOffset = 2
       for [verb, label] in expectedVerbs
         expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
-        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: verb, scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['keyword.control.backtracking.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: verb, scopes: regexpBacktrackingVerbScopes(quotedDoubleRegexpScope, verb)
         if label?
           expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: label, scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']
           expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
@@ -2000,7 +2006,7 @@ describe 'PHP regexp grammar', ->
       singleOffset = 2
       for [verb, label] in expectedVerbs
         expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
-        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: verb, scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['keyword.control.backtracking.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: verb, scopes: regexpBacktrackingVerbScopes(quotedSingleRegexpScope, verb)
         if label?
           expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: label, scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
           expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
@@ -3058,7 +3064,7 @@ describe 'PHP regexp grammar', ->
           offset = 1
           for [verb, markLabel] in expectedVerbs
             expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-            expect(lines[1][offset + 1]).toEqual value: verb, scopes: regexpGroupScopes(regexScope).concat ['keyword.control.backtracking.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: verb, scopes: regexpBacktrackingVerbScopes(regexScope, verb)
             if markLabel?
               expect(lines[1][offset + 2]).toEqual value: markLabel, scopes: regexpGroupScopes(regexScope).concat ['variable.other.regexp.php']
               expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
