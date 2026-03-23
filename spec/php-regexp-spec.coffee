@@ -1964,6 +1964,53 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize backtracking verbs in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/(*ACCEPT)(*FAIL)(*F)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/"'
+      singleQuoted = grammar.tokenizeLine "'/(*ACCEPT)(*FAIL)(*F)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/'"
+      expectedVerbs = [
+        ['*ACCEPT', null]
+        ['*FAIL', null]
+        ['*F', null]
+        ['*MARK:', 'label']
+        ['*COMMIT', null]
+        ['*PRUNE', null]
+        ['*SKIP', null]
+        ['*SKIP:', 'label']
+        ['*THEN', null]
+      ]
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      doubleOffset = 2
+      for [verb, label] in expectedVerbs
+        expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: verb, scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['keyword.control.backtracking.regexp.php']
+        if label?
+          expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: label, scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']
+          expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+          doubleOffset += 4
+        else
+          expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+          doubleOffset += 3
+      expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      singleOffset = 2
+      for [verb, label] in expectedVerbs
+        expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: verb, scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['keyword.control.backtracking.regexp.php']
+        if label?
+          expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: label, scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
+          expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+          singleOffset += 4
+        else
+          expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+          singleOffset += 3
+      expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize quoted regex named groups and backreferences', ->
       doubleQuoted = grammar.tokenizeLine '"/(?<name>ab)\\k<name>(?P=name)/"'
       singleQuoted = grammar.tokenizeLine "'/(?<name>ab)\\1\\k<name>(?P=name)/'"
@@ -2985,6 +3032,40 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][offset + 2]).toEqual value: content, scopes: regexpAssertionGroupContentScopes(regexScope)
             expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
             offset += 4
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize backtracking verbs in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(*ACCEPT)(*FAIL)(*F)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/
+            #{label};
+          """
+          expectedVerbs = [
+            ['*ACCEPT', null]
+            ['*FAIL', null]
+            ['*F', null]
+            ['*MARK:', 'label']
+            ['*COMMIT', null]
+            ['*PRUNE', null]
+            ['*SKIP', null]
+            ['*SKIP:', 'label']
+            ['*THEN', null]
+          ]
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for [verb, markLabel] in expectedVerbs
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: verb, scopes: regexpGroupScopes(regexScope).concat ['keyword.control.backtracking.regexp.php']
+            if markLabel?
+              expect(lines[1][offset + 2]).toEqual value: markLabel, scopes: regexpGroupScopes(regexScope).concat ['variable.other.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 4
+            else
+              expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 3
           expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
