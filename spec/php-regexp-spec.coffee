@@ -90,7 +90,7 @@ describe 'PHP regexp grammar', ->
   regexpDecodedAnchorTransportScopes = (baseScope) ->
     baseScope.concat ['constant.character.escape.php', 'keyword.control.anchor.regexp.php']
   regexpWildcardScopes = (baseScope) ->
-    baseScope.concat ['constant.character.class.regexp.php', 'keyword.operator.wildcard.regexp.php']
+    baseScope.concat ['constant.character.class.wildcard.regexp.php']
   regexpControlKeywordScopes = (baseScope) ->
     baseScope.concat ['keyword.control.regexp.php']
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
