@@ -5301,6 +5301,9 @@
     'match': '\\|'
     'name': 'keyword.operator.or.regexp.php'
   'regexp-dot-explicit':
+    'captures':
+      '0':
+        'name': 'keyword.operator.wildcard.regexp.php'
     'match': '\\.'
     'name': 'constant.character.class.regexp.php'
   'regexp-explicit-escapes':
