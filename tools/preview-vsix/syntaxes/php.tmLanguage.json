@@ -4956,7 +4956,7 @@
       "name": "meta.embedded.group.regexp.php"
     },
     "regexp-group-assertion-double-quoted": {
-      "begin": "(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))",
+      "begin": "(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -4992,7 +4992,7 @@
       ]
     },
     "regexp-group-assertion-single-quoted": {
-      "begin": "(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))",
+      "begin": "(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5449,7 +5449,7 @@
       "name": "meta.embedded.group.regexp.php"
     },
     "regexp-group-assertion-heredoc": {
-      "begin": "(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))",
+      "begin": "(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5485,7 +5485,7 @@
       ]
     },
     "regexp-group-assertion-nowdoc": {
-      "begin": "(\\()((\\?=)|(\\?!)|(\\?<=)|(\\?<!))",
+      "begin": "(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
