@@ -6901,6 +6901,8 @@
         'name': 'string.regexp.double-quoted.php'
       '1':
         'name': 'punctuation.definition.string.end.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
     # Keep string.regexp.double-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
     'patterns': [
@@ -6922,6 +6924,8 @@
         'name': 'string.regexp.single-quoted.php'
       '1':
         'name': 'punctuation.definition.string.end.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
     # Keep string.regexp.single-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
     'patterns': [

@@ -89,6 +89,8 @@ describe 'PHP regexp grammar', ->
     baseScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
   regexpDecodedAnchorTransportScopes = (baseScope) ->
     baseScope.concat ['constant.character.escape.php', 'keyword.control.anchor.regexp.php']
+  regexpWrapperFlagScopes = (baseScope) ->
+    baseScope.concat ['punctuation.definition.string.end.php', 'storage.modifier.regexp.php']
   regexpWildcardScopes = (baseScope) ->
     baseScope.concat ['constant.character.class.wildcard.regexp.php']
   regexpControlKeywordScopes = (baseScope) ->
@@ -177,6 +179,22 @@ describe 'PHP regexp grammar', ->
       expect(tokens[4]).toEqual value: 'b', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
       expect(tokens[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
       expect(tokens[6]).toEqual value: '/\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+    it 'should tokenize trailing wrapper flags in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/a/im"'
+      singleQuoted = grammar.tokenizeLine "'/a/im'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(doubleQuoted.tokens[1]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[2]).toEqual value: '/', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: 'im', scopes: regexpWrapperFlagScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: '"', scopes: quotedDoubleRegexpScope.concat ['punctuation.definition.string.end.php']
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.begin.php']
+      expect(singleQuoted.tokens[1]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[2]).toEqual value: '/', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
+      expect(singleQuoted.tokens[3]).toEqual value: 'im', scopes: regexpWrapperFlagScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: '\'', scopes: quotedSingleRegexpScope.concat ['punctuation.definition.string.end.php']
 
     it 'should tokenize double quoted regex with slash inside character class', ->
       {tokens} = grammar.tokenizeLine "\"/[a/b]/\""
