@@ -6888,21 +6888,25 @@
       }
     ]
   'regexp-double-quoted':
-    'begin': '("/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
+    'begin': '(")(/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|[^\\]])*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
     'beginCaptures':
       '0':
         'name': 'string.regexp.double-quoted.php'
       '1':
         'name': 'punctuation.definition.string.begin.php'
+      '2':
+        'name': 'punctuation.definition.string.begin.regexp.php'
     'contentName': 'string.regexp.double-quoted.php'
     'end': '((/)([imsxeADSUXu]*)("))'
     'endCaptures':
       '0':
         'name': 'string.regexp.double-quoted.php'
-      '1':
-        'name': 'punctuation.definition.string.end.php'
+      '2':
+        'name': 'punctuation.definition.string.end.regexp.php'
       '3':
         'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.string.end.php'
     # Keep string.regexp.double-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
     'patterns': [
@@ -6911,21 +6915,25 @@
       }
     ]
   'regexp-single-quoted':
-    'begin': '(\'/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\')'
+    'begin': '(\\\')(/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|[^\\]])*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\')'
     'beginCaptures':
       '0':
         'name': 'string.regexp.single-quoted.php'
       '1':
         'name': 'punctuation.definition.string.begin.php'
+      '2':
+        'name': 'punctuation.definition.string.begin.regexp.php'
     'contentName': 'string.regexp.single-quoted.php'
     'end': '((/)([imsxeADSUXu]*)(\'))'
     'endCaptures':
       '0':
         'name': 'string.regexp.single-quoted.php'
-      '1':
-        'name': 'punctuation.definition.string.end.php'
+      '2':
+        'name': 'punctuation.definition.string.end.regexp.php'
       '3':
         'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.string.end.php'
     # Keep string.regexp.single-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
     'patterns': [
