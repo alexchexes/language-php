@@ -2033,6 +2033,42 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize non-atomic assertion groups in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/"'
+      singleQuoted = grammar.tokenizeLine "'/(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/'"
+      expectedAssertions = [
+        ['?*', 'ab', 'meta.assertion.look-ahead.regexp.php']
+        ['?<*', 'cd', 'meta.assertion.look-behind.regexp.php']
+        ['*napla:', 'ef', 'meta.assertion.look-ahead.regexp.php']
+        ['*non_atomic_positive_lookahead:', 'gh', 'meta.assertion.look-ahead.regexp.php']
+        ['*naplb:', 'ij', 'meta.assertion.look-behind.regexp.php']
+        ['*non_atomic_positive_lookbehind:', 'kl', 'meta.assertion.look-behind.regexp.php']
+      ]
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      doubleOffset = 2
+      for [assertionOpener, content, specificScope] in expectedAssertions
+        expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: assertionOpener, scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedDoubleRegexpScope), specificScope)
+        expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: content, scopes: regexpAssertionGroupContentScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        doubleOffset += 4
+      expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      singleOffset = 2
+      for [assertionOpener, content, specificScope] in expectedAssertions
+        expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: assertionOpener, scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedSingleRegexpScope), specificScope)
+        expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: content, scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        singleOffset += 4
+      expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize conditional groups in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine "\"/(?(1)ab|cd)(?(<word>)ef|gh)(?('word')ij|kl)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/\""
       singleQuoted = grammar.tokenizeLine "'/(?(1)ab|cd)(?(<word>)ef|gh)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/'"
@@ -3416,6 +3452,33 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should tokenize non-atomic assertion groups in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/
+            #{label};
+          """
+          expectedAssertions = [
+            ['?*', 'ab', 'meta.assertion.look-ahead.regexp.php']
+            ['?<*', 'cd', 'meta.assertion.look-behind.regexp.php']
+            ['*napla:', 'ef', 'meta.assertion.look-ahead.regexp.php']
+            ['*non_atomic_positive_lookahead:', 'gh', 'meta.assertion.look-ahead.regexp.php']
+            ['*naplb:', 'ij', 'meta.assertion.look-behind.regexp.php']
+            ['*non_atomic_positive_lookbehind:', 'kl', 'meta.assertion.look-behind.regexp.php']
+          ]
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for [assertionOpener, content, specificScope] in expectedAssertions
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: assertionOpener, scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(regexScope), specificScope)
+            expect(lines[1][offset + 2]).toEqual value: content, scopes: regexpAssertionGroupContentScopes(regexScope)
+            expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpAssertionGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 4
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should tokenize non-assertion conditional groups in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -3663,7 +3726,7 @@ describe 'PHP regexp grammar', ->
         it "should tokenize atomic groups in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
-            /(?>ab)/
+            /(?>ab)(*atomic:cd)/
             #{label};
           """
 
@@ -3672,7 +3735,11 @@ describe 'PHP regexp grammar', ->
           expect(lines[1][2]).toEqual value: '?>', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), 'punctuation.definition.group.atomic.regexp.php')
           expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupContentScopes(regexScope)
           expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-          expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][5]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][6]).toEqual value: '*atomic:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), 'punctuation.definition.group.atomic.regexp.php')
+          expect(lines[1][7]).toEqual value: 'cd', scopes: regexpGroupContentScopes(regexScope)
+          expect(lines[1][8]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][9]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 

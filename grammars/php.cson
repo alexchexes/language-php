@@ -4649,7 +4649,7 @@
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-double-quoted':
-    'begin': '(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4675,7 +4675,7 @@
       }
     ]
   'regexp-group-assertion-single-quoted':
-    'begin': '(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5211,7 +5211,7 @@
       }
     ]
   'regexp-group-non-capturing-double-quoted':
-    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5235,7 +5235,7 @@
       }
     ]
   'regexp-group-non-capturing-single-quoted':
-    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5516,7 +5516,7 @@
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-heredoc':
-    'begin': '(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5542,7 +5542,7 @@
       }
     ]
   'regexp-group-assertion-nowdoc':
-    'begin': '(\\()((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6078,7 +6078,7 @@
       }
     ]
   'regexp-group-non-capturing-heredoc':
-    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6102,7 +6102,7 @@
       }
     ]
   'regexp-group-non-capturing-nowdoc':
-    'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
