@@ -3341,6 +3341,10 @@
       },
       "match": "\\\\[kg](\\{)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\})"
     },
+    "regexp-invalid-k-reference-closed-explicit": {
+      "match": "\\\\k(?:\\{\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}][^}]*\\}|<>|<[^A-Za-z_\\x{7f}-\\x{10ffff}][^>]*>|''|'[^A-Za-z_\\x{7f}-\\x{10ffff}][^']*')",
+      "name": "invalid.illegal.escape.regexp.php"
+    },
     "regexp-backreference-g-numeric-explicit": {
       "captures": {
         "0": {
@@ -3368,6 +3372,10 @@
         }
       },
       "match": "\\\\g(\\{)([+-]?[0-9]+)(\\})"
+    },
+    "regexp-invalid-g-reference-closed-explicit": {
+      "match": "\\\\g(?:\\{\\}|\\{[+-]?\\}|\\{[+-]?[0-9]+[^}]+\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^}]*\\}|<>|<[+-]?>|<[+-]?[0-9]+[^>]+>|<[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^>]*>|''|'[+-]?'|'[+-]?[0-9]+[^']+'|'[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^']*')",
+      "name": "invalid.illegal.escape.regexp.php"
     },
     "regexp-subroutine-g-angle-explicit": {
       "captures": {
@@ -3622,6 +3630,20 @@
       },
       "match": "((\\\\\\\\))(([kg])(\\{)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\}))"
     },
+    "regexp-decoded-invalid-k-reference-closed-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(k(?:\\{\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}][^}]*\\}|<>|<[^A-Za-z_\\x{7f}-\\x{10ffff}][^>]*>|''|'[^A-Za-z_\\x{7f}-\\x{10ffff}][^']*'))"
+    },
     "regexp-decoded-backreference-g-numeric-redundant-interpreted": {
       "captures": {
         "1": {
@@ -3661,6 +3683,20 @@
         }
       },
       "match": "((\\\\\\\\))((g)(\\{)([+-]?[0-9]+)(\\}))"
+    },
+    "regexp-decoded-invalid-g-reference-closed-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(g(?:\\{\\}|\\{[+-]?\\}|\\{[+-]?[0-9]+[^}]+\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^}]*\\}|<>|<[+-]?>|<[+-]?[0-9]+[^>]+>|<[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^>]*>|''|'[+-]?'|'[+-]?[0-9]+[^']+'|'[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^']*'))"
     },
     "regexp-decoded-subroutine-g-angle-redundant-interpreted": {
       "captures": {
@@ -4083,10 +4119,16 @@
           "include": "#regexp-decoded-backreference-named-braced-redundant-interpreted"
         },
         {
+          "include": "#regexp-decoded-invalid-k-reference-closed-interpreted"
+        },
+        {
           "include": "#regexp-decoded-backreference-g-numeric-redundant-interpreted"
         },
         {
           "include": "#regexp-decoded-backreference-g-braced-numeric-redundant-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-invalid-g-reference-closed-interpreted"
         },
         {
           "include": "#regexp-decoded-subroutine-g-angle-redundant-interpreted"
@@ -8208,6 +8250,12 @@
           "include": "#regexp-short-hex-escape-explicit"
         },
         {
+          "include": "#regexp-invalid-k-reference-closed-explicit"
+        },
+        {
+          "include": "#regexp-invalid-g-reference-closed-explicit"
+        },
+        {
           "include": "#regexp-invalid-escape-explicit"
         },
         {
@@ -8848,6 +8896,12 @@
         },
         {
           "include": "#regexp-invalid-escape-explicit"
+        },
+        {
+          "include": "#regexp-invalid-k-reference-closed-explicit"
+        },
+        {
+          "include": "#regexp-invalid-g-reference-closed-explicit"
         },
         {
           "include": "#regexp-backreference-named-angle-explicit"
