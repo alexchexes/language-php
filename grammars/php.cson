@@ -4542,6 +4542,19 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(k(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
+  'regexp-decoded-backreference-named-single-quoted-single-quoted':
+    'captures':
+      '1':
+        'name': 'keyword.other.back-reference.named.regexp.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '4':
+        'name': 'constant.character.escape.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'constant.character.escape.php'
+    'match': '(((?:\\\\\\\\))(k)(\\\\\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\\\\'))'
   'regexp-decoded-backreference-named-braced-redundant-interpreted':
     'captures':
       '1':
@@ -4631,6 +4644,19 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(g(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
+  'regexp-decoded-subroutine-g-single-quoted-single-quoted':
+    'captures':
+      '1':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '4':
+        'name': 'constant.character.escape.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'constant.character.escape.php'
+    'match': '(((?:\\\\\\\\))(g)(\\\\\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\\\\'))'
   'regexp-decoded-subroutine-g-angle-numeric-redundant-interpreted':
     'captures':
       '1':
@@ -4661,6 +4687,19 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(g(\')([+-]?[1-9][0-9]*)(\'))'
+  'regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted':
+    'captures':
+      '1':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '2':
+        'name': 'constant.character.escape.php'
+      '4':
+        'name': 'constant.character.escape.php'
+      '5':
+        'name': 'constant.numeric.regexp.php'
+      '6':
+        'name': 'constant.character.escape.php'
+    'match': '(((?:\\\\\\\\))(g)(\\\\\')([+-]?[1-9][0-9]*)(\\\\\'))'
   'regexp-decoded-hex-escape-interpreted':
     'captures':
       '1':
@@ -8733,6 +8772,15 @@
       }
       {
         'include': '#regexp-decoded-quoted-literal-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-backreference-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted'
       }
       {
         'include': '#regexp-decoded-apostrophe-escape-single-quoted'
