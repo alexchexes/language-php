@@ -5251,7 +5251,7 @@
       }
     ]
   'regexp-group-non-capturing-double-quoted':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5263,6 +5263,10 @@
         'name': 'punctuation.definition.group.atomic.regexp.php'
       '5':
         'name': 'punctuation.definition.group.branch-reset.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.script-run.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
     'endCaptures':
       '0':
@@ -5275,7 +5279,7 @@
       }
     ]
   'regexp-group-non-capturing-single-quoted':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5287,6 +5291,10 @@
         'name': 'punctuation.definition.group.atomic.regexp.php'
       '5':
         'name': 'punctuation.definition.group.branch-reset.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.script-run.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
     'endCaptures':
       '0':
@@ -6158,7 +6166,7 @@
       }
     ]
   'regexp-group-non-capturing-heredoc':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6170,6 +6178,10 @@
         'name': 'punctuation.definition.group.atomic.regexp.php'
       '5':
         'name': 'punctuation.definition.group.branch-reset.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.script-run.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
@@ -6182,7 +6194,7 @@
       }
     ]
   'regexp-group-non-capturing-nowdoc':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|))'
+    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6194,6 +6206,10 @@
         'name': 'punctuation.definition.group.atomic.regexp.php'
       '5':
         'name': 'punctuation.definition.group.branch-reset.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.script-run.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
       '0':
