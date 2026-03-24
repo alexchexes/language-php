@@ -3450,7 +3450,7 @@
       "name": "constant.character.class.regexp.php"
     },
     "regexp-hex-escape": {
-      "match": "\\\\x[0-9A-Fa-f]{2}",
+      "match": "\\\\x[0-9A-Fa-f]{1,2}",
       "name": "constant.character.numeric.regexp.php"
     },
     "regexp-short-hex-escape-explicit": {
@@ -3758,7 +3758,7 @@
           "name": "constant.character.numeric.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))(x[0-9A-Fa-f]{2})"
+      "match": "((\\\\\\\\))(x[0-9A-Fa-f]{1,2})"
     },
     "regexp-decoded-short-hex-escape-interpreted": {
       "captures": {
@@ -4163,7 +4163,7 @@
           "name": "constant.character.numeric.regexp.php"
         }
       },
-      "match": "(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})(-)(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{2})",
+      "match": "(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{1,2})(-)(\\\\x\\{[0-9A-Fa-f]+\\}|\\\\x[0-9A-Fa-f]{1,2})",
       "name": "constant.other.character-class.range.regexp.php"
     },
     "regexp-character-class-octal-range-explicit": {
@@ -4261,7 +4261,7 @@
           "name": "constant.character.numeric.regexp.php"
         }
       },
-      "match": "((\\\\\\\\))(x[0-9A-Fa-f]{2})"
+      "match": "((\\\\\\\\))(x[0-9A-Fa-f]{1,2})"
     },
     "regexp-character-class-braced-hex-range-decoded-left-interpreted": {
       "captures": {
