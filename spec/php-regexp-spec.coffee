@@ -125,6 +125,8 @@ describe 'PHP regexp grammar', ->
     else
       verb.replace(/^\*/, '').replace(/:$/, '').toLowerCase()
     regexpGroupScopes(baseScope).concat ["keyword.control.backtracking.#{normalizedVerb}.regexp.php"]
+  regexpDirectiveScopes = (baseScope) ->
+    regexpGroupScopes(baseScope).concat ['keyword.control.directive.regexp.php']
   regexpAssertionGroupScope = ['meta.embedded.group.assertion.regexp.php']
   regexpAssertionGroupScopes = (baseScope) ->
     baseScope.concat regexpAssertionGroupScope
@@ -2241,6 +2243,33 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize start directives in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/"'
+      singleQuoted = grammar.tokenizeLine "'/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/'"
+      expectedDirectives = ['*UTF', '*UCP', '*NO_START_OPT', '*LIMIT_MATCH=10', '*CRLF', '*BSR_UNICODE']
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      offset = 2
+      for directive in expectedDirectives
+        expect(doubleQuoted.tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 3
+      expect(doubleQuoted.tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[offset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      offset = 2
+      for directive in expectedDirectives
+        expect(singleQuoted.tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 3
+      expect(singleQuoted.tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[offset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize quoted regex named groups and backreferences', ->
       doubleQuoted = grammar.tokenizeLine '"/(?<name>ab)\\k<name>(?P=name)/"'
       singleQuoted = grammar.tokenizeLine "'/(?<name>ab)\\1\\k<name>(?P=name)/'"
@@ -3556,6 +3585,25 @@ describe 'PHP regexp grammar', ->
             else
               expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
               offset += 3
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize start directives in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(*UTF)(*UCP)(*LIMIT_HEAP=10)(*ANYCRLF)(*BSR_ANYCRLF)/
+            #{label};
+          """
+          expectedDirectives = ['*UTF', '*UCP', '*LIMIT_HEAP=10', '*ANYCRLF', '*BSR_ANYCRLF']
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for directive in expectedDirectives
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(regexScope)
+            expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 3
           expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
