@@ -3457,6 +3457,14 @@
       "match": "\\\\x(?!\\{|[0-9A-Fa-f])",
       "name": "constant.character.numeric.regexp.php"
     },
+    "regexp-invalid-braced-hex-escape-explicit": {
+      "match": "\\\\x\\{(?![0-9A-Fa-f]+\\})[^}]*\\}",
+      "name": "invalid.illegal.escape.regexp.php"
+    },
+    "regexp-invalid-braced-octal-escape-explicit": {
+      "match": "\\\\o\\{(?![0-7]+\\})[^}]*\\}",
+      "name": "invalid.illegal.escape.regexp.php"
+    },
     "regexp-braced-hex-escape": {
       "match": "\\\\x\\{[0-9A-Fa-f]+\\}",
       "name": "constant.character.numeric.regexp.php"
@@ -3774,6 +3782,34 @@
       },
       "match": "((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])"
     },
+    "regexp-decoded-invalid-braced-hex-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(x\\{(?![0-9A-Fa-f]+\\})[^}]*\\})"
+    },
+    "regexp-decoded-invalid-braced-octal-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(o\\{(?![0-7]+\\})[^}]*\\})"
+    },
     "regexp-transported-php-octal-escape-interpreted": {
       "captures": {
         "1": {
@@ -4071,6 +4107,12 @@
           "include": "#regexp-decoded-short-hex-escape-interpreted"
         },
         {
+          "include": "#regexp-decoded-invalid-braced-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-invalid-braced-hex-escape-interpreted"
+        },
+        {
           "include": "#regexp-decoded-braced-hex-escape-redundant-interpreted"
         },
         {
@@ -4212,6 +4254,14 @@
     "regexp-character-class-short-hex-escape-explicit": {
       "match": "\\\\x(?!\\{|[0-9A-Fa-f])",
       "name": "constant.character.numeric.regexp.php"
+    },
+    "regexp-character-class-invalid-braced-hex-escape-explicit": {
+      "match": "\\\\x\\{(?![0-9A-Fa-f]+\\})[^}]*\\}",
+      "name": "invalid.illegal.escape.regexp.php"
+    },
+    "regexp-character-class-invalid-braced-octal-escape-explicit": {
+      "match": "\\\\o\\{(?![0-7]+\\})[^}]*\\}",
+      "name": "invalid.illegal.escape.regexp.php"
     },
     "regexp-character-class-invalid-escape-explicit": {
       "match": "\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))",
@@ -4430,6 +4480,34 @@
       },
       "match": "((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])"
     },
+    "regexp-character-class-decoded-invalid-braced-hex-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(x\\{(?![0-9A-Fa-f]+\\})[^}]*\\})"
+    },
+    "regexp-character-class-decoded-invalid-braced-octal-escape-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "invalid.illegal.escape.regexp.php"
+        },
+        "3": {
+          "name": "invalid.illegal.escape.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(o\\{(?![0-7]+\\})[^}]*\\})"
+    },
     "regexp-character-class-decoded-invalid-escape-interpreted": {
       "captures": {
         "1": {
@@ -4576,6 +4654,12 @@
         },
         {
           "include": "#regexp-character-class-decoded-control-escape-redundant-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-invalid-braced-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-invalid-braced-hex-escape-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-short-hex-escape-interpreted"
@@ -4874,6 +4958,12 @@
         },
         {
           "include": "#regexp-character-class-invalid-escape-explicit"
+        },
+        {
+          "include": "#regexp-character-class-invalid-braced-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-character-class-invalid-braced-hex-escape-explicit"
         },
         {
           "include": "#regexp-character-class-octal-escape-explicit"
@@ -8100,6 +8190,12 @@
           "include": "#regexp-reset-start-explicit"
         },
         {
+          "include": "#regexp-invalid-braced-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-invalid-braced-hex-escape-explicit"
+        },
+        {
           "include": "#regexp-braced-hex-escape"
         },
         {
@@ -8731,6 +8827,12 @@
         },
         {
           "include": "#regexp-property-escape"
+        },
+        {
+          "include": "#regexp-invalid-braced-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-invalid-braced-hex-escape-explicit"
         },
         {
           "include": "#regexp-short-hex-escape-explicit"

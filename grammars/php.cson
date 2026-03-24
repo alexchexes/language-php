@@ -3354,6 +3354,12 @@
   'regexp-short-hex-escape-explicit':
     'match': '\\\\x(?!\\{|[0-9A-Fa-f])'
     'name': 'constant.character.numeric.regexp.php'
+  'regexp-invalid-braced-hex-escape-explicit':
+    'match': '\\\\x\\{(?![0-9A-Fa-f]+\\})[^}]*\\}'
+    'name': 'invalid.illegal.escape.regexp.php'
+  'regexp-invalid-braced-octal-escape-explicit':
+    'match': '\\\\o\\{(?![0-7]+\\})[^}]*\\}'
+    'name': 'invalid.illegal.escape.regexp.php'
   'regexp-braced-hex-escape':
     'match': '\\\\x\\{[0-9A-Fa-f]+\\}'
     'name': 'constant.character.numeric.regexp.php'
@@ -3566,6 +3572,24 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])'
+  'regexp-decoded-invalid-braced-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'invalid.illegal.escape.regexp.php'
+      '3':
+        'name': 'invalid.illegal.escape.regexp.php'
+    'match': '((\\\\\\\\))(x\\{(?![0-9A-Fa-f]+\\})[^}]*\\})'
+  'regexp-decoded-invalid-braced-octal-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'invalid.illegal.escape.regexp.php'
+      '3':
+        'name': 'invalid.illegal.escape.regexp.php'
+    'match': '((\\\\\\\\))(o\\{(?![0-7]+\\})[^}]*\\})'
   # In interpreted hosts, source like `\\\1`, `\\\n`, `\\\x21`, or `\\\u{21}`
   # first spends one backslash pair on PHP transport, and the remaining escape
   # is still PHP string syntax rather than source-level regex syntax.
@@ -3778,6 +3802,12 @@
       {
         'include': '#regexp-decoded-short-hex-escape-interpreted'
       }
+      {
+        'include': '#regexp-decoded-invalid-braced-octal-escape-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-invalid-braced-hex-escape-interpreted'
+      }
       # Redundant interpreted forms are optional in PHP string hosts, but we still
       # scope them so source transport and runtime regex meaning stay connected.
       {
@@ -3885,6 +3915,12 @@
   'regexp-character-class-short-hex-escape-explicit':
     'match': '\\\\x(?!\\{|[0-9A-Fa-f])'
     'name': 'constant.character.numeric.regexp.php'
+  'regexp-character-class-invalid-braced-hex-escape-explicit':
+    'match': '\\\\x\\{(?![0-9A-Fa-f]+\\})[^}]*\\}'
+    'name': 'invalid.illegal.escape.regexp.php'
+  'regexp-character-class-invalid-braced-octal-escape-explicit':
+    'match': '\\\\o\\{(?![0-7]+\\})[^}]*\\}'
+    'name': 'invalid.illegal.escape.regexp.php'
   'regexp-character-class-invalid-escape-explicit':
     # Invalid raw class escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
@@ -4030,6 +4066,24 @@
       '3':
         'name': 'constant.character.numeric.regexp.php'
     'match': '((\\\\\\\\))(x)(?!\\{|[0-9A-Fa-f])'
+  'regexp-character-class-decoded-invalid-braced-hex-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'invalid.illegal.escape.regexp.php'
+      '3':
+        'name': 'invalid.illegal.escape.regexp.php'
+    'match': '((\\\\\\\\))(x\\{(?![0-9A-Fa-f]+\\})[^}]*\\})'
+  'regexp-character-class-decoded-invalid-braced-octal-escape-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'invalid.illegal.escape.regexp.php'
+      '3':
+        'name': 'invalid.illegal.escape.regexp.php'
+    'match': '((\\\\\\\\))(o\\{(?![0-7]+\\})[^}]*\\})'
   'regexp-character-class-decoded-invalid-escape-interpreted':
     # Invalid decoded class escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`,
@@ -4144,6 +4198,12 @@
       }
       {
         'include': '#regexp-character-class-decoded-control-escape-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-invalid-braced-octal-escape-interpreted'
+      }
+      {
+        'include': '#regexp-character-class-decoded-invalid-braced-hex-escape-interpreted'
       }
       {
         'include': '#regexp-character-class-decoded-short-hex-escape-interpreted'
@@ -4382,6 +4442,12 @@
       }
       {
         'include': '#regexp-character-class-invalid-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-invalid-braced-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-class-invalid-braced-hex-escape-explicit'
       }
       {
         'include': '#regexp-character-class-octal-escape-explicit'
@@ -6773,6 +6839,12 @@
         'include': '#regexp-reset-start-explicit'
       }
       {
+        'include': '#regexp-invalid-braced-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-invalid-braced-hex-escape-explicit'
+      }
+      {
         'include': '#regexp-braced-hex-escape'
       }
       {
@@ -7395,6 +7467,12 @@
       }
       {
         'include': '#regexp-property-escape'
+      }
+      {
+        'include': '#regexp-invalid-braced-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-invalid-braced-hex-escape-explicit'
       }
       {
         'include': '#regexp-short-hex-escape-explicit'
