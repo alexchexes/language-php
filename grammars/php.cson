@@ -3293,7 +3293,20 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\[kg](\\{)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\})'
   'regexp-invalid-k-reference-closed-explicit':
-    'match': '\\\\k(?:\\{\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}][^}]*\\}|<>|<[^A-Za-z_\\x{7f}-\\x{10ffff}][^>]*>|\'\'|\'[^A-Za-z_\\x{7f}-\\x{10ffff}][^\']*\')'
+    'match': '''(?x)
+      \\\\k
+      (?:
+        # Empty or malformed braced forms.
+        \\{\\}
+        | \\{ [^A-Za-z_\\x{7f}-\\x{10ffff}] [^}]* \\}
+        # Empty or malformed angle-bracket forms.
+        | <>
+        | < [^A-Za-z_\\x{7f}-\\x{10ffff}] [^>]* >
+        # Empty or malformed apostrophe-delimited forms.
+        | ''
+        | ' [^A-Za-z_\\x{7f}-\\x{10ffff}] [^']* '
+      )
+    '''
     'name': 'invalid.illegal.escape.regexp.php'
   'regexp-backreference-g-numeric-explicit':
     'captures':
@@ -3314,7 +3327,26 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\g(\\{)([+-]?[0-9]+)(\\})'
   'regexp-invalid-g-reference-closed-explicit':
-    'match': '\\\\g(?:\\{\\}|\\{[+-]?\\}|\\{[+-]?[0-9]+[^}]+\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^}]*\\}|<>|<[+-]?>|<[+-]?[0-9]+[^>]+>|<[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^>]*>|\'\'|\'[+-]?\'|\'[+-]?[0-9]+[^\']+\'|\'[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^\']*\')'
+    'match': '''(?x)
+      \\\\g
+      (?:
+        # Empty, sign-only, or malformed braced forms.
+        \\{\\}
+        | \\{ [+-]? \\}
+        | \\{ [+-]? [0-9]+ [^}]+ \\}
+        | \\{ [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^}]* \\}
+        # Empty, sign-only, or malformed angle-bracket forms.
+        | <>
+        | < [+-]? >
+        | < [+-]? [0-9]+ [^>]+ >
+        | < [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^>]* >
+        # Empty, sign-only, or malformed apostrophe-delimited forms.
+        | ''
+        | ' [+-]? '
+        | ' [+-]? [0-9]+ [^']+ '
+        | ' [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^']* '
+      )
+    '''
     'name': 'invalid.illegal.escape.regexp.php'
   'regexp-subroutine-g-angle-explicit':
     'captures':
@@ -3427,7 +3459,19 @@
     # Invalid raw body escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
     # anchors, `\\Q...\\E`, and valid-but-mode-sensitive forms like `\\N{U+...}`.
-    'match': '\\\\(?:c(?=/)|c(?![ -.0-~])|g(?![-+0-9{<\\\'])|k(?![<{\\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
+    'match': '''(?x)
+      \\\\
+      (?:
+        c (?=/)
+        | c (?! [ -.0-~] )
+        | g (?! [-+0-9{<\\'] )
+        | k (?! [<{\\'] )
+        | [ilmquyFILMOTUY]
+        | o (?! \\{ )
+        | p (?! \\{ | [A-Za-z] )
+        | P (?! \\{ | [A-Za-z] )
+      )
+    '''
     'name': 'invalid.illegal.escape.regexp.php'
   'regexp-literal-escape-explicit':
     'match': '\\\\(?:\\\\|[0-7]{1,3}|c(?:[ -.]|[0-~])|[aefnrt]|[^A-Za-z0-9\\s\'"$])'
@@ -3548,7 +3592,20 @@
         'name': 'invalid.illegal.escape.regexp.php'
       '3':
         'name': 'invalid.illegal.escape.regexp.php'
-    'match': '((\\\\\\\\))(k(?:\\{\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}][^}]*\\}|<>|<[^A-Za-z_\\x{7f}-\\x{10ffff}][^>]*>|\'\'|\'[^A-Za-z_\\x{7f}-\\x{10ffff}][^\']*\'))'
+    'match': '''(?x)
+      ((\\\\\\\\))
+      (
+        k
+        (?:
+          \\{\\}
+          | \\{ [^A-Za-z_\\x{7f}-\\x{10ffff}] [^}]* \\}
+          | <>
+          | < [^A-Za-z_\\x{7f}-\\x{10ffff}] [^>]* >
+          | ''
+          | ' [^A-Za-z_\\x{7f}-\\x{10ffff}] [^']* '
+        )
+      )
+    '''
   'regexp-decoded-backreference-g-numeric-redundant-interpreted':
     'captures':
       '1':
@@ -3583,7 +3640,26 @@
         'name': 'invalid.illegal.escape.regexp.php'
       '3':
         'name': 'invalid.illegal.escape.regexp.php'
-    'match': '((\\\\\\\\))(g(?:\\{\\}|\\{[+-]?\\}|\\{[+-]?[0-9]+[^}]+\\}|\\{[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^}]*\\}|<>|<[+-]?>|<[+-]?[0-9]+[^>]+>|<[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^>]*>|\'\'|\'[+-]?\'|\'[+-]?[0-9]+[^\']+\'|\'[^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-][^\']*\'))'
+    'match': '''(?x)
+      ((\\\\\\\\))
+      (
+        g
+        (?:
+          \\{\\}
+          | \\{ [+-]? \\}
+          | \\{ [+-]? [0-9]+ [^}]+ \\}
+          | \\{ [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^}]* \\}
+          | <>
+          | < [+-]? >
+          | < [+-]? [0-9]+ [^>]+ >
+          | < [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^>]* >
+          | ''
+          | ' [+-]? '
+          | ' [+-]? [0-9]+ [^']+ '
+          | ' [^A-Za-z_\\x{7f}-\\x{10ffff}0-9+-] [^']* '
+        )
+      )
+    '''
   'regexp-decoded-subroutine-g-angle-redundant-interpreted':
     'captures':
       '1':
@@ -3880,7 +3956,19 @@
         'name': 'invalid.illegal.escape.regexp.php'
       '3':
         'name': 'invalid.illegal.escape.regexp.php'
-    'match': '((\\\\\\\\))(c(?=/)|c(?![ -.0-~])|g(?![-+0-9{<\\\'])|k(?![<{\\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
+    'match': '''(?x)
+      ((\\\\\\\\))
+      (
+        c (?=/)
+        | c (?! [ -.0-~] )
+        | g (?! [-+0-9{<\\'] )
+        | k (?! [<{\\'] )
+        | [ilmquyFILMOTUY]
+        | o (?! \\{ )
+        | p (?! \\{ | [A-Za-z] )
+        | P (?! \\{ | [A-Za-z] )
+      )
+    '''
   'regexp-decoded-literal-escape-interpreted':
     'captures':
       '1':
@@ -4877,7 +4965,15 @@
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-double-quoted':
-    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?=  | \\?\\*  | \\*pla: | \\*positive_lookahead: | \\*napla: | \\*non_atomic_positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\?<\\* | \\*plb: | \\*positive_lookbehind: | \\*naplb: | \\*non_atomic_positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4903,7 +4999,15 @@
       }
     ]
   'regexp-group-assertion-single-quoted':
-    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?=  | \\?\\*  | \\*pla: | \\*positive_lookahead: | \\*napla: | \\*non_atomic_positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\?<\\* | \\*plb: | \\*positive_lookbehind: | \\*naplb: | \\*non_atomic_positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4929,7 +5033,20 @@
       }
     ]
   'regexp-group-conditional-assertion-double-quoted':
-    'begin': '(\\()(\\?)(\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (\\?)
+      (\\()
+      (?=
+        (?:
+          \\?= | \\?! | \\?<= | \\?<!
+          | \\*pla: | \\*positive_lookahead:
+          | \\*nla: | \\*negative_lookahead:
+          | \\*plb: | \\*positive_lookbehind:
+          | \\*nlb: | \\*negative_lookbehind:
+        )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4951,8 +5068,17 @@
         'include': '#regexp-double-quoted-body'
       }
     ]
+  # Split the assertion condition from the outer conditional group so the first
+  # `)` can terminate the condition before the yes/no branches continue.
   'regexp-conditional-assertion-condition-double-quoted':
-    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (
+        ( \\?=  | \\*pla: | \\*positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\*plb: | \\*positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.assertion.regexp.php'
@@ -4976,7 +5102,20 @@
       }
     ]
   'regexp-group-conditional-assertion-single-quoted':
-    'begin': '(\\()(\\?)(\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (\\?)
+      (\\()
+      (?=
+        (?:
+          \\?= | \\?! | \\?<= | \\?<!
+          | \\*pla: | \\*positive_lookahead:
+          | \\*nla: | \\*negative_lookahead:
+          | \\*plb: | \\*positive_lookbehind:
+          | \\*nlb: | \\*negative_lookbehind:
+        )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -4999,7 +5138,14 @@
       }
     ]
   'regexp-conditional-assertion-condition-single-quoted':
-    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (
+        ( \\?=  | \\*pla: | \\*positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\*plb: | \\*positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.assertion.regexp.php'
@@ -5483,7 +5629,16 @@
       }
     ]
   'regexp-group-non-capturing-double-quoted':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?: )
+        | ( \\?> | \\*atomic: )
+        | ( \\?\\| )
+        | ( \\*sr: | \\*script_run: )
+        | ( \\*asr: | \\*atomic_script_run: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5511,7 +5666,16 @@
       }
     ]
   'regexp-group-non-capturing-single-quoted':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?: )
+        | ( \\?> | \\*atomic: )
+        | ( \\?\\| )
+        | ( \\*sr: | \\*script_run: )
+        | ( \\*asr: | \\*atomic_script_run: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5800,7 +5964,15 @@
         'name': 'punctuation.definition.comment.end.regexp.php'
     'name': 'meta.embedded.group.regexp.php'
   'regexp-group-assertion-heredoc':
-    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?=  | \\?\\*  | \\*pla: | \\*positive_lookahead: | \\*napla: | \\*non_atomic_positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\?<\\* | \\*plb: | \\*positive_lookbehind: | \\*naplb: | \\*non_atomic_positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5826,7 +5998,15 @@
       }
     ]
   'regexp-group-assertion-nowdoc':
-    'begin': '(\\()((\\?=|\\?\\*|\\*pla:|\\*positive_lookahead:|\\*napla:|\\*non_atomic_positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\?<\\*|\\*plb:|\\*positive_lookbehind:|\\*naplb:|\\*non_atomic_positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?=  | \\?\\*  | \\*pla: | \\*positive_lookahead: | \\*napla: | \\*non_atomic_positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\?<\\* | \\*plb: | \\*positive_lookbehind: | \\*naplb: | \\*non_atomic_positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5852,7 +6032,20 @@
       }
     ]
   'regexp-group-conditional-assertion-heredoc':
-    'begin': '(\\()(\\?)(\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (\\?)
+      (\\()
+      (?=
+        (?:
+          \\?= | \\?! | \\?<= | \\?<!
+          | \\*pla: | \\*positive_lookahead:
+          | \\*nla: | \\*negative_lookahead:
+          | \\*plb: | \\*positive_lookbehind:
+          | \\*nlb: | \\*negative_lookbehind:
+        )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5875,7 +6068,14 @@
       }
     ]
   'regexp-conditional-assertion-condition-heredoc':
-    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (
+        ( \\?=  | \\*pla: | \\*positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\*plb: | \\*positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.assertion.regexp.php'
@@ -5899,7 +6099,20 @@
       }
     ]
   'regexp-group-conditional-assertion-nowdoc':
-    'begin': '(\\()(\\?)(\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (\\()
+      (\\?)
+      (\\()
+      (?=
+        (?:
+          \\?= | \\?! | \\?<= | \\?<!
+          | \\*pla: | \\*positive_lookahead:
+          | \\*nla: | \\*negative_lookahead:
+          | \\*plb: | \\*positive_lookbehind:
+          | \\*nlb: | \\*negative_lookbehind:
+        )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5922,7 +6135,14 @@
       }
     ]
   'regexp-conditional-assertion-condition-nowdoc':
-    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'begin': '''(?x)
+      (
+        ( \\?=  | \\*pla: | \\*positive_lookahead: )
+        | ( \\?! | \\*nla: | \\*negative_lookahead: )
+        | ( \\?<= | \\*plb: | \\*positive_lookbehind: )
+        | ( \\?<! | \\*nlb: | \\*negative_lookbehind: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.assertion.regexp.php'
@@ -6402,7 +6622,16 @@
       }
     ]
   'regexp-group-non-capturing-heredoc':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?: )
+        | ( \\?> | \\*atomic: )
+        | ( \\?\\| )
+        | ( \\*sr: | \\*script_run: )
+        | ( \\*asr: | \\*atomic_script_run: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6430,7 +6659,16 @@
       }
     ]
   'regexp-group-non-capturing-nowdoc':
-    'begin': '(\\()((\\?:)|(\\?>|\\*atomic:)|(\\?\\|)|(\\*sr:|\\*script_run:)|(\\*asr:|\\*atomic_script_run:))'
+    'begin': '''(?x)
+      (\\()
+      (
+        ( \\?: )
+        | ( \\?> | \\*atomic: )
+        | ( \\?\\| )
+        | ( \\*sr: | \\*script_run: )
+        | ( \\*asr: | \\*atomic_script_run: )
+      )
+    '''
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -7402,6 +7640,9 @@
         'include': '#regexp-operators-basic'
       }
     ]
+  # Keep quoted-host group ordering centralized. These lists are mostly wired
+  # through one wrapper each, but inlining them would duplicate a large,
+  # host-specific precedence contract across multiple group entries.
   'regexp-double-quoted-groups-common':
     'patterns': [
       {
@@ -7534,6 +7775,9 @@
         'include': '#regexp-group-single-quoted'
       }
     ]
+  # Keep interpreted quoted-host escape ordering separate from explicit
+  # REGEX/REGEXP hosts. The transport/interpolation rules here are host-specific
+  # and are easier to reason about as one ordered include list.
   'regexp-double-quoted-common':
     'patterns': [
       {
@@ -7829,7 +8073,28 @@
       }
     ]
   'regexp-double-quoted':
-    'begin': '(")(/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*"|").)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\"]?|[^"])|.)|(?!["\\\\\\]]).)*\\]|(?!["/\\\\\\[]).)++/[imsxeADSUXu]*")'
+    'begin': '''(?x)
+      (")  # PHP string opener
+      (/)  # regex delimiter
+      (?=
+        (?:  # regex body that can appear before the closing /flags"
+          # Raw \Q...\E literal blocks inside the regex source.
+          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\E )?
+          # The same construct after PHP decoding has already produced \\Q.
+          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
+          # Ordinary regex escapes that keep the body from terminating early.
+          | \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . )
+          # Character classes may contain almost anything, but not the host quote.
+          | \\[
+              (?: \\^? \\] )?
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! ["\\\\\\]] ). )*
+            \\]
+          # Any other raw regex atom that cannot start the wrapper terminator.
+          | (?! ["/\\\\\\[] ).
+        )++
+        /[imsxeADSUXu]*"
+      )
+    '''
     'beginCaptures':
       '0':
         'name': 'string.regexp.double-quoted.php'
@@ -7856,7 +8121,28 @@
       }
     ]
   'regexp-single-quoted':
-    'begin': '(\\\')(/)(?=(?:\\\\Q(?:\\\\.|(?!\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\E)?|\\\\\\\\Q(?:\\\\.|(?!\\\\\\\\E|/[imsxeADSUXu]*\'|\').)*(?:\\\\\\\\E)?|\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|\\[(?:\\^?\\])?(?:\\\\(?:\\\\(?:\\\\[\\\\\']?|[^\'])|.)|(?![\'\\\\\\]]).)*\\]|(?![\'/\\\\\\[]).)++/[imsxeADSUXu]*\')'
+    'begin': '''(?x)
+      (')  # PHP string opener
+      (/)  # regex delimiter
+      (?=
+        (?:  # regex body that can appear before the closing /flags'
+          # Raw \Q...\E literal blocks inside the regex source.
+          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?
+          # The same construct after PHP decoding has already produced \\Q.
+          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
+          # Ordinary regex escapes that keep the body from terminating early.
+          | \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . )
+          # Character classes may contain almost anything, but not the host quote.
+          | \\[
+              (?: \\^? \\] )?
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! ['\\\\\\]] ). )*
+            \\]
+          # Any other raw regex atom that cannot start the wrapper terminator.
+          | (?! ['/\\\\\\[] ).
+        )++
+        /[imsxeADSUXu]*'
+      )
+    '''
     'beginCaptures':
       '0':
         'name': 'string.regexp.single-quoted.php'
