@@ -2152,7 +2152,7 @@
         'name': 'meta.embedded.regexp.php'
         'patterns': [
           {
-            'include': '#regexp-heredoc-body'
+            'include': '#regexp-heredoc-common'
           }
         ]
       }
@@ -2378,7 +2378,7 @@
         'name': 'meta.embedded.regexp.php'
         'patterns': [
           {
-            'include': '#regexp-nowdoc-body'
+            'include': '#regexp-nowdoc-common'
           }
         ]
       }
@@ -7379,18 +7379,6 @@
       }
       {
         'include': '#regexp-explicit-operators'
-      }
-    ]
-  'regexp-heredoc-body':
-    'patterns': [
-      {
-        'include': '#regexp-heredoc-common'
-      }
-    ]
-  'regexp-nowdoc-body':
-    'patterns': [
-      {
-        'include': '#regexp-nowdoc-common'
       }
     ]
   'regexp-quoted-common':
