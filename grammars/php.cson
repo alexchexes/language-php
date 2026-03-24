@@ -4378,6 +4378,50 @@
       '3':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\g(\\{)([+-]?[0-9]+)(\\})'
+  'regexp-subroutine-g-angle-explicit':
+    'captures':
+      '0':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '2':
+        'name': 'variable.other.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '\\\\g(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>)'
+  'regexp-subroutine-g-single-quoted-explicit':
+    'captures':
+      '0':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '2':
+        'name': 'variable.other.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '\\\\g(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
+  'regexp-subroutine-g-angle-numeric-explicit':
+    'captures':
+      '0':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '2':
+        'name': 'constant.numeric.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '\\\\g(<)([+-]?[1-9][0-9]*)(>)'
+  'regexp-subroutine-g-single-quoted-numeric-explicit':
+    'captures':
+      '0':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '1':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '2':
+        'name': 'constant.numeric.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '\\\\g(\')([+-]?[1-9][0-9]*)(\')'
   'regexp-character-type-escape':
     'match': '\\\\(?:[dDhHsSvVwW]|R)'
     'name': 'constant.character.class.regexp.php'
@@ -4408,7 +4452,7 @@
   'regexp-invalid-escape-explicit':
     # Invalid raw body escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
-    # anchors, `\\Q...\\E`, and valid-but-not-yet-modeled forms like `\\g<...>`.
+    # anchors, `\\Q...\\E`, and valid-but-mode-sensitive forms like `\\N{U+...}`.
     'match': '\\\\(?:c(?=/)|c(?![ -.0-~])|g(?![-+0-9{<\\\'])|k(?![<{\\\'])|[ilmquyFILMOTUY]|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
     'name': 'invalid.illegal.escape.regexp.php'
   'regexp-literal-escape-explicit':
@@ -4518,6 +4562,66 @@
       '7':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))((g)(\\{)([+-]?[0-9]+)(\\}))'
+  'regexp-decoded-subroutine-g-angle-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '3':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(g(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(>))'
+  'regexp-decoded-subroutine-g-single-quoted-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '3':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'variable.other.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(g(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
+  'regexp-decoded-subroutine-g-angle-numeric-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '3':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'constant.numeric.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(g(<)([+-]?[1-9][0-9]*)(>))'
+  'regexp-decoded-subroutine-g-single-quoted-numeric-redundant-interpreted':
+    'captures':
+      '1':
+        'name': 'constant.character.escape.php'
+      '2':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '3':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '5':
+        'name': 'constant.numeric.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+    'match': '((\\\\\\\\))(g(\')([+-]?[1-9][0-9]*)(\'))'
   'regexp-decoded-hex-escape-interpreted':
     'captures':
       '1':
@@ -4686,7 +4790,7 @@
   'regexp-decoded-invalid-escape-interpreted':
     # Invalid decoded body escapes for PHP's default PCRE2 behavior.
     # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`, stray
-    # `\\E`, anchors, and valid-but-not-yet-modeled forms like `\\g<...>`.
+    # `\\E`, anchors, and valid-but-mode-sensitive forms like `\\N{U+...}`.
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -4726,6 +4830,18 @@
       }
       {
         'include': '#regexp-decoded-backreference-g-braced-numeric-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-angle-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-angle-numeric-redundant-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-numeric-redundant-interpreted'
       }
       {
         'include': '#regexp-decoded-hex-escape-interpreted'
@@ -6280,6 +6396,52 @@
         'include': '#regexp-nowdoc-common'
       }
     ]
+  'regexp-recursion-whole-pattern-explicit':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'keyword.other.recursion.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.regexp.php'
+    'match': '(\\()(\\?(?:R|0))(\\))'
+    'name': 'meta.embedded.group.regexp.php'
+  'regexp-subroutine-numeric-explicit':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'keyword.other.subroutine.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.regexp.php'
+    'match': '(\\()((\\?)([+-]?[1-9][0-9]*))(\\))'
+    'name': 'meta.embedded.group.regexp.php'
+  'regexp-subroutine-named-ampersand-explicit':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.regexp.php'
+    'match': '(\\()((\\?&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\\))'
+    'name': 'meta.embedded.group.regexp.php'
+  'regexp-subroutine-named-pcre-explicit':
+    'captures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'keyword.other.subroutine.named.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.regexp.php'
+    'match': '(\\()((\\?P>)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\\))'
+    'name': 'meta.embedded.group.regexp.php'
   'regexp-backreference-named-pcre-explicit':
     'captures':
       '1':
@@ -6652,6 +6814,18 @@
         'include': '#regexp-backreference-g-braced-numeric-explicit'
       }
       {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
         'include': '#regexp-option-toggle-explicit'
       }
       {
@@ -6662,6 +6836,18 @@
       }
       {
         'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
       }
       {
         'include': '#regexp-backreference-named-pcre-explicit'
@@ -6739,6 +6925,18 @@
         'include': '#regexp-backreference-g-braced-numeric-explicit'
       }
       {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
         'include': '#regexp-option-toggle-explicit'
       }
       {
@@ -6749,6 +6947,18 @@
       }
       {
         'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
       }
       {
         'include': '#regexp-backreference-named-pcre-explicit'
@@ -7012,7 +7222,31 @@
         'include': '#regexp-backreference-g-braced-numeric-explicit'
       }
       {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
         'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
       }
       {
         'include': '#regexp-backreference-named-pcre-explicit'
@@ -7042,7 +7276,31 @@
         'include': '#regexp-backreference-g-braced-numeric-explicit'
       }
       {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
         'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
       }
       {
         'include': '#regexp-backreference-named-pcre-explicit'
