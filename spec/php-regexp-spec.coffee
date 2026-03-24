@@ -79,6 +79,22 @@ describe 'PHP regexp grammar', ->
     baseScope.concat ['keyword.other.back-reference.named.regexp.php']
   regexpNamedBackreferenceNameScopes = (baseScope) ->
     regexpNamedBackreferenceScopes(baseScope).concat ['variable.other.regexp.php']
+  regexpSubroutineScopes = (baseScope) ->
+    baseScope.concat ['keyword.other.subroutine.regexp.php']
+  regexpNamedSubroutineScopes = (baseScope) ->
+    baseScope.concat ['keyword.other.subroutine.named.regexp.php']
+  regexpNamedSubroutineNameScopes = (baseScope) ->
+    regexpNamedSubroutineScopes(baseScope).concat ['variable.other.regexp.php']
+  regexpDecodedSubroutineTransportScopes = (baseScope) ->
+    baseScope.concat ['constant.character.escape.php', 'keyword.other.subroutine.regexp.php']
+  regexpDecodedNamedSubroutineTransportScopes = (baseScope) ->
+    baseScope.concat ['constant.character.escape.php', 'keyword.other.subroutine.named.regexp.php']
+  regexpGroupRecursionScopes = (baseScope) ->
+    regexpGroupScopes(baseScope).concat ['keyword.other.recursion.regexp.php']
+  regexpGroupSubroutineScopes = (baseScope) ->
+    regexpGroupScopes(baseScope).concat ['keyword.other.subroutine.regexp.php']
+  regexpGroupNamedSubroutineScopes = (baseScope) ->
+    regexpGroupScopes(baseScope).concat ['keyword.other.subroutine.named.regexp.php']
   regexpInvalidEscapeScopes = (baseScope) ->
     baseScope.concat ['invalid.illegal.escape.regexp.php']
   regexpOctalScopes = (baseScope) ->
@@ -2236,6 +2252,127 @@ describe 'PHP regexp grammar', ->
       expect(singleQuoted.tokens[25]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[26]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize recursion and subroutine calls in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine "\"/(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/\""
+      singleQuoted = grammar.tokenizeLine "'/(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g<1>\\g<+1>\\g<-1>/'"
+
+      groupExpectations = [
+        ['recursion', '?R']
+        ['recursion', '?0']
+        ['numeric', '?', '1']
+        ['numeric', '?', '+1']
+        ['numeric', '?', '-1']
+        ['named', '?&', 'word']
+        ['named', '?P>', 'word']
+      ]
+
+      gExpectations = [
+        ['named', '<', 'word', '>']
+        ['named', '\'', 'word', '\'']
+        ['numeric', '<', '1', '>']
+        ['numeric', '<', '+1', '>']
+        ['numeric', '\'', '-1', '\'']
+      ]
+
+      for [tokens, baseScope, useSingleQuotedGForms] in [
+        [doubleQuoted.tokens, quotedDoubleRegexpScope, true]
+        [singleQuoted.tokens, quotedSingleRegexpScope, false]
+      ]
+        quote = if baseScope is quotedDoubleRegexpScope then '"' else '\''
+        expect(tokens[0]).toEqual value: quote, scopes: regexpWrapperBeginQuoteScopes(baseScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(baseScope)
+
+        offset = 2
+        for [kind, head, payload] in groupExpectations
+          expect(tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(baseScope).concat ['punctuation.definition.group.regexp.php']
+          if kind is 'recursion'
+            expect(tokens[offset + 1]).toEqual value: head, scopes: regexpGroupRecursionScopes(baseScope)
+            expect(tokens[offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(baseScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 3
+          else if kind is 'numeric'
+            expect(tokens[offset + 1]).toEqual value: head, scopes: regexpGroupSubroutineScopes(baseScope)
+            expect(tokens[offset + 2]).toEqual value: payload, scopes: regexpGroupSubroutineScopes(baseScope).concat ['constant.numeric.regexp.php']
+            expect(tokens[offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(baseScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 4
+          else
+            expect(tokens[offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(baseScope)
+            expect(tokens[offset + 2]).toEqual value: payload, scopes: regexpGroupNamedSubroutineScopes(baseScope).concat ['variable.other.regexp.php']
+            expect(tokens[offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(baseScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 4
+
+        hostGExpectations = if useSingleQuotedGForms
+          gExpectations
+        else
+          [
+            ['named', '<', 'word', '>']
+            ['numeric', '<', '1', '>']
+            ['numeric', '<', '+1', '>']
+            ['numeric', '<', '-1', '>']
+          ]
+
+        for [kind, beginPunctuation, payload, endPunctuation] in hostGExpectations
+          if kind is 'named'
+            expect(tokens[offset]).toEqual value: '\\g', scopes: regexpNamedSubroutineScopes(baseScope)
+            expect(tokens[offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(tokens[offset + 2]).toEqual value: payload, scopes: regexpNamedSubroutineNameScopes(baseScope)
+            expect(tokens[offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+          else
+            expect(tokens[offset]).toEqual value: '\\g', scopes: regexpSubroutineScopes(baseScope)
+            expect(tokens[offset + 1]).toEqual value: beginPunctuation, scopes: regexpSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(tokens[offset + 2]).toEqual value: payload, scopes: regexpSubroutineScopes(baseScope).concat ['constant.numeric.regexp.php']
+            expect(tokens[offset + 3]).toEqual value: endPunctuation, scopes: regexpSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+          offset += 4
+
+        expect(tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(baseScope)
+        expect(tokens[offset + 1]).toEqual value: quote, scopes: regexpWrapperEndQuoteScopes(baseScope)
+
+    it 'should tokenize decoded Oniguruma subroutine calls in interpreted quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine "\"/\\\\g<word>\\\\g'word'\\\\g<1>\\\\g<+1>\\\\g'-1'/\""
+      singleQuoted = grammar.tokenizeLine "'/\\\\g<word>\\\\g<1>\\\\g<+1>\\\\g<-1>/'"
+
+      for [tokens, baseScope, useSingleQuotedGForms] in [
+        [doubleQuoted.tokens, quotedDoubleRegexpScope, true]
+        [singleQuoted.tokens, quotedSingleRegexpScope, false]
+      ]
+        quote = if baseScope is quotedDoubleRegexpScope then '"' else '\''
+        expect(tokens[0]).toEqual value: quote, scopes: regexpWrapperBeginQuoteScopes(baseScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(baseScope)
+
+        hostGExpectations = if useSingleQuotedGForms
+          [
+            ['named', '<', 'word', '>']
+            ['named', '\'', 'word', '\'']
+            ['numeric', '<', '1', '>']
+            ['numeric', '<', '+1', '>']
+            ['numeric', '\'', '-1', '\'']
+          ]
+        else
+          [
+            ['named', '<', 'word', '>']
+            ['numeric', '<', '1', '>']
+            ['numeric', '<', '+1', '>']
+            ['numeric', '<', '-1', '>']
+          ]
+
+        offset = 2
+        for [kind, beginPunctuation, payload, endPunctuation] in hostGExpectations
+          if kind is 'named'
+            expect(tokens[offset]).toEqual value: '\\\\', scopes: regexpDecodedNamedSubroutineTransportScopes(baseScope)
+            expect(tokens[offset + 1]).toEqual value: 'g', scopes: regexpNamedSubroutineScopes(baseScope)
+            expect(tokens[offset + 2]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(tokens[offset + 3]).toEqual value: payload, scopes: regexpNamedSubroutineNameScopes(baseScope)
+            expect(tokens[offset + 4]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+          else
+            expect(tokens[offset]).toEqual value: '\\\\', scopes: regexpDecodedSubroutineTransportScopes(baseScope)
+            expect(tokens[offset + 1]).toEqual value: 'g', scopes: regexpSubroutineScopes(baseScope)
+            expect(tokens[offset + 2]).toEqual value: beginPunctuation, scopes: regexpSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(tokens[offset + 3]).toEqual value: payload, scopes: regexpSubroutineScopes(baseScope).concat ['constant.numeric.regexp.php']
+            expect(tokens[offset + 4]).toEqual value: endPunctuation, scopes: regexpSubroutineScopes(baseScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+          offset += 5
+
+        expect(tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(baseScope)
+        expect(tokens[offset + 1]).toEqual value: quote, scopes: regexpWrapperEndQuoteScopes(baseScope)
+
     it 'should keep double quoted numeric backreferences as PHP octal escapes', ->
       {tokens} = grammar.tokenizeLine '"/\\1/"'
 
@@ -3285,6 +3422,65 @@ describe 'PHP regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should tokenize recursion and subroutine calls in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/
+            #{label};
+          """
+
+          groupExpectations = [
+            ['recursion', '?R']
+            ['recursion', '?0']
+            ['numeric', '?', '1']
+            ['numeric', '?', '+1']
+            ['numeric', '?', '-1']
+            ['named', '?&', 'word']
+            ['named', '?P>', 'word']
+          ]
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for [kind, head, payload] in groupExpectations
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            if kind is 'recursion'
+              expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupRecursionScopes(regexScope)
+              expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 3
+            else if kind is 'numeric'
+              expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupSubroutineScopes(regexScope)
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpGroupSubroutineScopes(regexScope).concat ['constant.numeric.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 4
+            else
+              expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(regexScope)
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpGroupNamedSubroutineScopes(regexScope).concat ['variable.other.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 4
+
+          for [kind, beginPunctuation, payload, endPunctuation] in [
+            ['named', '<', 'word', '>']
+            ['named', '\'', 'word', '\'']
+            ['numeric', '<', '1', '>']
+            ['numeric', '<', '+1', '>']
+            ['numeric', '\'', '-1', '\'']
+          ]
+            if kind is 'named'
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedSubroutineScopes(regexScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(regexScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpNamedSubroutineNameScopes(regexScope)
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(regexScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            else
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpSubroutineScopes(regexScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpSubroutineScopes(regexScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpSubroutineScopes(regexScope).concat ['constant.numeric.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpSubroutineScopes(regexScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            offset += 4
+
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         if description is 'REGEX heredoc'
           it 'should keep single-backslash overlapping escapes PHP-first in REGEX heredoc', ->
             lines = grammar.tokenizeLines """
@@ -3953,6 +4149,42 @@ describe 'PHP regexp grammar', ->
             expect(lines[1][22]).toEqual value: '-1', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
             expect(lines[1][23]).toEqual value: '}', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
             expect(lines[1][24]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+
+          it 'should tokenize decoded Oniguruma subroutine calls in REGEX heredoc', ->
+            lines = grammar.tokenizeLines """
+              $r = <<<REGEX
+              /\\\\g<word>\\\\g'word'\\\\g<1>\\\\g<+1>\\\\g'-1'/
+              REGEX;
+            """
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedNamedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][2]).toEqual value: 'g', scopes: regexpNamedSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][3]).toEqual value: '<', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][4]).toEqual value: 'word', scopes: regexpNamedSubroutineNameScopes(heredocRegexpScope)
+            expect(lines[1][5]).toEqual value: '>', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            expect(lines[1][6]).toEqual value: '\\\\', scopes: regexpDecodedNamedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][7]).toEqual value: 'g', scopes: regexpNamedSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][8]).toEqual value: '\'', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][9]).toEqual value: 'word', scopes: regexpNamedSubroutineNameScopes(heredocRegexpScope)
+            expect(lines[1][10]).toEqual value: '\'', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            expect(lines[1][11]).toEqual value: '\\\\', scopes: regexpDecodedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][12]).toEqual value: 'g', scopes: regexpSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][13]).toEqual value: '<', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][14]).toEqual value: '1', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['constant.numeric.regexp.php']
+            expect(lines[1][15]).toEqual value: '>', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            expect(lines[1][16]).toEqual value: '\\\\', scopes: regexpDecodedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][17]).toEqual value: 'g', scopes: regexpSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][18]).toEqual value: '<', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][19]).toEqual value: '+1', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['constant.numeric.regexp.php']
+            expect(lines[1][20]).toEqual value: '>', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            expect(lines[1][21]).toEqual value: '\\\\', scopes: regexpDecodedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][22]).toEqual value: 'g', scopes: regexpSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][23]).toEqual value: '\'', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][24]).toEqual value: '-1', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['constant.numeric.regexp.php']
+            expect(lines[1][25]).toEqual value: '\'', scopes: regexpSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            expect(lines[1][26]).toEqual value: '/', scopes: heredocRegexpScope
             expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
 
           it 'should keep valid decoded body escapes, stray \\\\E, and invalid ones distinct in REGEX heredoc', ->
