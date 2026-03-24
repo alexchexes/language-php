@@ -2,7 +2,7 @@
 require('../utils/compatibleExpect')
 {expect} = require('chai')
 
-describe 'PHP regexp invalid braced escapes', ->
+describe 'PHP regexp invalid escapes', ->
   grammar = null
   before(-> grammar = await loadGrammar('source.php'))
 
@@ -119,3 +119,66 @@ describe 'PHP regexp invalid braced escapes', ->
     expect(lines[2][5]).toEqual value: 'o{abc}', scopes: regexpCharacterClassInvalidEscapeScopes(heredocRegexpScope)
     expect(lines[2][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
     expect(lines[2][7]).toEqual value: '/', scopes: heredocRegexpScope
+
+  it 'tokenizes closed malformed raw \\k/\\g forms as invalid in quoted regexes', ->
+    body = '"/' + '\\k{}' + '\\k{1}' + '\\g{}' + '\\g{1x}' + '\\g<>' + '/"'
+    tokens = grammar.tokenizeLine(body).tokens
+
+    expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+    expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+    expect(tokens[2]).toEqual value: '\\k{}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[3]).toEqual value: '\\k{1}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[4]).toEqual value: '\\g{}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[5]).toEqual value: '\\g{1x}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[6]).toEqual value: '\\g<>', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[7]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+    expect(tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+  it 'tokenizes closed malformed decoded \\k/\\g forms as invalid in quoted regexes', ->
+    body = '"/' + '\\'.repeat(2) + 'k{}' + '\\'.repeat(2) + 'k{1}' + '\\'.repeat(2) + 'g{}' + '\\'.repeat(2) + 'g{1x}' + '/"'
+    tokens = grammar.tokenizeLine(body).tokens
+
+    expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+    expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+    expect(tokens[2]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+    expect(tokens[3]).toEqual value: 'k{}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[4]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+    expect(tokens[5]).toEqual value: 'k{1}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[6]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+    expect(tokens[7]).toEqual value: 'g{}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[8]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(quotedDoubleRegexpScope)
+    expect(tokens[9]).toEqual value: 'g{1x}', scopes: regexpInvalidEscapeScopes(quotedDoubleRegexpScope)
+    expect(tokens[10]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+    expect(tokens[11]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+  it 'tokenizes closed malformed raw \\k/\\g forms as invalid in REGEXP nowdoc', ->
+    lines = grammar.tokenizeLines [
+      "$r = <<<'REGEXP'"
+      '/\\k{}\\k{1}\\g{}\\g{1x}/'
+      'REGEXP;'
+    ].join "\n"
+
+    expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\k{}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+    expect(lines[1][2]).toEqual value: '\\k{1}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+    expect(lines[1][3]).toEqual value: '\\g{}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+    expect(lines[1][4]).toEqual value: '\\g{1x}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+    expect(lines[1][5]).toEqual value: '/', scopes: nowdocRegexpScope
+
+  it 'tokenizes closed malformed decoded \\k/\\g forms as invalid in REGEX heredoc', ->
+    lines = grammar.tokenizeLines """
+      $r = <<<REGEXP
+      /\\\\k{}\\\\k{1}\\\\g{}\\\\g{1x}/
+      REGEXP;
+    """
+
+    expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+    expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+    expect(lines[1][2]).toEqual value: 'k{}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+    expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+    expect(lines[1][4]).toEqual value: 'k{1}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+    expect(lines[1][5]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+    expect(lines[1][6]).toEqual value: 'g{}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+    expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+    expect(lines[1][8]).toEqual value: 'g{1x}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+    expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
