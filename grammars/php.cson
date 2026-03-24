@@ -5783,6 +5783,516 @@
         'include': '#regexp-single-quoted-body'
       }
     ]
+  'regexp-group-conditional-assertion-double-quoted':
+    'begin': '(\\()(\\?\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-conditional-assertion-condition-double-quoted'
+      }
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-conditional-assertion-condition-double-quoted':
+    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '2':
+        'name': 'meta.assertion.look-ahead.regexp.php'
+      '3':
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
+      '4':
+        'name': 'meta.assertion.look-behind.regexp.php'
+      '5':
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-assertion-single-quoted':
+    'begin': '(\\()(\\?\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-conditional-assertion-condition-single-quoted'
+      }
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-conditional-assertion-condition-single-quoted':
+    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '2':
+        'name': 'meta.assertion.look-ahead.regexp.php'
+      '3':
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
+      '4':
+        'name': 'meta.assertion.look-behind.regexp.php'
+      '5':
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-numeric-double-quoted':
+    'begin': '(\\()(\\?\\()([+-]?(?:0|[1-9][0-9]*))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-angle-double-quoted':
+    'begin': '(\\()(\\?\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-single-quoted-double-quoted':
+    'begin': "(\\()(\\?\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))"
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-double-quoted':
+    'begin': '(\\()(\\?\\()(R)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-numbered-double-quoted':
+    'begin': '(\\()(\\?\\()(R)(0|[1-9][0-9]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-named-double-quoted':
+    'begin': '(\\()(\\?\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-define-double-quoted':
+    'begin': '(\\()(\\?\\()(DEFINE)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-version-double-quoted':
+    'begin': '(\\()(\\?\\()((?:VERSION(?:>=|<=|=|>|<)[0-9]+(?:\\.[0-9]+)?))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-bare-double-quoted':
+    'begin': '(\\()(\\?\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'variable.other.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.double-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-numeric-single-quoted':
+    'begin': '(\\()(\\?\\()([+-]?(?:0|[1-9][0-9]*))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-angle-single-quoted':
+    'begin': '(\\()(\\?\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-single-quoted-single-quoted':
+    'begin': "(\\()(\\?\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))"
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-single-quoted':
+    'begin': '(\\()(\\?\\()(R)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-numbered-single-quoted':
+    'begin': '(\\()(\\?\\()(R)(0|[1-9][0-9]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-recursion-named-single-quoted':
+    'begin': '(\\()(\\?\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-define-single-quoted':
+    'begin': '(\\()(\\?\\()(DEFINE)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-version-single-quoted':
+    'begin': '(\\()(\\?\\()((?:VERSION(?:>=|<=|=|>|<)[0-9]+(?:\\.[0-9]+)?))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-group-conditional-named-bare-single-quoted':
+    'begin': '(\\()(\\?\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'variable.other.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.single-quoted.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
   'regexp-group-non-capturing-double-quoted':
     'begin': '(\\()((\\?:)|(\\?>)|(\\?\\|))'
     'beginCaptures':
@@ -6135,6 +6645,516 @@
         'name': 'punctuation.definition.group.regexp.php'
     'contentName': 'string.regexp.nowdoc.php'
     'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-assertion-heredoc':
+    'begin': '(\\()(\\?\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-conditional-assertion-condition-heredoc'
+      }
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-conditional-assertion-condition-heredoc':
+    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '2':
+        'name': 'meta.assertion.look-ahead.regexp.php'
+      '3':
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
+      '4':
+        'name': 'meta.assertion.look-behind.regexp.php'
+      '5':
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-assertion-nowdoc':
+    'begin': '(\\()(\\?\\()(?=(?:\\?=|\\?!|\\?<=|\\?<!|\\*pla:|\\*positive_lookahead:|\\*nla:|\\*negative_lookahead:|\\*plb:|\\*positive_lookbehind:|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-conditional-assertion-condition-nowdoc'
+      }
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-conditional-assertion-condition-nowdoc':
+    'begin': '((\\?=|\\*pla:|\\*positive_lookahead:)|(\\?!|\\*nla:|\\*negative_lookahead:)|(\\?<=|\\*plb:|\\*positive_lookbehind:)|(\\?<!|\\*nlb:|\\*negative_lookbehind:))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.assertion.regexp.php'
+      '2':
+        'name': 'meta.assertion.look-ahead.regexp.php'
+      '3':
+        'name': 'meta.assertion.negative-look-ahead.regexp.php'
+      '4':
+        'name': 'meta.assertion.look-behind.regexp.php'
+      '5':
+        'name': 'meta.assertion.negative-look-behind.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.assertion.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-numeric-heredoc':
+    'begin': '(\\()(\\?\\()([+-]?(?:0|[1-9][0-9]*))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-angle-heredoc':
+    'begin': '(\\()(\\?\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-single-quoted-heredoc':
+    'begin': "(\\()(\\?\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))"
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-heredoc':
+    'begin': '(\\()(\\?\\()(R)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-numbered-heredoc':
+    'begin': '(\\()(\\?\\()(R)(0|[1-9][0-9]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-named-heredoc':
+    'begin': '(\\()(\\?\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-define-heredoc':
+    'begin': '(\\()(\\?\\()(DEFINE)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-version-heredoc':
+    'begin': '(\\()(\\?\\()((?:VERSION(?:>=|<=|=|>|<)[0-9]+(?:\\.[0-9]+)?))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-bare-heredoc':
+    'begin': '(\\()(\\?\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'variable.other.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.heredoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-heredoc-common'
+      }
+    ]
+  'regexp-group-conditional-numeric-nowdoc':
+    'begin': '(\\()(\\?\\()([+-]?(?:0|[1-9][0-9]*))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'constant.numeric.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-angle-nowdoc':
+    'begin': '(\\()(\\?\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-single-quoted-nowdoc':
+    'begin': "(\\()(\\?\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))"
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '6':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-nowdoc':
+    'begin': '(\\()(\\?\\()(R)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-numbered-nowdoc':
+    'begin': '(\\()(\\?\\()(R)(0|[1-9][0-9]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'constant.numeric.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-recursion-named-nowdoc':
+    'begin': '(\\()(\\?\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.other.recursion.regexp.php'
+      '4':
+        'name': 'variable.other.regexp.php'
+      '5':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-define-nowdoc':
+    'begin': '(\\()(\\?\\()(DEFINE)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-version-nowdoc':
+    'begin': '(\\()(\\?\\()((?:VERSION(?:>=|<=|=|>|<)[0-9]+(?:\\.[0-9]+)?))(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'keyword.control.conditional.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-nowdoc-common'
+      }
+    ]
+  'regexp-group-conditional-named-bare-nowdoc':
+    'begin': '(\\()(\\?\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.definition.group.regexp.php'
+      '2':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+      '3':
+        'name': 'variable.other.regexp.php'
+      '4':
+        'name': 'punctuation.definition.group.conditional.regexp.php'
+    'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.group.regexp.php'
+    'contentName': 'string.regexp.nowdoc.php'
+    'name': 'meta.embedded.group.conditional.regexp.php'
     'patterns': [
       {
         'include': '#regexp-nowdoc-common'
@@ -6871,6 +7891,36 @@
         'include': '#regexp-group-assertion-heredoc'
       }
       {
+        'include': '#regexp-group-conditional-assertion-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-define-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-version-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-heredoc'
+      }
+      {
         'include': '#regexp-backtracking-verb-mark-short-explicit'
       }
       {
@@ -6988,6 +8038,36 @@
         'include': '#regexp-group-assertion-nowdoc'
       }
       {
+        'include': '#regexp-group-conditional-assertion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-define-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-version-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-nowdoc'
+      }
+      {
         'include': '#regexp-backtracking-verb-mark-short-explicit'
       }
       {
@@ -7063,6 +8143,36 @@
         'include': '#regexp-group-assertion-double-quoted'
       }
       {
+        'include': '#regexp-group-conditional-assertion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-define-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-version-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-double-quoted'
+      }
+      {
         'include': '#regexp-backtracking-verb-named-explicit'
       }
       {
@@ -7094,6 +8204,36 @@
       }
       {
         'include': '#regexp-group-assertion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-assertion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-define-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-version-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-single-quoted'
       }
       {
         'include': '#regexp-backtracking-verb-named-explicit'
