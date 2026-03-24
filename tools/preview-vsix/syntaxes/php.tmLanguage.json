@@ -3287,7 +3287,7 @@
       "match": "\\\\([89][0-9]*)"
     },
     "regexp-octal-escape-explicit": {
-      "match": "\\\\0[0-7]{0,2}",
+      "match": "\\\\(?:0[0-7]{0,2}|o{[0-7]+})",
       "name": "constant.numeric.octal.regexp.php"
     },
     "regexp-backreference-named-angle-explicit": {
@@ -3530,6 +3530,20 @@
         }
       },
       "match": "((\\\\\\\\))((0[0-7]{0,2}))"
+    },
+    "regexp-decoded-braced-octal-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.numeric.octal.regexp.php"
+        },
+        "3": {
+          "name": "constant.numeric.octal.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))((o{[0-7]+}))"
     },
     "regexp-decoded-backreference-named-angle-redundant-interpreted": {
       "captures": {
@@ -4018,6 +4032,9 @@
           "include": "#regexp-decoded-octal-zero-interpreted"
         },
         {
+          "include": "#regexp-decoded-braced-octal-interpreted"
+        },
+        {
           "include": "#regexp-decoded-backreference-numeric-interpreted"
         },
         {
@@ -4189,7 +4206,7 @@
       "match": "[^\\\\\\[\\]0-9-]"
     },
     "regexp-character-class-octal-escape-explicit": {
-      "match": "\\\\[0-7]{1,3}",
+      "match": "\\\\(?:[0-7]{1,3}|o{[0-7]+})",
       "name": "constant.numeric.octal.regexp.php"
     },
     "regexp-character-class-short-hex-escape-explicit": {
@@ -4217,6 +4234,20 @@
         }
       },
       "match": "((\\\\\\\\))([0-7]{1,3})"
+    },
+    "regexp-character-class-decoded-braced-octal-interpreted": {
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.php"
+        },
+        "2": {
+          "name": "constant.numeric.octal.regexp.php"
+        },
+        "3": {
+          "name": "constant.numeric.octal.regexp.php"
+        }
+      },
+      "match": "((\\\\\\\\))(o{[0-7]+})"
     },
     "regexp-character-class-decoded-hex-escape-interpreted": {
       "captures": {
@@ -4518,6 +4549,9 @@
       "patterns": [
         {
           "include": "#regexp-character-class-decoded-octal-interpreted"
+        },
+        {
+          "include": "#regexp-character-class-decoded-braced-octal-interpreted"
         },
         {
           "include": "#regexp-character-class-decoded-hex-escape-interpreted"
@@ -8676,6 +8710,9 @@
         },
         {
           "include": "#regexp-reset-start-explicit"
+        },
+        {
+          "include": "#regexp-octal-escape-explicit"
         },
         {
           "include": "#interpolation_double_quoted"
