@@ -7880,6 +7880,21 @@
       "match": "(\\()(\\*(ACCEPT|FAIL|F|COMMIT|PRUNE|SKIP|THEN))(\\))",
       "name": "meta.embedded.group.regexp.php"
     },
+    "regexp-start-directive-explicit": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.group.regexp.php"
+        },
+        "2": {
+          "name": "keyword.control.directive.regexp.php"
+        },
+        "3": {
+          "name": "punctuation.definition.group.regexp.php"
+        }
+      },
+      "match": "(\\()(\\*(?:LIMIT_DEPTH=\\d+|LIMIT_HEAP=\\d+|LIMIT_MATCH=\\d+|CASELESS_RESTRICT|NOTEMPTY_ATSTART|NOTEMPTY|NO_AUTO_POSSESS|NO_DOTSTAR_ANCHOR|NO_START_OPT|NO_JIT|TURKISH_CASING|BSR_ANYCRLF|BSR_UNICODE|ANYCRLF|CRLF|UTF|UCP|ANY|NUL|CR|LF))(\\))",
+      "name": "meta.embedded.group.regexp.php"
+    },
     "regexp-simple-quantifier-explicit": {
       "match": "[?+*][?+]?",
       "name": "keyword.operator.quantifier.regexp.php"
@@ -8041,6 +8056,9 @@
           "include": "#regexp-backtracking-verb-explicit"
         },
         {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
           "include": "#regexp-recursion-whole-pattern-explicit"
         },
         {
@@ -8111,6 +8129,9 @@
         },
         {
           "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
         },
         {
           "include": "#regexp-group-non-capturing-heredoc"
@@ -8261,6 +8282,9 @@
           "include": "#regexp-backtracking-verb-explicit"
         },
         {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
           "include": "#regexp-group-non-capturing-nowdoc"
         },
         {
@@ -8367,6 +8391,9 @@
           "include": "#regexp-backtracking-verb-explicit"
         },
         {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
           "include": "#regexp-group-non-capturing-double-quoted"
         },
         {
@@ -8429,6 +8456,9 @@
         },
         {
           "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
         },
         {
           "include": "#regexp-group-non-capturing-single-quoted"
