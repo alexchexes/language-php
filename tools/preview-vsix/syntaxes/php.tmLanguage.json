@@ -3679,22 +3679,34 @@
     "regexp-decoded-backreference-named-single-quoted-single-quoted": {
       "captures": {
         "1": {
-          "name": "keyword.other.back-reference.named.regexp.php"
+          "name": "constant.character.escape.php"
         },
         "2": {
-          "name": "constant.character.escape.php"
+          "name": "keyword.other.back-reference.named.regexp.php"
+        },
+        "3": {
+          "name": "keyword.other.back-reference.named.regexp.php"
         },
         "4": {
           "name": "constant.character.escape.php"
         },
         "5": {
-          "name": "variable.other.regexp.php"
+          "name": "punctuation.definition.group.capture.begin.regexp.php"
         },
         "6": {
+          "name": "keyword.other.back-reference.named.regexp.php"
+        },
+        "7": {
+          "name": "variable.other.regexp.php"
+        },
+        "8": {
           "name": "constant.character.escape.php"
+        },
+        "9": {
+          "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "match": "(((?:\\\\\\\\))(k)(\\\\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\\\'))"
+      "match": "((\\\\\\\\))(k)((\\\\'))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((\\\\'))"
     },
     "regexp-decoded-backreference-named-braced-redundant-interpreted": {
       "captures": {
@@ -3836,22 +3848,34 @@
     "regexp-decoded-subroutine-g-single-quoted-single-quoted": {
       "captures": {
         "1": {
-          "name": "keyword.other.subroutine.named.regexp.php"
+          "name": "constant.character.escape.php"
         },
         "2": {
-          "name": "constant.character.escape.php"
+          "name": "keyword.other.subroutine.named.regexp.php"
+        },
+        "3": {
+          "name": "keyword.other.subroutine.named.regexp.php"
         },
         "4": {
           "name": "constant.character.escape.php"
         },
         "5": {
-          "name": "variable.other.regexp.php"
+          "name": "punctuation.definition.group.capture.begin.regexp.php"
         },
         "6": {
+          "name": "keyword.other.subroutine.named.regexp.php"
+        },
+        "7": {
+          "name": "variable.other.regexp.php"
+        },
+        "8": {
           "name": "constant.character.escape.php"
+        },
+        "9": {
+          "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "match": "(((?:\\\\\\\\))(g)(\\\\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\\\'))"
+      "match": "((\\\\\\\\))(g)((\\\\'))(([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))((\\\\'))"
     },
     "regexp-decoded-subroutine-g-angle-numeric-redundant-interpreted": {
       "captures": {
@@ -3902,22 +3926,34 @@
     "regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted": {
       "captures": {
         "1": {
-          "name": "keyword.other.subroutine.regexp.php"
+          "name": "constant.character.escape.php"
         },
         "2": {
-          "name": "constant.character.escape.php"
+          "name": "keyword.other.subroutine.regexp.php"
+        },
+        "3": {
+          "name": "keyword.other.subroutine.regexp.php"
         },
         "4": {
           "name": "constant.character.escape.php"
         },
         "5": {
-          "name": "constant.numeric.regexp.php"
+          "name": "punctuation.definition.group.capture.begin.regexp.php"
         },
         "6": {
+          "name": "keyword.other.subroutine.regexp.php"
+        },
+        "7": {
+          "name": "constant.numeric.regexp.php"
+        },
+        "8": {
           "name": "constant.character.escape.php"
+        },
+        "9": {
+          "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "match": "(((?:\\\\\\\\))(g)(\\\\')([+-]?[1-9][0-9]*)(\\\\'))"
+      "match": "((\\\\\\\\))(g)((\\\\'))(([+-]?[1-9][0-9]*))((\\\\'))"
     },
     "regexp-decoded-hex-escape-interpreted": {
       "captures": {
