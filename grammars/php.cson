@@ -5627,7 +5627,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -5649,7 +5649,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
@@ -5669,7 +5669,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -5691,7 +5691,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
@@ -5899,7 +5899,9 @@
       '4':
         'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
-    'end': '(\\])|(?=/[imsxeADSUXu]*")|(?=$)'
+    # In quoted hosts, unclosed classes must yield at the actual PHP string end,
+    # not only at the regex wrapper terminator or end-of-line.
+    'end': '(\\])|(?=")'
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
@@ -5913,7 +5915,7 @@
     ]
   'regexp-character-class-set-double-quoted':
     'begin': '(?=[^\\]])'
-    'end': '(?=\\])|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '(?=\\])|(?=")'
     'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
@@ -5968,7 +5970,9 @@
       '4':
         'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
-    'end': '(\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
+    # In quoted hosts, unclosed classes must yield at the actual PHP string end,
+    # not only at the regex wrapper terminator or end-of-line.
+    'end': '(\\])|(?=\')'
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
@@ -5982,7 +5986,7 @@
     ]
   'regexp-character-class-set-single-quoted':
     'begin': '(?=[^\\]])'
-    'end': '(?=\\])|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '(?=\\])|(?=\')'
     'name': 'constant.other.character-class.set.regexp.php'
     'patterns': [
       {
@@ -9167,10 +9171,11 @@
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
           # Ordinary regex escapes that keep the body from terminating early.
           | \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . )
-          # Character classes may contain almost anything, but not the host quote.
+          # Character classes are treated as opaque top-level atoms here. Their
+          # broken-host recovery belongs to the class rules themselves.
           | \\[
               (?: \\^? \\] )?
-              (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! ["\\\\\\]] ). )*
+              (?: \\\\. | . )*?
             \\]
           # Any other raw regex atom that cannot start the wrapper terminator.
           | (?! ["/\\\\\\[] ).
@@ -9186,7 +9191,7 @@
       '2':
         'name': 'punctuation.definition.string.begin.regexp.php'
     'contentName': 'string.regexp.double-quoted.php'
-    'end': '((/)([imsxeADSUXu]*)("))'
+    'end': '((/)([imsxeADSUXu]*)("))|(")'
     'endCaptures':
       '0':
         'name': 'string.regexp.double-quoted.php'
@@ -9195,6 +9200,8 @@
       '3':
         'name': 'storage.modifier.regexp.php'
       '4':
+        'name': 'punctuation.definition.string.end.php'
+      '5':
         'name': 'punctuation.definition.string.end.php'
     # Keep string.regexp.double-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
@@ -9215,10 +9222,11 @@
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
           # Ordinary regex escapes that keep the body from terminating early.
           | \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . )
-          # Character classes may contain almost anything, but not the host quote.
+          # Character classes are treated as opaque top-level atoms here. Their
+          # broken-host recovery belongs to the class rules themselves.
           | \\[
               (?: \\^? \\] )?
-              (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! ['\\\\\\]] ). )*
+              (?: \\\\. | . )*?
             \\]
           # Any other raw regex atom that cannot start the wrapper terminator.
           | (?! ['/\\\\\\[] ).
@@ -9234,7 +9242,7 @@
       '2':
         'name': 'punctuation.definition.string.begin.regexp.php'
     'contentName': 'string.regexp.single-quoted.php'
-    'end': '((/)([imsxeADSUXu]*)(\'))'
+    'end': '((/)([imsxeADSUXu]*)(\'))|(\')'
     'endCaptures':
       '0':
         'name': 'string.regexp.single-quoted.php'
@@ -9243,6 +9251,8 @@
       '3':
         'name': 'storage.modifier.regexp.php'
       '4':
+        'name': 'punctuation.definition.string.end.php'
+      '5':
         'name': 'punctuation.definition.string.end.php'
     # Keep string.regexp.single-quoted.php for BC via contentName while layering on an embedded wrapper.
     'name': 'meta.embedded.regexp.php'
