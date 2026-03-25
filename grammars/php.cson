@@ -4680,22 +4680,22 @@
         'include': '#regex-decoded-quoted-literal-single-quoted'
       }
       {
-        'include': '#regex-backreference-named-single-quoted-single-quoted'
+        'include': '#regex-backreference-named-single-quoted-escaped'
       }
       {
-        'include': '#regex-subroutine-g-single-quoted-single-quoted'
+        'include': '#regex-subroutine-g-single-quoted-escaped'
       }
       {
-        'include': '#regex-subroutine-g-single-quoted-numeric-single-quoted'
+        'include': '#regex-subroutine-g-single-quoted-numeric-escaped'
       }
       {
-        'include': '#regex-decoded-backreference-named-single-quoted-single-quoted'
+        'include': '#regex-decoded-backreference-named-single-quoted-escaped'
       }
       {
-        'include': '#regex-decoded-subroutine-g-single-quoted-single-quoted'
+        'include': '#regex-decoded-subroutine-g-single-quoted-escaped'
       }
       {
-        'include': '#regex-decoded-subroutine-g-single-quoted-numeric-single-quoted'
+        'include': '#regex-decoded-subroutine-g-single-quoted-numeric-escaped'
       }
       {
         'include': '#regex-decoded-apostrophe-escape-single-quoted'
@@ -4815,7 +4815,7 @@
         'include': '#regex-group-conditional-named-angle-single-quoted'
       }
       {
-        'include': '#regex-group-conditional-named-single-quoted-single-quoted'
+        'include': '#regex-group-conditional-named-single-quoted-escaped'
       }
       {
         'include': '#regex-group-conditional-recursion-single-quoted'
@@ -4854,7 +4854,7 @@
         'include': '#regex-group-named-angle-single-quoted'
       }
       {
-        'include': '#regex-group-named-single-quoted-single-quoted'
+        'include': '#regex-group-named-single-quoted-escaped'
       }
       {
         'include': '#regex-group-named-pcre-single-quoted'
@@ -5249,7 +5249,7 @@
       '3':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\k(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
-  'regex-backreference-named-single-quoted-single-quoted':
+  'regex-backreference-named-single-quoted-escaped':
     'captures':
       '0':
         'name': 'keyword.other.back-reference.named.regexp.php'
@@ -5353,7 +5353,7 @@
       '3':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\g(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\')'
-  'regex-subroutine-g-single-quoted-single-quoted':
+  'regex-subroutine-g-single-quoted-escaped':
     'captures':
       '0':
         'name': 'keyword.other.subroutine.named.regexp.php'
@@ -5390,7 +5390,7 @@
       '3':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '\\\\g(\')([+-]?[1-9][0-9]*)(\')'
-  'regex-subroutine-g-single-quoted-numeric-single-quoted':
+  'regex-subroutine-g-single-quoted-numeric-escaped':
     'captures':
       '0':
         'name': 'keyword.other.subroutine.regexp.php'
@@ -5531,7 +5531,7 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(k(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
-  'regex-decoded-backreference-named-single-quoted-single-quoted':
+  'regex-decoded-backreference-named-single-quoted-escaped':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -5673,7 +5673,7 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(g(\')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\'))'
-  'regex-decoded-subroutine-g-single-quoted-single-quoted':
+  'regex-decoded-subroutine-g-single-quoted-escaped':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -5724,7 +5724,7 @@
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
     'match': '((\\\\\\\\))(g(\')([+-]?[1-9][0-9]*)(\'))'
-  'regex-decoded-subroutine-g-single-quoted-numeric-single-quoted':
+  'regex-decoded-subroutine-g-single-quoted-numeric-escaped':
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -7435,7 +7435,7 @@
         'include': '#regex-single-quoted-body'
       }
     ]
-  'regex-group-conditional-named-single-quoted-single-quoted':
+  'regex-group-conditional-named-single-quoted-escaped':
     'begin': "(\\()(\\?)(\\()((\\\\'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((\\\\'))(\\))"
     'beginCaptures':
       '1':
@@ -7819,7 +7819,7 @@
         'include': '#regex-double-quoted-body'
       }
     ]
-  'regex-group-named-single-quoted-single-quoted':
+  'regex-group-named-single-quoted-escaped':
     'begin': '(\\()((\\?))((\\\\\'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((\\\\\'))'
     'beginCaptures':
       '1':
@@ -8890,6 +8890,8 @@
         'include': '#regex-nowdoc-common'
       }
     ]
+  # The "-explicit" suffix means source-visible regex syntax shared across raw hosts and
+  # quoted hosts after their host-specific transport/interpolation rules have already run.
   'regex-recursion-whole-pattern-explicit':
     'captures':
       '1':
