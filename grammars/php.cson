@@ -4590,19 +4590,19 @@
         'include': '#regex-option-toggle-explicit'
       }
       {
-        'include': '#regex-recursion-whole-pattern-explicit'
+        'include': '#regex-group-recursion-whole-pattern-explicit'
       }
       {
-        'include': '#regex-subroutine-numeric-explicit'
+        'include': '#regex-group-subroutine-numeric-explicit'
       }
       {
-        'include': '#regex-subroutine-named-ampersand-explicit'
+        'include': '#regex-group-subroutine-named-ampersand-explicit'
       }
       {
-        'include': '#regex-subroutine-named-pcre-explicit'
+        'include': '#regex-group-subroutine-named-pcre-explicit'
       }
       {
-        'include': '#regex-backreference-named-pcre-explicit'
+        'include': '#regex-group-backreference-named-pcre-explicit'
       }
       {
         'include': '#regex-quoted-common'
@@ -4644,19 +4644,19 @@
         'include': '#regex-option-toggle-explicit'
       }
       {
-        'include': '#regex-recursion-whole-pattern-explicit'
+        'include': '#regex-group-recursion-whole-pattern-explicit'
       }
       {
-        'include': '#regex-subroutine-numeric-explicit'
+        'include': '#regex-group-subroutine-numeric-explicit'
       }
       {
-        'include': '#regex-subroutine-named-ampersand-explicit'
+        'include': '#regex-group-subroutine-named-ampersand-explicit'
       }
       {
-        'include': '#regex-subroutine-named-pcre-explicit'
+        'include': '#regex-group-subroutine-named-pcre-explicit'
       }
       {
-        'include': '#regex-backreference-named-pcre-explicit'
+        'include': '#regex-group-backreference-named-pcre-explicit'
       }
       {
         'include': '#regex-character-type-escape'
@@ -4950,19 +4950,19 @@
         'include': '#regex-start-directive-explicit'
       }
       {
-        'include': '#regex-recursion-whole-pattern-explicit'
+        'include': '#regex-group-recursion-whole-pattern-explicit'
       }
       {
-        'include': '#regex-subroutine-numeric-explicit'
+        'include': '#regex-group-subroutine-numeric-explicit'
       }
       {
-        'include': '#regex-subroutine-named-ampersand-explicit'
+        'include': '#regex-group-subroutine-named-ampersand-explicit'
       }
       {
-        'include': '#regex-subroutine-named-pcre-explicit'
+        'include': '#regex-group-subroutine-named-pcre-explicit'
       }
       {
-        'include': '#regex-backreference-named-pcre-explicit'
+        'include': '#regex-group-backreference-named-pcre-explicit'
       }
       {
         'include': '#regex-apostrophe-escape-explicit'
@@ -5094,19 +5094,19 @@
         'include': '#regex-backtracking-verb-explicit'
       }
       {
-        'include': '#regex-recursion-whole-pattern-explicit'
+        'include': '#regex-group-recursion-whole-pattern-explicit'
       }
       {
-        'include': '#regex-subroutine-numeric-explicit'
+        'include': '#regex-group-subroutine-numeric-explicit'
       }
       {
-        'include': '#regex-subroutine-named-ampersand-explicit'
+        'include': '#regex-group-subroutine-named-ampersand-explicit'
       }
       {
-        'include': '#regex-subroutine-named-pcre-explicit'
+        'include': '#regex-group-subroutine-named-pcre-explicit'
       }
       {
-        'include': '#regex-backreference-named-pcre-explicit'
+        'include': '#regex-group-backreference-named-pcre-explicit'
       }
       {
         'include': '#regex-quoted-literal-nowdoc'
@@ -8890,9 +8890,7 @@
         'include': '#regex-nowdoc-common'
       }
     ]
-  # The "-explicit" suffix means source-visible regex syntax shared across raw hosts and
-  # quoted hosts after their host-specific transport/interpolation rules have already run.
-  'regex-recursion-whole-pattern-explicit':
+  'regex-group-recursion-whole-pattern-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8902,7 +8900,7 @@
         'name': 'punctuation.definition.group.regexp.php'
     'match': '(\\()(\\?(?:R|0))(\\))'
     'name': 'meta.embedded.group.regexp.php'
-  'regex-subroutine-numeric-explicit':
+  'regex-group-subroutine-numeric-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8914,7 +8912,7 @@
         'name': 'punctuation.definition.group.regexp.php'
     'match': '(\\()((\\?)([+-]?[1-9][0-9]*))(\\))'
     'name': 'meta.embedded.group.regexp.php'
-  'regex-subroutine-named-ampersand-explicit':
+  'regex-group-subroutine-named-ampersand-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8926,7 +8924,7 @@
         'name': 'punctuation.definition.group.regexp.php'
     'match': '(\\()((\\?&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\\))'
     'name': 'meta.embedded.group.regexp.php'
-  'regex-subroutine-named-pcre-explicit':
+  'regex-group-subroutine-named-pcre-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8938,7 +8936,7 @@
         'name': 'punctuation.definition.group.regexp.php'
     'match': '(\\()((\\?P>)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*))(\\))'
     'name': 'meta.embedded.group.regexp.php'
-  'regex-backreference-named-pcre-explicit':
+  'regex-group-backreference-named-pcre-explicit':
     'captures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
