@@ -2022,6 +2022,48 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should stop unclosed non-capturing and option groups at the quoted host boundary', ->
+      nonCapturingDoubleQuoted = grammar.tokenizeLine '"/a(?:foo/"'
+      nonCapturingSingleQuoted = grammar.tokenizeLine "'/a(?:foo/'"
+      optionsDoubleQuoted = grammar.tokenizeLine '"/a(?im:foo/"'
+      optionsSingleQuoted = grammar.tokenizeLine "'/a(?im:foo/'"
+
+      expect(nonCapturingDoubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(nonCapturingDoubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(nonCapturingDoubleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(nonCapturingDoubleQuoted.tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(nonCapturingDoubleQuoted.tokens[4]).toEqual value: '?:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.no-capture.regexp.php')
+      expect(nonCapturingDoubleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(nonCapturingDoubleQuoted.tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(nonCapturingSingleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(nonCapturingSingleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(nonCapturingSingleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(nonCapturingSingleQuoted.tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(nonCapturingSingleQuoted.tokens[4]).toEqual value: '?:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.no-capture.regexp.php')
+      expect(nonCapturingSingleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(nonCapturingSingleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+      expect(optionsDoubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(optionsDoubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(optionsDoubleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(optionsDoubleQuoted.tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(optionsDoubleQuoted.tokens[4]).toEqual value: '?', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(optionsDoubleQuoted.tokens[5]).toEqual value: 'im', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['storage.modifier.regexp.php']
+      expect(optionsDoubleQuoted.tokens[6]).toEqual value: ':', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(optionsDoubleQuoted.tokens[7]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+      expect(optionsDoubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(optionsSingleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(optionsSingleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(optionsSingleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(optionsSingleQuoted.tokens[3]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(optionsSingleQuoted.tokens[4]).toEqual value: '?', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(optionsSingleQuoted.tokens[5]).toEqual value: 'im', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['storage.modifier.regexp.php']
+      expect(optionsSingleQuoted.tokens[6]).toEqual value: ':', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.option.regexp.php')
+      expect(optionsSingleQuoted.tokens[7]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+      expect(optionsSingleQuoted.tokens[8]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize verb-style assertion groups in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/"'
       singleQuoted = grammar.tokenizeLine "'/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/'"
@@ -3117,6 +3159,28 @@ describe 'PHP quoted regexp recovery', ->
     {tokens: doubleTokens} = grammar.tokenizeLine doubleLine
     expect(doubleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
     expect(doubleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+  it 'keeps concatenated non-capturing and option-group fragments out of quoted regex mode while wrapper entry stays conservative', ->
+    nonCapturingSingleLine = "'/a(?:foo' . $foo . 'bar)/';"
+    nonCapturingDoubleLine = "\"/a(?:foo\" . $foo . \"bar)/\";"
+    optionsSingleLine = "'/a(?im:foo' . $foo . 'bar)/';"
+    optionsDoubleLine = "\"/a(?im:foo\" . $foo . \"bar)/\";"
+
+    {tokens: nonCapturingSingleTokens} = grammar.tokenizeLine nonCapturingSingleLine
+    expect(nonCapturingSingleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(nonCapturingSingleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: nonCapturingDoubleTokens} = grammar.tokenizeLine nonCapturingDoubleLine
+    expect(nonCapturingDoubleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(nonCapturingDoubleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: optionsSingleTokens} = grammar.tokenizeLine optionsSingleLine
+    expect(optionsSingleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(optionsSingleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: optionsDoubleTokens} = grammar.tokenizeLine optionsDoubleLine
+    expect(optionsDoubleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(optionsDoubleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
 
 describe 'PHP regexp decoded apostrophe-delimited forms', ->

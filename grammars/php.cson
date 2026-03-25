@@ -5658,7 +5658,7 @@
         'name': 'punctuation.definition.group.script-run.regexp.php'
       '7':
         'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5695,7 +5695,7 @@
         'name': 'punctuation.definition.group.script-run.regexp.php'
       '7':
         'name': 'punctuation.definition.group.atomic-script-run.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5721,7 +5721,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.option.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5747,7 +5747,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.option.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
