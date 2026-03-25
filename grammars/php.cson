@@ -5923,7 +5923,7 @@
     'beginCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -5939,7 +5939,7 @@
     'beginCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
