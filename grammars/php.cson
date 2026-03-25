@@ -8081,19 +8081,34 @@
       (")  # PHP string opener
       (/)  # regex delimiter
       (?=
-        (?:  # regex body that can appear before the closing /flags"
-          # Raw \Q...\E literal blocks inside the regex source.
+        # Entry heuristic for one local quoted /.../flags wrapper.
+        #
+        # It only recognizes top-level constructs that can legally contain a
+        # raw `/` before the local wrapper tail, and it must not look through
+        # the current PHP string boundary into later same-line PHP code.
+        (?:
+          # Raw \Q...\E blocks can contain literal `/`
           \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\E )?
-          # The same construct after PHP decoding has already produced \\Q.
+
+          # The same \Q...\E construct after PHP decoding
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
-          # Ordinary regex escapes that keep the body from terminating early.
-          | \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . )
-          # Character classes are treated as opaque top-level atoms here, but
-          # the wrapper must not look through the PHP string boundary.
+
+          # Ordinary regex escapes can also include characters
+          # that would otherwise look like the wrapper tail.
+          | \\\\                          # regex backslash
+                (?: \\\\                  # escaped thing also starts with `\`
+                        (?: \\\\[\\\\"]?  # another `\`, optionally followed by `\` or `"`
+                            | [^"] )      # or any non-quote char
+                        | .               # fallback: consume one char after `\` to allow `\.`, `\d`, `\/`, etc.
+                )
+
+          # Character classes are treated as opaque top-level atoms for entry,
+          # because they can contain raw `/`, but this branch must still stop at
+          # the local wrapper tail or host quote.
           | \\[
               (?: \\^? \\] )?
               (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! /[imsxeADSUXu]*" | " ). )*
-          # Any other raw regex atom that cannot start the wrapper terminator.
+          # Any other raw atom that does not begin the wrapper tail.
           | (?! ["/\\\\\\[] ).
         )++
         /[imsxeADSUXu]*"
@@ -8127,23 +8142,24 @@
       }
     ]
   'regexp-single-quoted':
+    # Mirrors 'regexp-double-quoted', but for single-quoted strings.
     'begin': '''(?x)
-      (')  # PHP string opener
-      (/)  # regex delimiter
+      (')
+      (/)
       (?=
-        (?:  # regex body that can appear before the closing /flags'
-          # Raw \Q...\E literal blocks inside the regex source.
+        (?:
           \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?
-          # The same construct after PHP decoding has already produced \\Q.
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
-          # Ordinary regex escapes that keep the body from terminating early.
-          | \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . )
-          # Character classes are treated as opaque top-level atoms here, but
-          # the wrapper must not look through the PHP string boundary.
+          | \\\\
+                (?: \\\\
+                        (?: \\\\[\\\\']?
+                            | [^'] )
+                        | .
+                )
           | \\[
               (?: \\^? \\] )?
               (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*
-          # Any other raw regex atom that cannot start the wrapper terminator.
+
           | (?! ['/\\\\\\[] ).
         )++
         /[imsxeADSUXu]*'
