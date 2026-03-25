@@ -2477,12 +2477,6 @@
         'name': 'constant.character.escape.php'
       }
       {
-        'include': '#interpolation_variables_only'
-      }
-    ]
-  'interpolation_variables_only':
-    'patterns': [
-      {
         'begin': '{(?=\\$.*?})'
         'beginCaptures':
           '0':
