@@ -6074,7 +6074,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '6':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6108,7 +6108,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '6':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
