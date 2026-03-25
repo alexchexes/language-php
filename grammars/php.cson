@@ -7034,7 +7034,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -7056,7 +7056,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
@@ -7076,7 +7076,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -7098,7 +7098,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
