@@ -4299,6 +4299,917 @@
   'null_coalescing':
     'match': '\\?\\?'
     'name': 'keyword.operator.null-coalescing.php'
+
+  #############
+  ### REGEX ###
+  #############
+  'regexp-double-quoted':
+    'begin': '''(?x)
+      (")  # PHP string opener
+      (/)  # regex delimiter
+      (?=
+        # Entry heuristic for one local quoted /.../flags wrapper.
+        #
+        # It only recognizes top-level constructs that can legally contain a
+        # raw `/` before the local wrapper tail, and it must not look through
+        # the current PHP string boundary into later same-line PHP code.
+        (?:
+          # Raw \Q...\E blocks can contain literal `/`
+          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\E )?
+
+          # The same \Q...\E construct after PHP decoding
+          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
+
+          # Ordinary regex escapes can also include characters
+          # that would otherwise look like the wrapper tail.
+          | \\\\                          # regex backslash
+                (?: \\\\                  # escaped thing also starts with `\`
+                        (?: \\\\[\\\\"]?  # another `\`, optionally followed by `\` or `"`
+                            | [^"] )      # or any non-quote char
+                        | .               # fallback: consume one char after `\` to allow `\.`, `\d`, `\/`, etc.
+                )
+
+          # Character classes are treated as opaque top-level atoms for entry,
+          # because they can contain raw `/`, but this branch must still stop at
+          # the local wrapper tail or host quote.
+          | \\[
+              (?: \\^? \\] )?
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! /[imsxeADSUXu]*" | " ). )*
+          # Any other raw atom that does not begin the wrapper tail.
+          | (?! ["/\\\\\\[] ).
+        )++
+        /[imsxeADSUXu]*"
+      )
+    '''
+    'beginCaptures':
+      '0':
+        'name': 'string.regexp.double-quoted.php'
+      '1':
+        'name': 'punctuation.definition.string.begin.php'
+      '2':
+        'name': 'punctuation.definition.string.begin.regexp.php'
+    # Keep string.regexp.double-quoted.php on the contents while adding
+    # meta.embedded.regexp.php on the wrapper itself.
+    'contentName': 'string.regexp.double-quoted.php'
+    'end': '((/)([imsxeADSUXu]*)("))|(")'
+    'endCaptures':
+      '0':
+        'name': 'string.regexp.double-quoted.php'
+      '2':
+        'name': 'punctuation.definition.string.end.regexp.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.string.end.php'
+      '5':
+        'name': 'punctuation.definition.string.end.php'
+    'name': 'meta.embedded.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-body'
+      }
+    ]
+  'regexp-single-quoted':
+    # Mirrors 'regexp-double-quoted', but for single-quoted strings.
+    'begin': '''(?x)
+      (')
+      (/)
+      (?=
+        (?:
+          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?
+          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
+          | \\\\
+                (?: \\\\
+                        (?: \\\\[\\\\']?
+                            | [^'] )
+                        | .
+                )
+          | \\[
+              (?: \\^? \\] )?
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*
+
+          | (?! ['/\\\\\\[] ).
+        )++
+        /[imsxeADSUXu]*'
+      )
+    '''
+    'beginCaptures':
+      '0':
+        'name': 'string.regexp.single-quoted.php'
+      '1':
+        'name': 'punctuation.definition.string.begin.php'
+      '2':
+        'name': 'punctuation.definition.string.begin.regexp.php'
+    # Keep string.regexp.single-quoted.php on the contents while adding
+    # meta.embedded.regexp.php on the wrapper itself.
+    'contentName': 'string.regexp.single-quoted.php'
+    'end': '((/)([imsxeADSUXu]*)(\'))|(\')'
+    'endCaptures':
+      '0':
+        'name': 'string.regexp.single-quoted.php'
+      '2':
+        'name': 'punctuation.definition.string.end.regexp.php'
+      '3':
+        'name': 'storage.modifier.regexp.php'
+      '4':
+        'name': 'punctuation.definition.string.end.php'
+      '5':
+        'name': 'punctuation.definition.string.end.php'
+    'name': 'meta.embedded.regexp.php'
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-body'
+      }
+    ]
+  'regexp-heredoc-common':
+    'patterns': [
+      {
+        'include': '#regexp-quoted-literal-heredoc'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-heredoc'
+      }
+      {
+        'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-end-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-octal-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-basic-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-overlap-escapes-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
+        'include': '#regexp-dollar-anchor-php-interpreted'
+      }
+      {
+        'include': '#interpolation'
+      }
+      {
+        'include': '#regexp-backreference-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-braced-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-braced-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-mark-short-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-start-directive-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-end-explicit'
+      }
+      {
+        'include': '#regexp-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-explicit-escapes'
+      }
+      {
+        'include': '#regexp-comment-group-heredoc-nowdoc'
+      }
+      {
+        'include': '#regexp-group-assertion-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-assertion-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-define-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-version-heredoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-heredoc'
+      }
+      {
+        'include': '#regexp-backtracking-verb-mark-short-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-start-directive-explicit'
+      }
+      {
+        'include': '#regexp-group-non-capturing-heredoc'
+      }
+      {
+        'include': '#regexp-group-options-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-angle-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-heredoc'
+      }
+      {
+        'include': '#regexp-group-named-pcre-heredoc'
+      }
+      {
+        'include': '#regexp-group-heredoc'
+      }
+      {
+        'include': '#regexp-character-class-heredoc'
+      }
+      {
+        'include': '#regexp-explicit-operators'
+      }
+    ]
+  'regexp-nowdoc-common':
+    'patterns': [
+      {
+        'include': '#regexp-backreference-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-braced-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-braced-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-mark-short-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-nowdoc'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
+      }
+      {
+        'include': '#regexp-double-quote-escape-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-end-explicit'
+      }
+      {
+        'include': '#regexp-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-explicit-escapes'
+      }
+      {
+        'include': '#regexp-comment-group-heredoc-nowdoc'
+      }
+      {
+        'include': '#regexp-group-assertion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-assertion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-define-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-version-nowdoc'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-nowdoc'
+      }
+      {
+        'include': '#regexp-backtracking-verb-mark-short-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-start-directive-explicit'
+      }
+      {
+        'include': '#regexp-group-non-capturing-nowdoc'
+      }
+      {
+        'include': '#regexp-group-options-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-angle-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-nowdoc'
+      }
+      {
+        'include': '#regexp-group-named-pcre-nowdoc'
+      }
+      {
+        'include': '#regexp-group-nowdoc'
+      }
+      {
+        'include': '#regexp-character-class-nowdoc'
+      }
+      {
+        'include': '#regexp-explicit-operators'
+      }
+    ]
+  'regexp-quoted-common':
+    'patterns': [
+      {
+        'include': '#regexp-anchor-explicit'
+      }
+      {
+        'include': '#regexp-range-quantifier'
+      }
+      {
+        'include': '#regexp-simple-quantifier-explicit'
+      }
+      {
+        'include': '#regexp-alternation-explicit'
+      }
+      {
+        'include': '#regexp-dot-explicit'
+      }
+      {
+        'include': '#regexp-operators-basic'
+      }
+    ]
+  # Keep quoted-host group ordering centralized. These lists are mostly wired
+  # through one wrapper each, but inlining them would duplicate a large,
+  # host-specific precedence contract across multiple group entries.
+  'regexp-double-quoted-groups-common':
+    'patterns': [
+      {
+        'include': '#regexp-comment-group-double-quoted'
+      }
+      {
+        'include': '#regexp-group-assertion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-assertion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-define-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-version-double-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-double-quoted'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-start-directive-explicit'
+      }
+      {
+        'include': '#regexp-group-non-capturing-double-quoted'
+      }
+      {
+        'include': '#regexp-group-options-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-angle-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-double-quoted'
+      }
+      {
+        'include': '#regexp-group-named-pcre-double-quoted'
+      }
+      {
+        'include': '#regexp-group-double-quoted'
+      }
+    ]
+  'regexp-single-quoted-groups-common':
+    'patterns': [
+      {
+        'include': '#regexp-comment-group-single-quoted'
+      }
+      {
+        'include': '#regexp-group-assertion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-assertion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-numeric-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-angle-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-numbered-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-recursion-named-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-define-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-version-single-quoted'
+      }
+      {
+        'include': '#regexp-group-conditional-named-bare-single-quoted'
+      }
+      {
+        'include': '#regexp-backtracking-verb-named-explicit'
+      }
+      {
+        'include': '#regexp-backtracking-verb-explicit'
+      }
+      {
+        'include': '#regexp-start-directive-explicit'
+      }
+      {
+        'include': '#regexp-group-non-capturing-single-quoted'
+      }
+      {
+        'include': '#regexp-group-options-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-angle-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-group-named-pcre-single-quoted'
+      }
+      {
+        'include': '#regexp-group-single-quoted'
+      }
+    ]
+  # Keep interpreted quoted-host escape ordering separate from explicit
+  # REGEX/REGEXP hosts. The transport/interpolation rules here are host-specific
+  # and are easier to reason about as one ordered include list.
+  'regexp-double-quoted-common':
+    'patterns': [
+      {
+        'include': '#regexp-quoted-literal-double-quoted'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-double-quoted'
+      }
+      {
+        'include': '#regexp-decoded-double-quote-escape-double-quoted'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-end-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-octal-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-basic-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-hex-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-php-unicode-escape-interpreted'
+      }
+      {
+        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-overlap-escapes-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-apostrophe-escape-interpreted'
+      }
+      {
+        'include': '#regexp-dollar-anchor-php-interpreted'
+      }
+      {
+        'include': '#regexp-group-escape-explicit'
+      }
+      {
+        'include': '#regexp-structural-escape'
+      }
+      {
+        'include': '#regexp-apostrophe-escape-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-end-explicit'
+      }
+      {
+        'include': '#regexp-reset-start-explicit'
+      }
+      {
+        'include': '#regexp-octal-escape-explicit'
+      }
+      {
+        'include': '#interpolation_double_quoted'
+      }
+      {
+        'include': '#regexp-backreference-numeric-double-quoted'
+      }
+      {
+        'include': '#regexp-literal-escape-explicit'
+      }
+      {
+        'include': '#regexp-character-type-escape'
+      }
+      {
+        'include': '#regexp-special-character-type-body-explicit'
+      }
+      {
+        'include': '#regexp-property-escape'
+      }
+      {
+        'include': '#regexp-invalid-braced-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-invalid-braced-hex-escape-explicit'
+      }
+      {
+        'include': '#regexp-short-hex-escape-explicit'
+      }
+      {
+        'include': '#regexp-braced-hex-escape'
+      }
+      {
+        'include': '#regexp-unicode-code-point-escape'
+      }
+      {
+        'include': '#regexp-hex-escape'
+      }
+      {
+        'include': '#regexp-invalid-escape-explicit'
+      }
+      {
+        'include': '#regexp-invalid-k-reference-closed-explicit'
+      }
+      {
+        'include': '#regexp-invalid-g-reference-closed-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-braced-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-braced-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-quoted-common'
+      }
+    ]
+  'regexp-single-quoted-common':
+    'patterns': [
+      {
+        'include': '#regexp-backreference-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-angle-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-braced-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-numeric-explicit'
+      }
+      {
+        'include': '#regexp-backreference-g-braced-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-angle-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
+      }
+      {
+        'include': '#regexp-option-toggle-explicit'
+      }
+      {
+        'include': '#regexp-recursion-whole-pattern-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-numeric-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-ampersand-explicit'
+      }
+      {
+        'include': '#regexp-subroutine-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-backreference-named-pcre-explicit'
+      }
+      {
+        'include': '#regexp-character-type-escape'
+      }
+      {
+        'include': '#regexp-property-escape'
+      }
+      {
+        'include': '#regexp-hex-escape'
+      }
+      {
+        'include': '#regexp-braced-hex-escape'
+      }
+      {
+        'include': '#regexp-unicode-code-point-escape'
+      }
+      {
+        'include': '#regexp-quoted-literal-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-single-quoted'
+      }
+      {
+        'include': '#regexp-backreference-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-subroutine-g-single-quoted-numeric-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-backreference-named-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-apostrophe-escape-single-quoted'
+      }
+      {
+        'include': '#regexp-decoded-quoted-literal-end-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
+      }
+      {
+        'include': '#regexp-decoded-overlap-escapes-interpreted'
+      }
+      {
+        'include': '#regexp-double-quote-escape-explicit'
+      }
+      {
+        'include': '#regexp-quoted-literal-end-explicit'
+      }
+      {
+        'include': '#regexp-octal-escape-explicit'
+      }
+      {
+        'include': '#regexp-explicit-escapes'
+      }
+      {
+        'include': '#single_quote_escape_only'
+      }
+      {
+        'include': '#regexp-quoted-common'
+      }
+    ]
+  'regexp-double-quoted-body':
+    'patterns': [
+      {
+        'include': '#regexp-double-quoted-common'
+      }
+      {
+        'include': '#regexp-double-quoted-groups-common'
+      }
+      {
+        'include': '#regexp-character-class-double-quoted'
+      }
+    ]
+  'regexp-single-quoted-body':
+    'patterns': [
+      {
+        'include': '#regexp-single-quoted-common'
+      }
+      {
+        'include': '#regexp-single-quoted-groups-common'
+      }
+      {
+        'include': '#regexp-character-class-single-quoted'
+      }
+    ]
   'regexp-structural-escape':
     # Raw regex source: a single backslash can escape structural punctuation here.
     # Doubled backslashes must stay separate so raw-host constructs like `\\[` or `\\\[` keep their regex parity.
@@ -8368,912 +9279,5 @@
       }
       {
         'include': '#regexp-line-comment'
-      }
-    ]
-  'regexp-heredoc-common':
-    'patterns': [
-      {
-        'include': '#regexp-quoted-literal-heredoc'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-heredoc'
-      }
-      {
-        'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-end-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-octal-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-basic-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-hex-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-unicode-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-overlap-escapes-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-apostrophe-escape-interpreted'
-      }
-      {
-        'include': '#regexp-dollar-anchor-php-interpreted'
-      }
-      {
-        'include': '#interpolation'
-      }
-      {
-        'include': '#regexp-backreference-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-angle-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-braced-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-braced-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
-      }
-      {
-        'include': '#regexp-option-toggle-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-mark-short-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-start-directive-explicit'
-      }
-      {
-        'include': '#regexp-recursion-whole-pattern-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-ampersand-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-apostrophe-escape-explicit'
-      }
-      {
-        'include': '#regexp-quoted-literal-end-explicit'
-      }
-      {
-        'include': '#regexp-octal-escape-explicit'
-      }
-      {
-        'include': '#regexp-explicit-escapes'
-      }
-      {
-        'include': '#regexp-comment-group-heredoc-nowdoc'
-      }
-      {
-        'include': '#regexp-group-assertion-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-assertion-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-numeric-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-angle-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-single-quoted-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-numbered-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-named-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-define-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-version-heredoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-bare-heredoc'
-      }
-      {
-        'include': '#regexp-backtracking-verb-mark-short-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-start-directive-explicit'
-      }
-      {
-        'include': '#regexp-group-non-capturing-heredoc'
-      }
-      {
-        'include': '#regexp-group-options-heredoc'
-      }
-      {
-        'include': '#regexp-group-named-angle-heredoc'
-      }
-      {
-        'include': '#regexp-group-named-single-quoted-heredoc'
-      }
-      {
-        'include': '#regexp-group-named-pcre-heredoc'
-      }
-      {
-        'include': '#regexp-group-heredoc'
-      }
-      {
-        'include': '#regexp-character-class-heredoc'
-      }
-      {
-        'include': '#regexp-explicit-operators'
-      }
-    ]
-  'regexp-nowdoc-common':
-    'patterns': [
-      {
-        'include': '#regexp-backreference-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-angle-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-braced-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-braced-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
-      }
-      {
-        'include': '#regexp-option-toggle-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-mark-short-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-recursion-whole-pattern-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-ampersand-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-quoted-literal-nowdoc'
-      }
-      {
-        'include': '#regexp-apostrophe-escape-explicit'
-      }
-      {
-        'include': '#regexp-double-quote-escape-explicit'
-      }
-      {
-        'include': '#regexp-quoted-literal-end-explicit'
-      }
-      {
-        'include': '#regexp-octal-escape-explicit'
-      }
-      {
-        'include': '#regexp-explicit-escapes'
-      }
-      {
-        'include': '#regexp-comment-group-heredoc-nowdoc'
-      }
-      {
-        'include': '#regexp-group-assertion-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-assertion-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-numeric-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-angle-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-single-quoted-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-numbered-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-named-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-define-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-version-nowdoc'
-      }
-      {
-        'include': '#regexp-group-conditional-named-bare-nowdoc'
-      }
-      {
-        'include': '#regexp-backtracking-verb-mark-short-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-start-directive-explicit'
-      }
-      {
-        'include': '#regexp-group-non-capturing-nowdoc'
-      }
-      {
-        'include': '#regexp-group-options-nowdoc'
-      }
-      {
-        'include': '#regexp-group-named-angle-nowdoc'
-      }
-      {
-        'include': '#regexp-group-named-single-quoted-nowdoc'
-      }
-      {
-        'include': '#regexp-group-named-pcre-nowdoc'
-      }
-      {
-        'include': '#regexp-group-nowdoc'
-      }
-      {
-        'include': '#regexp-character-class-nowdoc'
-      }
-      {
-        'include': '#regexp-explicit-operators'
-      }
-    ]
-  'regexp-quoted-common':
-    'patterns': [
-      {
-        'include': '#regexp-anchor-explicit'
-      }
-      {
-        'include': '#regexp-range-quantifier'
-      }
-      {
-        'include': '#regexp-simple-quantifier-explicit'
-      }
-      {
-        'include': '#regexp-alternation-explicit'
-      }
-      {
-        'include': '#regexp-dot-explicit'
-      }
-      {
-        'include': '#regexp-operators-basic'
-      }
-    ]
-  # Keep quoted-host group ordering centralized. These lists are mostly wired
-  # through one wrapper each, but inlining them would duplicate a large,
-  # host-specific precedence contract across multiple group entries.
-  'regexp-double-quoted-groups-common':
-    'patterns': [
-      {
-        'include': '#regexp-comment-group-double-quoted'
-      }
-      {
-        'include': '#regexp-group-assertion-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-assertion-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-numeric-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-angle-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-single-quoted-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-numbered-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-named-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-define-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-version-double-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-bare-double-quoted'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-start-directive-explicit'
-      }
-      {
-        'include': '#regexp-group-non-capturing-double-quoted'
-      }
-      {
-        'include': '#regexp-group-options-double-quoted'
-      }
-      {
-        'include': '#regexp-group-named-angle-double-quoted'
-      }
-      {
-        'include': '#regexp-group-named-single-quoted-double-quoted'
-      }
-      {
-        'include': '#regexp-group-named-pcre-double-quoted'
-      }
-      {
-        'include': '#regexp-group-double-quoted'
-      }
-    ]
-  'regexp-single-quoted-groups-common':
-    'patterns': [
-      {
-        'include': '#regexp-comment-group-single-quoted'
-      }
-      {
-        'include': '#regexp-group-assertion-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-assertion-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-numeric-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-angle-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-numbered-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-recursion-named-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-define-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-version-single-quoted'
-      }
-      {
-        'include': '#regexp-group-conditional-named-bare-single-quoted'
-      }
-      {
-        'include': '#regexp-backtracking-verb-named-explicit'
-      }
-      {
-        'include': '#regexp-backtracking-verb-explicit'
-      }
-      {
-        'include': '#regexp-start-directive-explicit'
-      }
-      {
-        'include': '#regexp-group-non-capturing-single-quoted'
-      }
-      {
-        'include': '#regexp-group-options-single-quoted'
-      }
-      {
-        'include': '#regexp-group-named-angle-single-quoted'
-      }
-      {
-        'include': '#regexp-group-named-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-group-named-pcre-single-quoted'
-      }
-      {
-        'include': '#regexp-group-single-quoted'
-      }
-    ]
-  # Keep interpreted quoted-host escape ordering separate from explicit
-  # REGEX/REGEXP hosts. The transport/interpolation rules here are host-specific
-  # and are easier to reason about as one ordered include list.
-  'regexp-double-quoted-common':
-    'patterns': [
-      {
-        'include': '#regexp-quoted-literal-double-quoted'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-double-quoted'
-      }
-      {
-        'include': '#regexp-decoded-double-quote-escape-double-quoted'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-end-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-octal-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-basic-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-hex-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-php-unicode-escape-interpreted'
-      }
-      {
-        'include': '#regexp-transported-backslash-before-interpolation-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-overlap-escapes-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-apostrophe-escape-interpreted'
-      }
-      {
-        'include': '#regexp-dollar-anchor-php-interpreted'
-      }
-      {
-        'include': '#regexp-group-escape-explicit'
-      }
-      {
-        'include': '#regexp-structural-escape'
-      }
-      {
-        'include': '#regexp-apostrophe-escape-explicit'
-      }
-      {
-        'include': '#regexp-quoted-literal-end-explicit'
-      }
-      {
-        'include': '#regexp-reset-start-explicit'
-      }
-      {
-        'include': '#regexp-octal-escape-explicit'
-      }
-      {
-        'include': '#interpolation_double_quoted'
-      }
-      {
-        'include': '#regexp-backreference-numeric-double-quoted'
-      }
-      {
-        'include': '#regexp-literal-escape-explicit'
-      }
-      {
-        'include': '#regexp-character-type-escape'
-      }
-      {
-        'include': '#regexp-special-character-type-body-explicit'
-      }
-      {
-        'include': '#regexp-property-escape'
-      }
-      {
-        'include': '#regexp-invalid-braced-octal-escape-explicit'
-      }
-      {
-        'include': '#regexp-invalid-braced-hex-escape-explicit'
-      }
-      {
-        'include': '#regexp-short-hex-escape-explicit'
-      }
-      {
-        'include': '#regexp-braced-hex-escape'
-      }
-      {
-        'include': '#regexp-unicode-code-point-escape'
-      }
-      {
-        'include': '#regexp-hex-escape'
-      }
-      {
-        'include': '#regexp-invalid-escape-explicit'
-      }
-      {
-        'include': '#regexp-invalid-k-reference-closed-explicit'
-      }
-      {
-        'include': '#regexp-invalid-g-reference-closed-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-angle-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-braced-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-braced-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
-      }
-      {
-        'include': '#regexp-option-toggle-explicit'
-      }
-      {
-        'include': '#regexp-recursion-whole-pattern-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-ampersand-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-quoted-common'
-      }
-    ]
-  'regexp-single-quoted-common':
-    'patterns': [
-      {
-        'include': '#regexp-backreference-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-angle-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-braced-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-numeric-explicit'
-      }
-      {
-        'include': '#regexp-backreference-g-braced-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-angle-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-numeric-explicit'
-      }
-      {
-        'include': '#regexp-option-toggle-explicit'
-      }
-      {
-        'include': '#regexp-recursion-whole-pattern-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-numeric-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-ampersand-explicit'
-      }
-      {
-        'include': '#regexp-subroutine-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-backreference-named-pcre-explicit'
-      }
-      {
-        'include': '#regexp-character-type-escape'
-      }
-      {
-        'include': '#regexp-property-escape'
-      }
-      {
-        'include': '#regexp-hex-escape'
-      }
-      {
-        'include': '#regexp-braced-hex-escape'
-      }
-      {
-        'include': '#regexp-unicode-code-point-escape'
-      }
-      {
-        'include': '#regexp-quoted-literal-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-single-quoted'
-      }
-      {
-        'include': '#regexp-backreference-named-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-subroutine-g-single-quoted-numeric-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-backreference-named-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-subroutine-g-single-quoted-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-apostrophe-escape-single-quoted'
-      }
-      {
-        'include': '#regexp-decoded-quoted-literal-end-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-double-quote-escape-regex-interpreted'
-      }
-      {
-        'include': '#regexp-decoded-overlap-escapes-interpreted'
-      }
-      {
-        'include': '#regexp-double-quote-escape-explicit'
-      }
-      {
-        'include': '#regexp-quoted-literal-end-explicit'
-      }
-      {
-        'include': '#regexp-octal-escape-explicit'
-      }
-      {
-        'include': '#regexp-explicit-escapes'
-      }
-      {
-        'include': '#single_quote_escape_only'
-      }
-      {
-        'include': '#regexp-quoted-common'
-      }
-    ]
-  'regexp-double-quoted-body':
-    'patterns': [
-      {
-        'include': '#regexp-double-quoted-common'
-      }
-      {
-        'include': '#regexp-double-quoted-groups-common'
-      }
-      {
-        'include': '#regexp-character-class-double-quoted'
-      }
-    ]
-  'regexp-single-quoted-body':
-    'patterns': [
-      {
-        'include': '#regexp-single-quoted-common'
-      }
-      {
-        'include': '#regexp-single-quoted-groups-common'
-      }
-      {
-        'include': '#regexp-character-class-single-quoted'
-      }
-    ]
-  'regexp-double-quoted':
-    'begin': '''(?x)
-      (")  # PHP string opener
-      (/)  # regex delimiter
-      (?=
-        # Entry heuristic for one local quoted /.../flags wrapper.
-        #
-        # It only recognizes top-level constructs that can legally contain a
-        # raw `/` before the local wrapper tail, and it must not look through
-        # the current PHP string boundary into later same-line PHP code.
-        (?:
-          # Raw \Q...\E blocks can contain literal `/`
-          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\E )?
-
-          # The same \Q...\E construct after PHP decoding
-          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
-
-          # Ordinary regex escapes can also include characters
-          # that would otherwise look like the wrapper tail.
-          | \\\\                          # regex backslash
-                (?: \\\\                  # escaped thing also starts with `\`
-                        (?: \\\\[\\\\"]?  # another `\`, optionally followed by `\` or `"`
-                            | [^"] )      # or any non-quote char
-                        | .               # fallback: consume one char after `\` to allow `\.`, `\d`, `\/`, etc.
-                )
-
-          # Character classes are treated as opaque top-level atoms for entry,
-          # because they can contain raw `/`, but this branch must still stop at
-          # the local wrapper tail or host quote.
-          | \\[
-              (?: \\^? \\] )?
-              (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! /[imsxeADSUXu]*" | " ). )*
-          # Any other raw atom that does not begin the wrapper tail.
-          | (?! ["/\\\\\\[] ).
-        )++
-        /[imsxeADSUXu]*"
-      )
-    '''
-    'beginCaptures':
-      '0':
-        'name': 'string.regexp.double-quoted.php'
-      '1':
-        'name': 'punctuation.definition.string.begin.php'
-      '2':
-        'name': 'punctuation.definition.string.begin.regexp.php'
-    # Keep string.regexp.double-quoted.php on the contents while adding
-    # meta.embedded.regexp.php on the wrapper itself.
-    'contentName': 'string.regexp.double-quoted.php'
-    'end': '((/)([imsxeADSUXu]*)("))|(")'
-    'endCaptures':
-      '0':
-        'name': 'string.regexp.double-quoted.php'
-      '2':
-        'name': 'punctuation.definition.string.end.regexp.php'
-      '3':
-        'name': 'storage.modifier.regexp.php'
-      '4':
-        'name': 'punctuation.definition.string.end.php'
-      '5':
-        'name': 'punctuation.definition.string.end.php'
-    'name': 'meta.embedded.regexp.php'
-    'patterns': [
-      {
-        'include': '#regexp-double-quoted-body'
-      }
-    ]
-  'regexp-single-quoted':
-    # Mirrors 'regexp-double-quoted', but for single-quoted strings.
-    'begin': '''(?x)
-      (')
-      (/)
-      (?=
-        (?:
-          \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?
-          | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
-          | \\\\
-                (?: \\\\
-                        (?: \\\\[\\\\']?
-                            | [^'] )
-                        | .
-                )
-          | \\[
-              (?: \\^? \\] )?
-              (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*
-
-          | (?! ['/\\\\\\[] ).
-        )++
-        /[imsxeADSUXu]*'
-      )
-    '''
-    'beginCaptures':
-      '0':
-        'name': 'string.regexp.single-quoted.php'
-      '1':
-        'name': 'punctuation.definition.string.begin.php'
-      '2':
-        'name': 'punctuation.definition.string.begin.regexp.php'
-    # Keep string.regexp.single-quoted.php on the contents while adding
-    # meta.embedded.regexp.php on the wrapper itself.
-    'contentName': 'string.regexp.single-quoted.php'
-    'end': '((/)([imsxeADSUXu]*)(\'))|(\')'
-    'endCaptures':
-      '0':
-        'name': 'string.regexp.single-quoted.php'
-      '2':
-        'name': 'punctuation.definition.string.end.regexp.php'
-      '3':
-        'name': 'storage.modifier.regexp.php'
-      '4':
-        'name': 'punctuation.definition.string.end.php'
-      '5':
-        'name': 'punctuation.definition.string.end.php'
-    'name': 'meta.embedded.regexp.php'
-    'patterns': [
-      {
-        'include': '#regexp-single-quoted-body'
       }
     ]
