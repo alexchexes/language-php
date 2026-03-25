@@ -1639,29 +1639,31 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuotedDecoded.tokens[6]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedSingleRegexpScope)
       expect(singleQuotedDecoded.tokens[7]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
 
-    it 'should decompose repeated interpreted backslashes before quotes in quoted regex character classes', ->
+    it 'should keep same-host quotes after even interpreted parity out of quoted regex mode in quoted regex character classes', ->
       singleQuotedSameQuote = grammar.tokenizeLine ["'/[", '\\'.repeat(4), "'", "a-z]/'"].join ''
-      singleQuotedOppositeQuote = grammar.tokenizeLine ["'/[", '\\'.repeat(4), '"', "a-z]/'"].join ''
       doubleQuotedSameQuote = grammar.tokenizeLine ['"/[', '\\'.repeat(4), '"', 'a-z]/"'].join ''
-      doubleQuotedOppositeQuote = grammar.tokenizeLine ['"/[', '\\'.repeat(4), "'", 'a-z]/"'].join ''
 
-      expect(singleQuotedSameQuote.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
-      expect(singleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
-      expect(singleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(singleQuotedSameQuote.tokens[5]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-      expect(singleQuotedSameQuote.tokens[6].scopes).toEqual ['source.php', 'constant.other.php']
+      expect(singleQuotedSameQuote.tokens[1]).toEqual value: '/[', scopes: ['source.php', 'string.quoted.single.php']
+      expect(singleQuotedSameQuote.tokens[2]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.single.php', 'constant.character.escape.php']
+      expect(singleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.single.php', 'constant.character.escape.php']
+      expect(singleQuotedSameQuote.tokens[4]).toEqual value: '\'', scopes: ['source.php', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
+      expect(singleQuotedSameQuote.tokens[1].scopes).not.toContain 'meta.embedded.regexp.php'
+
+      expect(doubleQuotedSameQuote.tokens[1]).toEqual value: '/[', scopes: ['source.php', 'string.quoted.double.php']
+      expect(doubleQuotedSameQuote.tokens[2]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.double.php', 'constant.character.escape.php']
+      expect(doubleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.double.php', 'constant.character.escape.php']
+      expect(doubleQuotedSameQuote.tokens[4]).toEqual value: '"', scopes: ['source.php', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
+      expect(doubleQuotedSameQuote.tokens[1].scopes).not.toContain 'meta.embedded.regexp.php'
+
+    it 'should keep opposite-host quotes inside quoted regex character classes after even interpreted parity', ->
+      singleQuotedOppositeQuote = grammar.tokenizeLine ["'/[", '\\'.repeat(4), '"', "a-z]/'"].join ''
+      doubleQuotedOppositeQuote = grammar.tokenizeLine ['"/[', '\\'.repeat(4), "'", 'a-z]/"'].join ''
 
       expect(singleQuotedOppositeQuote.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
       expect(singleQuotedOppositeQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
       expect(singleQuotedOppositeQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(singleQuotedOppositeQuote.tokens[5]).toEqual value: '"', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
       expect(singleQuotedOppositeQuote.tokens[6]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
-
-      expect(doubleQuotedSameQuote.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
-      expect(doubleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-      expect(doubleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(doubleQuotedSameQuote.tokens[5]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-      expect(doubleQuotedSameQuote.tokens[6].scopes).toEqual ['source.php', 'constant.other.php']
 
       expect(doubleQuotedOppositeQuote.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
       expect(doubleQuotedOppositeQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
@@ -1675,11 +1677,12 @@ describe 'PHP quoted regexp grammar', ->
       doubleQuotedSameQuote = grammar.tokenizeLine ['"/[', '\\'.repeat(6), '"', 'a-z]/"'].join ''
       doubleQuotedOppositeQuote = grammar.tokenizeLine ['"/[', '\\'.repeat(6), "'", 'a-z]/"'].join ''
 
-      expect(singleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
-      expect(singleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(singleQuotedSameQuote.tokens[5]).toEqual value: '\\\\', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
-      expect(singleQuotedSameQuote.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-      expect(singleQuotedSameQuote.tokens[7].scopes).toEqual ['source.php', 'constant.other.php']
+      expect(singleQuotedSameQuote.tokens[1]).toEqual value: '/[', scopes: ['source.php', 'string.quoted.single.php']
+      expect(singleQuotedSameQuote.tokens[2]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.single.php', 'constant.character.escape.php']
+      expect(singleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.single.php', 'constant.character.escape.php']
+      expect(singleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.single.php', 'constant.character.escape.php']
+      expect(singleQuotedSameQuote.tokens[5]).toEqual value: '\'', scopes: ['source.php', 'string.quoted.single.php', 'punctuation.definition.string.end.php']
+      expect(singleQuotedSameQuote.tokens[1].scopes).not.toContain 'meta.embedded.regexp.php'
 
       expect(singleQuotedOppositeQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
       expect(singleQuotedOppositeQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
@@ -1687,11 +1690,12 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuotedOppositeQuote.tokens[6]).toEqual value: '"', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
       expect(singleQuotedOppositeQuote.tokens[7]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
 
-      expect(doubleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-      expect(doubleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(doubleQuotedSameQuote.tokens[5]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
-      expect(doubleQuotedSameQuote.tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-      expect(doubleQuotedSameQuote.tokens[7].scopes).toEqual ['source.php', 'constant.other.php']
+      expect(doubleQuotedSameQuote.tokens[1]).toEqual value: '/[', scopes: ['source.php', 'string.quoted.double.php']
+      expect(doubleQuotedSameQuote.tokens[2]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.double.php', 'constant.character.escape.php']
+      expect(doubleQuotedSameQuote.tokens[3]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.double.php', 'constant.character.escape.php']
+      expect(doubleQuotedSameQuote.tokens[4]).toEqual value: '\\\\', scopes: ['source.php', 'string.quoted.double.php', 'constant.character.escape.php']
+      expect(doubleQuotedSameQuote.tokens[5]).toEqual value: '"', scopes: ['source.php', 'string.quoted.double.php', 'punctuation.definition.string.end.php']
+      expect(doubleQuotedSameQuote.tokens[1].scopes).not.toContain 'meta.embedded.regexp.php'
 
       expect(doubleQuotedOppositeQuote.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
       expect(doubleQuotedOppositeQuote.tokens[4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
@@ -3083,6 +3087,41 @@ describe 'PHP quoted regexp grammar', ->
       expect(lines[0].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(lines[1].some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
+    it 'should enter wrapped broken character classes when the local wrapper tail is present', ->
+      plainSingleQuoted = grammar.tokenizeLine "'/foo[ba/xui'"
+      quotedLiteralSingleQuoted = grammar.tokenizeLine "'/foo[\\Qba/xui'"
+      plainDoubleQuoted = grammar.tokenizeLine '"/foo[ba/xui"'
+
+      expect(plainSingleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[2]).toEqual value: 'foo', scopes: quotedSingleRegexpScope
+      expect(plainSingleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[4]).toEqual value: 'b', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(plainSingleQuoted.tokens[7]).toEqual value: 'xui', scopes: quotedSingleRegexpScope.concat ['storage.modifier.regexp.php']
+      expect(plainSingleQuoted.tokens[8]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+      expect(quotedLiteralSingleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(quotedLiteralSingleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(quotedLiteralSingleQuoted.tokens[2]).toEqual value: 'foo', scopes: quotedSingleRegexpScope
+      expect(quotedLiteralSingleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(quotedLiteralSingleQuoted.tokens[4]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(quotedLiteralSingleQuoted.tokens[5]).toEqual value: 'ba', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(quotedLiteralSingleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(quotedLiteralSingleQuoted.tokens[7]).toEqual value: 'xui', scopes: quotedSingleRegexpScope.concat ['storage.modifier.regexp.php']
+      expect(quotedLiteralSingleQuoted.tokens[8]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+      expect(plainDoubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[2]).toEqual value: 'foo', scopes: quotedDoubleRegexpScope
+      expect(plainDoubleQuoted.tokens[3]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[4]).toEqual value: 'b', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(plainDoubleQuoted.tokens[7]).toEqual value: 'xui', scopes: quotedDoubleRegexpScope.concat ['storage.modifier.regexp.php']
+      expect(plainDoubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
   describe 'PHP transport scopes in quoted regex hosts', ->
     # These tests only lock in the PHP transport layer for doubled backslashes.
     # Some interpreted-host forms also gain regex meaning in more specific tests below.
@@ -3121,61 +3160,66 @@ describe 'PHP quoted regexp recovery', ->
       .filter((token) -> 'meta.embedded.regexp.php' in token.scopes)
       .map((token) -> token.value)
 
-  it 'stops quoted regex character classes at the host string boundary across concatenated string fragments', ->
+  it 'keeps incomplete local class fragments out of quoted regex mode even when later same-line PHP text looks class-like', ->
     plainSingleCases = [
-      {
-        line: "'/[^' . $foo . '.\\\\-a-zA-Z\\d\\s]/';"
-        regexValues: ['\'', '/', '[', '^', '\'']
-      }
-      {
-        line: "'/[' . $foo . ']+/u';"
-        regexValues: ['\'', '/', '[', '\'']
-      }
+      "'/[^' . $foo . '.\\\\-a-zA-Z\\d\\s]/';"
+      "'/[' . $foo . ']+/u';"
     ]
     plainDoubleCases = [
-      {
-        line: "\"/[^\" . $foo . \".\\\\-a-zA-Z\\d\\s]/\";"
-        regexValues: ['"', '/', '[', '^', '"']
-      }
-      {
-        line: "\"/[\" . $foo . \"]+/u\";"
-        regexValues: ['"', '/', '[', '"']
-      }
+      "\"/[^\" . $foo . \".\\\\-a-zA-Z\\d\\s]/\";"
+      "\"/[\" . $foo . \"]+/u\";"
     ]
     singleWithInnerRegex = "'/[' . \\preg_replace('/a-z/', $foo, $bar) . ']+/u';"
     doubleWithInnerRegex = "\"/[\" . \\preg_replace(\"/a-z/\", $foo, $bar) . \"]+/u\";"
 
-    for {line, regexValues: expectedRegexValues} in plainSingleCases
+    for line in plainSingleCases
       {tokens} = grammar.tokenizeLine line
-      expect(regexValues(tokens)).toEqual expectedRegexValues
+      expect(regexValues(tokens)).toEqual []
       expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens.some((token) -> token.value is '.\\\\-a-zA-Z\\d\\s]/' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens[tokens.length - 1].scopes).toContain 'punctuation.terminator.expression.php'
 
-    for {line, regexValues: expectedRegexValues} in plainDoubleCases
+    for line in plainDoubleCases
       {tokens} = grammar.tokenizeLine line
-      expect(regexValues(tokens)).toEqual expectedRegexValues
+      expect(regexValues(tokens)).toEqual []
       expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens.some((token) -> token.value is '.\\\\-a-zA-Z\\d\\s]/' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens[tokens.length - 1].scopes).toContain 'punctuation.terminator.expression.php'
 
     {tokens: singleWithInnerRegexTokens} = grammar.tokenizeLine singleWithInnerRegex
-    expect(regexValues(singleWithInnerRegexTokens)).toEqual ['\'', '/', '[', '\'', '\'', '/', 'a-z', '/', '\'']
+    expect(regexValues(singleWithInnerRegexTokens)).toEqual ['\'', '/', 'a-z', '/', '\'']
 
     {tokens: doubleWithInnerRegexTokens} = grammar.tokenizeLine doubleWithInnerRegex
-    expect(regexValues(doubleWithInnerRegexTokens)).toEqual ['"', '/', '[', '"', '"', '/', 'a-z', '/', '"']
+    expect(regexValues(doubleWithInnerRegexTokens)).toEqual ['"', '/', 'a-z', '/', '"']
 
-  it 'stops quoted class-internal quoted literals at the host string boundary across concatenated string fragments', ->
+  it 'keeps complete local wrapped class fragments in regex mode when concatenation continues later on the line', ->
+    plainSingleLine = "'/foo[ba/xui' . 'a]/xui';"
+    quotedLiteralSingleLine = "'/foo[\\Qba/xui' . 'a]/xui';"
+    plainDoubleLine = "\"/foo[ba/xui\" . \"a]/xui\";"
+
+    {tokens: plainSingleTokens} = grammar.tokenizeLine plainSingleLine
+    expect(regexValues(plainSingleTokens)).toEqual ['\'', '/', 'foo', '[', 'b', 'a', '/', 'xui', '\'']
+    expect(plainSingleTokens.some((token) -> token.value is 'a]/xui' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: quotedLiteralSingleTokens} = grammar.tokenizeLine quotedLiteralSingleLine
+    expect(regexValues(quotedLiteralSingleTokens)).toEqual ['\'', '/', 'foo', '[', '\\Q', 'ba', '/', 'xui', '\'']
+    expect(quotedLiteralSingleTokens.some((token) -> token.value is 'a]/xui' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: plainDoubleTokens} = grammar.tokenizeLine plainDoubleLine
+    expect(regexValues(plainDoubleTokens)).toEqual ['"', '/', 'foo', '[', 'b', 'a', '/', 'xui', '"']
+    expect(plainDoubleTokens.some((token) -> token.value is 'a]/xui' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+  it 'keeps incomplete local class-internal quoted-literal fragments out of quoted regex mode across concatenated string fragments', ->
     singleLine = "'/[\\Qfoo' . $foo . 'bar]/';"
     doubleLine = "\"/[\\\\Qfoo\" . $foo . \"bar]/\";"
 
     {tokens: singleTokens} = grammar.tokenizeLine singleLine
-    expect(regexValues(singleTokens)).toEqual ['\'', '/', '[', '\\Q', 'foo', '\'']
+    expect(regexValues(singleTokens)).toEqual []
     expect(singleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
     expect(singleTokens.some((token) -> token.value is 'bar]/' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
     {tokens: doubleTokens} = grammar.tokenizeLine doubleLine
-    expect(regexValues(doubleTokens)).toEqual ['"', '/', '[', '\\\\', 'Q', 'foo', '"']
+    expect(regexValues(doubleTokens)).toEqual []
     expect(doubleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
     expect(doubleTokens.some((token) -> token.value is 'bar]/' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
