@@ -2527,6 +2527,35 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][24]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][25]).toEqual value: '/', scopes: heredocRegexpScope
 
+    it 'should tokenize decoded \\N, \\o, \\p, and \\P as invalid in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\N\\\\o\\\\p\\\\P]/
+        REGEXP;
+      '''
+      expectedPayloads = ['N', 'o', 'p', 'P']
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      for value, index in expectedPayloads
+        tokenOffset = 2 + index * 2
+        expect(lines[1][tokenOffset]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedInvalidTransportScopes(heredocRegexpScope)
+        expect(lines[1][tokenOffset + 1]).toEqual value: value, scopes: regexpCharacterClassInvalidEscapeScopes(heredocRegexpScope)
+      expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should treat decoded \\c before the REGEXP heredoc terminator as invalid inside character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\c
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedInvalidTransportScopes(heredocRegexpScope)
+      expect(lines[1][3]).toEqual value: 'c', scopes: regexpCharacterClassInvalidEscapeScopes(heredocRegexpScope)
+
     it 'should tokenize interpreted braced hex ranges in REGEXP heredoc character classes', ->
       rangeScopes = regexpCharacterClassHexRangeScopes(heredocRegexpScope)
       decodedTransportScopes = rangeScopes.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
@@ -2633,6 +2662,32 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][13]).toEqual value: '\\W', scopes: regexpCharacterClassClassEscapeScopes(nowdocRegexpScope)
       expect(lines[1][14]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
       expect(lines[1][15]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should tokenize raw \\N, \\o, \\p, and \\P as invalid in REGEXP nowdoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[\\N\\o\\p\\P]/
+        REGEXP;
+      '''
+      expectedEscapes = ['\\N', '\\o', '\\p', '\\P']
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      for value, index in expectedEscapes
+        expect(lines[1][2 + index]).toEqual value: value, scopes: regexpCharacterClassInvalidEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should treat raw \\c before the REGEXP nowdoc terminator as invalid inside character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[\\c
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\c', scopes: regexpCharacterClassInvalidEscapeScopes(nowdocRegexpScope)
 
     it 'should keep overlapping single-backslash escapes raw-regex in REGEXP nowdoc character classes', ->
       lines = grammar.tokenizeLines '''
@@ -2873,5 +2928,4 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
       expect(lines[1][8]).toEqual value: 'g{1x}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
       expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
-
 

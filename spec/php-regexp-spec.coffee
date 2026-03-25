@@ -332,6 +332,33 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[14]).toEqual value: '\\W', scopes: regexpCharacterClassClassEscapeScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[15]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize raw \\N, \\o, \\p, and \\P as invalid in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          line: '"/[\\N\\o\\p\\P]/"'
+          quoteValue: '"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          line: "'/[\\N\\o\\p\\P]/'"
+          quoteValue: '\''
+        }
+      ]
+      expectedEscapes = ['\\N', '\\o', '\\p', '\\P']
+
+      for {regexScope, line, quoteValue} in quotedHosts
+        {tokens} = grammar.tokenizeLine line
+
+        expect(tokens[0]).toEqual value: quoteValue, scopes: regexpWrapperBeginQuoteScopes(regexScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(regexScope)
+        expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        for value, index in expectedEscapes
+          expect(tokens[3 + index]).toEqual value: value, scopes: regexpCharacterClassInvalidEscapeScopes(regexScope)
+        expect(tokens[7]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(tokens[8]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
+        expect(tokens[9]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
+
     it 'should tokenize negated character classes in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/[^0-9]/"'
       singleQuoted = grammar.tokenizeLine "'/[^0-9]/'"
@@ -561,6 +588,35 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[23]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
       expect(singleQuoted.tokens[24]).toEqual value: 'W', scopes: regexpCharacterClassClassEscapeScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[25]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
+    it 'should tokenize decoded \\N, \\o, \\p, and \\P as invalid in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          line: '"/[\\\\N\\\\o\\\\p\\\\P]/"'
+          quoteValue: '"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          line: "'/[\\\\N\\\\o\\\\p\\\\P]/'"
+          quoteValue: '\''
+        }
+      ]
+      expectedPayloads = ['N', 'o', 'p', 'P']
+
+      for {regexScope, line, quoteValue} in quotedHosts
+        {tokens} = grammar.tokenizeLine line
+
+        expect(tokens[0]).toEqual value: quoteValue, scopes: regexpWrapperBeginQuoteScopes(regexScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(regexScope)
+        expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        for value, index in expectedPayloads
+          tokenOffset = 3 + index * 2
+          expect(tokens[tokenOffset]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedInvalidTransportScopes(regexScope)
+          expect(tokens[tokenOffset + 1]).toEqual value: value, scopes: regexpCharacterClassInvalidEscapeScopes(regexScope)
+        expect(tokens[11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(tokens[12]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
+        expect(tokens[13]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
 
     it 'should tokenize decoded character-type escapes in quoted regex character classes', ->
       doubleQuoted = grammar.tokenizeLine '"/[\\\\d]/"'
