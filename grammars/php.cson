@@ -6856,7 +6856,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6882,7 +6882,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6908,7 +6908,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6938,7 +6938,7 @@
         'name': 'constant.character.escape.php'
       '8':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6964,7 +6964,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=$)'
+    'end': '\\)|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6990,7 +6990,7 @@
         'name': 'punctuation.definition.group.regexp.php'
       '6':
         'name': 'punctuation.definition.group.capture.end.regexp.php'
-    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=$)'
+    'end': '\\)|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
