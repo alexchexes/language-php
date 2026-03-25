@@ -2258,6 +2258,39 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should tokenize atomic and branch-reset groups in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/(?>ab)(*atomic:cd)(?|ef)/"'
+      singleQuoted = grammar.tokenizeLine "'/(?>ab)(*atomic:cd)(?|ef)/'"
+      expectedGroups = [
+        ['?>', 'ab', 'punctuation.definition.group.atomic.regexp.php']
+        ['*atomic:', 'cd', 'punctuation.definition.group.atomic.regexp.php']
+        ['?|', 'ef', 'punctuation.definition.group.branch-reset.regexp.php']
+      ]
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      doubleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), specificScope)
+        expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        doubleOffset += 4
+      expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      singleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), specificScope)
+        expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        singleOffset += 4
+      expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize conditional groups in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine "\"/(?(1)ab|cd)(?(<word>)ef|gh)(?('word')ij|kl)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/\""
       singleQuoted = grammar.tokenizeLine "'/(?(1)ab|cd)(?(<word>)ef|gh)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/'"
@@ -2353,14 +2386,86 @@ describe 'PHP quoted regexp grammar', ->
           ['de', regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)]
         ]
       ]
-      singleLeadingConditionalSpec = [
-        ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
-        ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
-        ['1', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.numeric.regexp.php']]
-        [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
-        ['ab', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
-        ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
-        ['cd', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+      singleConditionalSpecs = [
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['1', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.numeric.regexp.php']]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['ab', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['cd', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['<', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+          ['word', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']]
+          ['>', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['ef', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['gh', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['word', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['mn', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['op', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['R', regexpConditionalRecursionScopes(quotedSingleRegexpScope)]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['qr', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['st', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['R', regexpConditionalRecursionScopes(quotedSingleRegexpScope)]
+          ['1', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.numeric.regexp.php']]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['uv', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['wx', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['R&', regexpConditionalRecursionScopes(quotedSingleRegexpScope)]
+          ['word', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['yz', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['za', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['DEFINE', regexpConditionalKeywordScopes(quotedSingleRegexpScope)]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']]
+          ['?<', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']]
+          ['word', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']]
+          ['>', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']]
+          ['ab', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat [quotedSingleRegexpScope[quotedSingleRegexpScope.length - 1]]]
+          [')', regexpConditionalNestedGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']]
+        ]
+        [
+          ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
+          ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
+          ['VERSION>=10.4', regexpConditionalKeywordScopes(quotedSingleRegexpScope)]
+          [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
+          ['bc', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+          ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
+          ['de', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
+        ]
       ]
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
@@ -2373,9 +2478,11 @@ describe 'PHP quoted regexp grammar', ->
 
       expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
-      expectConditionalGroupTokens singleQuoted.tokens, 2, quotedSingleRegexpScope, singleLeadingConditionalSpec
-      expect(singleQuoted.tokens[singleQuoted.tokens.length - 2]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[singleQuoted.tokens.length - 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+      offset = 2
+      for spec in singleConditionalSpecs
+        offset = expectConditionalGroupTokens singleQuoted.tokens, offset, quotedSingleRegexpScope, spec
+      expect(singleQuoted.tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[offset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize assertion conditional groups in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine "\"/(?(?=ab)cd|ef)(?(*nlb:gh)ij|kl)/\""

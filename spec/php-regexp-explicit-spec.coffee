@@ -823,7 +823,7 @@ describe 'PHP explicit regexp grammar', ->
         it "should tokenize backtracking verbs in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
-            /(*ACCEPT)(*FAIL)(*F)(*:label)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/
+            /(*ACCEPT)(*FAIL)(*F)(*:label)(*ACCEPT:label)(*FAIL:label)(*F:label)(*MARK:label)(*COMMIT:label)(*PRUNE:label)(*SKIP:label)(*THEN:label)(*COMMIT)(*PRUNE)(*SKIP)(*THEN)/
             #{label};
           """
           expectedVerbs = [
@@ -831,11 +831,17 @@ describe 'PHP explicit regexp grammar', ->
             ['*FAIL', null]
             ['*F', null]
             ['*:', 'label']
+            ['*ACCEPT:', 'label']
+            ['*FAIL:', 'label']
+            ['*F:', 'label']
             ['*MARK:', 'label']
+            ['*COMMIT:', 'label']
+            ['*PRUNE:', 'label']
+            ['*SKIP:', 'label']
+            ['*THEN:', 'label']
             ['*COMMIT', null]
             ['*PRUNE', null]
             ['*SKIP', null]
-            ['*SKIP:', 'label']
             ['*THEN', null]
           ]
 
@@ -1022,13 +1028,13 @@ describe 'PHP explicit regexp grammar', ->
         it "should tokenize option toggles in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
-            /(?im)/
+            /(?imsxADJUXunr-)/
             #{label};
           """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-          expect(lines[1][2]).toEqual value: '?im', scopes: regexpGroupScopes(regexScope).concat ['keyword.other.option-toggle.regexp.php']
+          expect(lines[1][2]).toEqual value: '?imsxADJUXunr-', scopes: regexpGroupScopes(regexScope).concat ['keyword.other.option-toggle.regexp.php']
           expect(lines[1][3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
           expect(lines[1][4]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
@@ -2205,6 +2211,35 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[1][11]).toEqual value: '+', scopes: regexpRangeQuantifierScopes(regexScope)
           expect(lines[1][12]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
           expect(lines[1][13]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize simple quantifier variants in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /a?b??c?+d+e++f+?g*h*?i*+/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/a', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][2]).toEqual value: 'b', scopes: regexScope
+          expect(lines[1][3]).toEqual value: '??', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][4]).toEqual value: 'c', scopes: regexScope
+          expect(lines[1][5]).toEqual value: '?+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][6]).toEqual value: 'd', scopes: regexScope
+          expect(lines[1][7]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][8]).toEqual value: 'e', scopes: regexScope
+          expect(lines[1][9]).toEqual value: '++', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][10]).toEqual value: 'f', scopes: regexScope
+          expect(lines[1][11]).toEqual value: '+?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][12]).toEqual value: 'g', scopes: regexScope
+          expect(lines[1][13]).toEqual value: '*', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][14]).toEqual value: 'h', scopes: regexScope
+          expect(lines[1][15]).toEqual value: '*?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][16]).toEqual value: 'i', scopes: regexScope
+          expect(lines[1][17]).toEqual value: '*+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][18]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
