@@ -6932,7 +6932,7 @@
   'regex-character-class-invalid-escape-explicit':
     # Invalid raw character-class escapes under PHP's PCRE2 surface.
     # Leave valid and mode-sensitive forms to the more specific class rules above.
-    'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|Nf(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
+    'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
     'name': 'invalid.illegal.escape.regexp.php'
   'regex-character-class-literal-escape-explicit':
     'match': '\\\\(?:[0-7]{1,3}|c[ -~]|.)'
