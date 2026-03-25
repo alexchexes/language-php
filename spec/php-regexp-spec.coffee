@@ -1972,6 +1972,24 @@ describe 'PHP quoted regexp grammar', ->
             expect(tokens[tokens.length - 2]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
             expect(tokens[tokens.length - 1]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
 
+    it 'should literalize basic single-quoted payloads after odd interpreted backslash parity in quoted regex character classes', ->
+      payloads = ['e', 'f', 'n', 'r', 't', 'v']
+
+      for slashCount in [3, 7]
+        for payload in payloads
+          {tokens} = grammar.tokenizeLine "'/[a" + '\\'.repeat(slashCount) + payload + "]/'"
+          payloadIndex = tokens.findIndex (token) -> token.value is payload
+
+          expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+          expect(tokens[3]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+          expect(tokens.some((token) -> token.value is '\\' + payload)).toBe false
+          expect(payloadIndex).to.be.greaterThan 4
+          expect(tokens[payloadIndex - 1]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
+          expect(tokens[payloadIndex]).toEqual value: payload, scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+          expect(tokens[payloadIndex + 1]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+          expect(tokens[tokens.length - 2]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+          expect(tokens[tokens.length - 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize quoted regex groups and assertions', ->
       doubleQuoted = grammar.tokenizeLine '"/(ab)(?=cd)(?!ef)(?<=gh)(?<!ij)(?:kl)(?im:mn)/"'
       singleQuoted = grammar.tokenizeLine "'/(ab)(?=cd)(?!ef)(?<=gh)(?<!ij)(?:kl)(?im:mn)/'"
