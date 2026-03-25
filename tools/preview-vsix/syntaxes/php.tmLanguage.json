@@ -5463,7 +5463,7 @@
         }
       },
       "contentName": "comment.block.regexp.php",
-      "end": "(\\))|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "(\\))|(?=\")",
       "endCaptures": {
         "0": {
           "name": "comment.block.regexp.php"
@@ -5488,7 +5488,7 @@
         }
       },
       "contentName": "comment.block.regexp.php",
-      "end": "(\\))|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "(\\))|(?=')",
       "endCaptures": {
         "0": {
           "name": "comment.block.regexp.php"
@@ -5521,7 +5521,7 @@
           "name": "meta.assertion.negative-look-behind.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5557,7 +5557,7 @@
           "name": "meta.assertion.negative-look-behind.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5584,7 +5584,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5620,7 +5620,7 @@
           "name": "meta.assertion.negative-look-behind.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.conditional.regexp.php"
@@ -5647,7 +5647,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5683,7 +5683,7 @@
           "name": "meta.assertion.negative-look-behind.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.conditional.regexp.php"
@@ -5716,7 +5716,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5755,7 +5755,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5794,7 +5794,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5827,7 +5827,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5863,7 +5863,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5899,7 +5899,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5932,7 +5932,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5965,7 +5965,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -5998,7 +5998,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6031,7 +6031,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6070,7 +6070,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6115,7 +6115,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6148,7 +6148,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6184,7 +6184,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6220,7 +6220,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6253,7 +6253,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6286,7 +6286,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6319,7 +6319,7 @@
           "name": "punctuation.definition.group.conditional.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6358,7 +6358,7 @@
           "name": "punctuation.definition.group.atomic-script-run.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6397,7 +6397,7 @@
           "name": "punctuation.definition.group.atomic-script-run.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6433,7 +6433,7 @@
           "name": "punctuation.definition.group.option.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6469,7 +6469,7 @@
           "name": "punctuation.definition.group.option.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6505,7 +6505,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6541,7 +6541,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6577,7 +6577,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6619,7 +6619,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6655,7 +6655,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6691,7 +6691,7 @@
           "name": "punctuation.definition.group.capture.end.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6712,7 +6712,7 @@
           "name": "punctuation.definition.group.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "\\)|(?=\")",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -6733,7 +6733,7 @@
           "name": "punctuation.definition.group.regexp.php"
         }
       },
-      "end": "\\)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "\\)|(?=')",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8146,7 +8146,7 @@
         }
       },
       "contentName": "string.regexp.quoted-literal.php",
-      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=\")",
       "endCaptures": {
         "1": {
           "name": "constant.character.escape.regexp.php"
@@ -8176,7 +8176,7 @@
         }
       },
       "contentName": "string.regexp.quoted-literal.php",
-      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*\")|(?=$)",
+      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=\")",
       "endCaptures": {
         "1": {
           "name": "constant.character.escape.php"
@@ -8203,7 +8203,7 @@
         }
       },
       "contentName": "string.regexp.quoted-literal.php",
-      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "(\\\\E)|(\\\\\\\\)(E)|(?=')",
       "endCaptures": {
         "1": {
           "name": "constant.character.escape.regexp.php"
@@ -8233,7 +8233,7 @@
         }
       },
       "contentName": "string.regexp.quoted-literal.php",
-      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*')|(?=$)",
+      "end": "(\\\\\\\\)(E)|(\\\\E)|(?=')",
       "endCaptures": {
         "1": {
           "name": "constant.character.escape.php"

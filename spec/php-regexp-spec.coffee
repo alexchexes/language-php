@@ -3266,6 +3266,80 @@ describe 'PHP quoted regexp recovery', ->
       expect(tokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
+  it 'stops unclosed quoted conditionals at the host string boundary', ->
+    doubleQuoted = grammar.tokenizeLine '"/(?(1)ab/"'
+    singleQuoted = grammar.tokenizeLine "'/(?(<word>)ab/'"
+
+    expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(doubleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[5]).toEqual value: '1', scopes: regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['constant.numeric.regexp.php']
+    expect(doubleQuoted.tokens[6]).toEqual value: ')', scopes: regexpConditionalPunctuationScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[7]).toEqual value: 'ab/', scopes: regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+    expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(singleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[5]).toEqual value: '<', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+    expect(singleQuoted.tokens[6]).toEqual value: 'word', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
+    expect(singleQuoted.tokens[7]).toEqual value: '>', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+    expect(singleQuoted.tokens[8]).toEqual value: ')', scopes: regexpConditionalPunctuationScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[9]).toEqual value: 'ab/', scopes: regexpConditionalGroupContentScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[10]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+  it 'stops unclosed quoted conditional assertion conditions at the host string boundary', ->
+    doubleQuoted = grammar.tokenizeLine '"/(?(?=ab/"'
+    singleQuoted = grammar.tokenizeLine "'/(?(?!ab/'"
+
+    expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(doubleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[5]).toEqual value: '?=', scopes: regexpSpecificConditionalAssertionPunctuationScopes(quotedDoubleRegexpScope, 'meta.assertion.look-ahead.regexp.php')
+    expect(doubleQuoted.tokens[6]).toEqual value: 'ab/', scopes: regexpConditionalAssertionContentScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[7]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+    expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+    expect(singleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[5]).toEqual value: '?!', scopes: regexpSpecificConditionalAssertionPunctuationScopes(quotedSingleRegexpScope, 'meta.assertion.negative-look-ahead.regexp.php')
+    expect(singleQuoted.tokens[6]).toEqual value: 'ab/', scopes: regexpConditionalAssertionContentScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[7]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+  it 'keeps concatenated conditional-group fragments out of quoted regex mode while wrapper entry stays conservative', ->
+    lines = [
+      "\"/(?(1)ab\" . $foo . \"cd)/\";"
+      "\"/(?(<word>)ab\" . $foo . \"cd)/\";"
+      "\"/(?('word')ab\" . $foo . \"cd)/\";"
+      "'/(?(1)ab' . $foo . 'cd)/';"
+      "'/(?(<word>)ab' . $foo . 'cd)/';"
+      "'/(?(\\'word\\')ab' . $foo . 'cd)/';"
+    ]
+
+    for line in lines
+      {tokens} = grammar.tokenizeLine line
+      expect(tokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+      expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+  it 'keeps concatenated assertion-conditional fragments out of quoted regex mode while wrapper entry stays conservative', ->
+    lines = [
+      "\"/(?(?=ab)cd\" . $foo . \"ef)/\";"
+      "'/(?(?!ab)cd' . $foo . 'ef)/';"
+    ]
+
+    for line in lines
+      {tokens} = grammar.tokenizeLine line
+      expect(tokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+      expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
 
 describe 'PHP regexp decoded apostrophe-delimited forms', ->
   grammar = null
