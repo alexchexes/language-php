@@ -2129,7 +2129,6 @@
             'name': 'keyword.operator.heredoc.php'
           '5':
             'name': 'invalid.illegal.trailing-whitespace.php'
-        # Keep string.regexp.heredoc.php and add meta.embedded wrapper.
         'contentName': 'string.regexp.heredoc.php'
         'end': '^\\s*(\\3)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}])'
         'endCaptures':
@@ -2352,7 +2351,6 @@
             'name': 'keyword.operator.nowdoc.php'
           '3':
             'name': 'invalid.illegal.trailing-whitespace.php'
-        # Keep string.regexp.nowdoc.php and add meta.embedded wrapper.
         'contentName': 'string.regexp.nowdoc.php'
         'end': '^\\s*(\\2)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}])'
         'endCaptures':
@@ -4349,8 +4347,6 @@
         'name': 'punctuation.definition.string.begin.php'
       '2':
         'name': 'punctuation.definition.string.begin.regexp.php'
-    # Keep string.regexp.double-quoted.php on the contents while adding
-    # meta.embedded.regexp.php on the wrapper itself.
     'contentName': 'string.regexp.double-quoted.php'
     'end': '((/)([imsxeADSUXu]*)("))|(")'
     'endCaptures':
@@ -4401,8 +4397,6 @@
         'name': 'punctuation.definition.string.begin.php'
       '2':
         'name': 'punctuation.definition.string.begin.regexp.php'
-    # Keep string.regexp.single-quoted.php on the contents while adding
-    # meta.embedded.regexp.php on the wrapper itself.
     'contentName': 'string.regexp.single-quoted.php'
     'end': '((/)([imsxeADSUXu]*)(\'))|(\')'
     'endCaptures':
