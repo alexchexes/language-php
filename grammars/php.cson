@@ -6074,7 +6074,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '6':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6108,7 +6108,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '6':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6141,7 +6141,7 @@
         'name': 'keyword.control.conditional.begin.regexp.php'
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6177,7 +6177,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '5':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.conditional.regexp.php'
@@ -6210,7 +6210,7 @@
         'name': 'keyword.control.conditional.begin.regexp.php'
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6244,7 +6244,7 @@
         'name': 'meta.assertion.look-behind.regexp.php'
       '5':
         'name': 'meta.assertion.negative-look-behind.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.conditional.regexp.php'
@@ -6268,7 +6268,7 @@
         'name': 'constant.numeric.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6296,7 +6296,7 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
       '8':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6324,7 +6324,7 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
       '7':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6348,7 +6348,7 @@
         'name': 'keyword.other.recursion.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6374,7 +6374,7 @@
         'name': 'constant.numeric.regexp.php'
       '6':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6400,7 +6400,7 @@
         'name': 'variable.other.regexp.php'
       '6':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6424,7 +6424,7 @@
         'name': 'keyword.control.conditional.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6448,7 +6448,7 @@
         'name': 'keyword.control.conditional.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6472,7 +6472,7 @@
         'name': 'variable.other.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=")'
+    'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6496,7 +6496,7 @@
         'name': 'constant.numeric.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6524,7 +6524,7 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
       '8':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6556,7 +6556,7 @@
         'name': 'punctuation.definition.group.capture.end.regexp.php'
       '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6580,7 +6580,7 @@
         'name': 'keyword.other.recursion.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6606,7 +6606,7 @@
         'name': 'constant.numeric.regexp.php'
       '6':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6632,7 +6632,7 @@
         'name': 'variable.other.regexp.php'
       '6':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6656,7 +6656,7 @@
         'name': 'keyword.control.conditional.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6680,7 +6680,7 @@
         'name': 'keyword.control.conditional.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'
@@ -6704,7 +6704,7 @@
         'name': 'variable.other.regexp.php'
       '5':
         'name': 'punctuation.definition.group.conditional.regexp.php'
-    'end': '\\)|(?=\')'
+    'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'punctuation.definition.group.regexp.php'

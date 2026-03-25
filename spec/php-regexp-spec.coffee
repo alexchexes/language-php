@@ -2002,7 +2002,7 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[4]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[5]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
-    it 'should stop unclosed assertion groups at the quoted host boundary', ->
+    it 'should stop unclosed assertion groups at the quoted wrapper boundary', ->
       doubleQuoted = grammar.tokenizeLine '"/a(?=foo/"'
       singleQuoted = grammar.tokenizeLine "'/a(?<!foo/'"
 
@@ -2011,16 +2011,18 @@ describe 'PHP quoted regexp grammar', ->
       expect(doubleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
       expect(doubleQuoted.tokens[3]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
       expect(doubleQuoted.tokens[4]).toEqual value: '?=', scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedDoubleRegexpScope), 'meta.assertion.look-ahead.regexp.php')
-      expect(doubleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpAssertionGroupContentScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: 'foo', scopes: regexpAssertionGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[7]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
       expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedSingleRegexpScope
       expect(singleQuoted.tokens[3]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
       expect(singleQuoted.tokens[4]).toEqual value: '?<!', scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedSingleRegexpScope), 'meta.assertion.negative-look-behind.regexp.php')
-      expect(singleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: 'foo', scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[7]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should stop unclosed non-capturing and option groups at the quoted host boundary', ->
       nonCapturingDoubleQuoted = grammar.tokenizeLine '"/a(?:foo/"'
@@ -3266,7 +3268,7 @@ describe 'PHP quoted regexp recovery', ->
       expect(tokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
       expect(tokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
 
-  it 'stops unclosed quoted conditionals at the host string boundary', ->
+  it 'stops unclosed quoted conditionals at the quoted wrapper boundary', ->
     doubleQuoted = grammar.tokenizeLine '"/(?(1)ab/"'
     singleQuoted = grammar.tokenizeLine "'/(?(<word>)ab/'"
 
@@ -3277,8 +3279,9 @@ describe 'PHP quoted regexp recovery', ->
     expect(doubleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)
     expect(doubleQuoted.tokens[5]).toEqual value: '1', scopes: regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['constant.numeric.regexp.php']
     expect(doubleQuoted.tokens[6]).toEqual value: ')', scopes: regexpConditionalPunctuationScopes(quotedDoubleRegexpScope)
-    expect(doubleQuoted.tokens[7]).toEqual value: 'ab/', scopes: regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)
-    expect(doubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[7]).toEqual value: 'ab', scopes: regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[8]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[9]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
     expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
@@ -3289,10 +3292,11 @@ describe 'PHP quoted regexp recovery', ->
     expect(singleQuoted.tokens[6]).toEqual value: 'word', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
     expect(singleQuoted.tokens[7]).toEqual value: '>', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
     expect(singleQuoted.tokens[8]).toEqual value: ')', scopes: regexpConditionalPunctuationScopes(quotedSingleRegexpScope)
-    expect(singleQuoted.tokens[9]).toEqual value: 'ab/', scopes: regexpConditionalGroupContentScopes(quotedSingleRegexpScope)
-    expect(singleQuoted.tokens[10]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[9]).toEqual value: 'ab', scopes: regexpConditionalGroupContentScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[10]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[11]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
-  it 'stops unclosed quoted conditional assertion conditions at the host string boundary', ->
+  it 'stops unclosed quoted conditional assertion conditions at the quoted wrapper boundary', ->
     doubleQuoted = grammar.tokenizeLine '"/(?(?=ab/"'
     singleQuoted = grammar.tokenizeLine "'/(?(?!ab/'"
 
@@ -3302,8 +3306,9 @@ describe 'PHP quoted regexp recovery', ->
     expect(doubleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)
     expect(doubleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)
     expect(doubleQuoted.tokens[5]).toEqual value: '?=', scopes: regexpSpecificConditionalAssertionPunctuationScopes(quotedDoubleRegexpScope, 'meta.assertion.look-ahead.regexp.php')
-    expect(doubleQuoted.tokens[6]).toEqual value: 'ab/', scopes: regexpConditionalAssertionContentScopes(quotedDoubleRegexpScope)
-    expect(doubleQuoted.tokens[7]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[6]).toEqual value: 'ab', scopes: regexpConditionalAssertionContentScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[7]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+    expect(doubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
     expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
@@ -3311,8 +3316,9 @@ describe 'PHP quoted regexp recovery', ->
     expect(singleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[5]).toEqual value: '?!', scopes: regexpSpecificConditionalAssertionPunctuationScopes(quotedSingleRegexpScope, 'meta.assertion.negative-look-ahead.regexp.php')
-    expect(singleQuoted.tokens[6]).toEqual value: 'ab/', scopes: regexpConditionalAssertionContentScopes(quotedSingleRegexpScope)
-    expect(singleQuoted.tokens[7]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[6]).toEqual value: 'ab', scopes: regexpConditionalAssertionContentScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[7]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+    expect(singleQuoted.tokens[8]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
   it 'keeps concatenated conditional-group fragments out of quoted regex mode while wrapper entry stays conservative', ->
     lines = [
