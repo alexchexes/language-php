@@ -9171,12 +9171,11 @@
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
           # Ordinary regex escapes that keep the body from terminating early.
           | \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . )
-          # Character classes are treated as opaque top-level atoms here. Their
-          # broken-host recovery belongs to the class rules themselves.
+          # Character classes are treated as opaque top-level atoms here, but
+          # the wrapper must not look through the PHP string boundary.
           | \\[
               (?: \\^? \\] )?
-              (?: \\\\. | . )*?
-            \\]
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\"]? | [^"] ) | . ) | (?! /[imsxeADSUXu]*" | " ). )*
           # Any other raw regex atom that cannot start the wrapper terminator.
           | (?! ["/\\\\\\[] ).
         )++
@@ -9222,12 +9221,11 @@
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?
           # Ordinary regex escapes that keep the body from terminating early.
           | \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . )
-          # Character classes are treated as opaque top-level atoms here. Their
-          # broken-host recovery belongs to the class rules themselves.
+          # Character classes are treated as opaque top-level atoms here, but
+          # the wrapper must not look through the PHP string boundary.
           | \\[
               (?: \\^? \\] )?
-              (?: \\\\. | . )*?
-            \\]
+              (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*
           # Any other raw regex atom that cannot start the wrapper terminator.
           | (?! ['/\\\\\\[] ).
         )++
