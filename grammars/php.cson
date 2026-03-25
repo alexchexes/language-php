@@ -2471,28 +2471,6 @@
         ]
       }
     ]
-  'interpolation_variables_only':
-    'patterns': [
-      {
-        'begin': '{(?=\\$.*?})'
-        'name': 'meta.embedded.interpolation.php'
-        'beginCaptures':
-          '0':
-            'name': 'punctuation.definition.variable.php'
-        'end': '}'
-        'endCaptures':
-          '0':
-            'name': 'punctuation.definition.variable.php'
-        'patterns': [
-          {
-            'include': '$self'
-          }
-        ]
-      }
-      {
-        'include': '#variable-name'
-      }
-    ]
   'interpolation':
     # http://www.php.net/manual/en/language.types.string.php#language.types.string.parsing
     # http://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
@@ -2514,7 +2492,23 @@
         'name': 'constant.character.escape.php'
       }
       {
-        'include': '#interpolation_variables_only'
+        'begin': '{(?=\\$.*?})'
+        'name': 'meta.embedded.interpolation.php'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.variable.php'
+        'end': '}'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.variable.php'
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+      }
+      {
+        'include': '#variable-name'
       }
     ]
   'interpolation_double_quoted':
