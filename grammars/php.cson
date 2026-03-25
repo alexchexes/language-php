@@ -6027,7 +6027,7 @@
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
     'contentName': 'comment.block.regexp.php'
-    'end': '(\\))|(?=")'
+    'end': '(\\))|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '0':
         'name': 'comment.block.regexp.php'
@@ -6044,7 +6044,7 @@
       '2':
         'name': 'punctuation.definition.comment.begin.regexp.php'
     'contentName': 'comment.block.regexp.php'
-    'end': '(\\))|(?=\')'
+    'end': '(\\))|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '0':
         'name': 'comment.block.regexp.php'
@@ -8117,7 +8117,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=")'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -8139,7 +8139,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=")'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
@@ -8159,7 +8159,7 @@
       '1':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=\')'
+    'end': '(\\\\E)|(\\\\\\\\)(E)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.regexp.php'
@@ -8181,7 +8181,7 @@
       '2':
         'name': 'constant.character.escape.regexp.php'
     'contentName': 'string.regexp.quoted-literal.php'
-    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=\')'
+    'end': '(\\\\\\\\)(E)|(\\\\E)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '1':
         'name': 'constant.character.escape.php'
