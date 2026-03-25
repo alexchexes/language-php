@@ -2002,6 +2002,26 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[4]).toEqual value: 'foo/', scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[5]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should stop unclosed assertion groups at the quoted host boundary', ->
+      doubleQuoted = grammar.tokenizeLine '"/a(?=foo/"'
+      singleQuoted = grammar.tokenizeLine "'/a(?<!foo/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[3]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '?=', scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedDoubleRegexpScope), 'meta.assertion.look-ahead.regexp.php')
+      expect(doubleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpAssertionGroupContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[3]).toEqual value: '(', scopes: regexpAssertionGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '?<!', scopes: regexpSpecificAssertionPunctuationScopes(regexpAssertionGroupScopes(quotedSingleRegexpScope), 'meta.assertion.negative-look-behind.regexp.php')
+      expect(singleQuoted.tokens[5]).toEqual value: 'foo/', scopes: regexpAssertionGroupContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
     it 'should tokenize verb-style assertion groups in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/"'
       singleQuoted = grammar.tokenizeLine "'/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/'"
@@ -3077,6 +3097,18 @@ describe 'PHP quoted regexp recovery', ->
   it 'keeps concatenated plain-group fragments out of quoted regex mode while wrapper entry stays conservative', ->
     singleLine = "'/a(foo' . $foo . 'bar)/';"
     doubleLine = "\"/a(foo\" . $foo . \"bar)/\";"
+
+    {tokens: singleTokens} = grammar.tokenizeLine singleLine
+    expect(singleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(singleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+    {tokens: doubleTokens} = grammar.tokenizeLine doubleLine
+    expect(doubleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
+    expect(doubleTokens.some((token) -> token.value is '$foo' and 'meta.embedded.regexp.php' in token.scopes)).toBe false
+
+  it 'keeps concatenated assertion-group fragments out of quoted regex mode while wrapper entry stays conservative', ->
+    singleLine = "'/a(?=foo' . $foo . 'bar)/';"
+    doubleLine = "\"/a(?=foo\" . $foo . \"bar)/\";"
 
     {tokens: singleTokens} = grammar.tokenizeLine singleLine
     expect(singleTokens.some((token) -> 'meta.embedded.regexp.php' in token.scopes)).toBe false
