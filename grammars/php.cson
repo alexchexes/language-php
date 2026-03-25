@@ -5116,8 +5116,7 @@
           # The same \Q...\E construct after PHP decoding
           | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*" | " ). )* (?: \\\\\\\\E )?
 
-          # Ordinary regex escapes can also include characters
-          # that would otherwise look like the wrapper tail.
+          # Ordinary regex escapes can also keep a raw `/` from ending the wrapper, e.g. `\/`.
           | \\\\                          # regex backslash
                 (?: \\\\                  # escaped thing also starts with `\`
                         (?: \\\\[\\\\"]?  # another `\`, optionally followed by `\` or `"`
@@ -5259,9 +5258,7 @@
         'include': '#regex-operators-basic'
       }
     ]
-  # Keep interpreted quoted-host escape ordering separate from explicit
-  # REGEX/REGEXP hosts. The transport/interpolation rules here are host-specific
-  # and are easier to reason about as one ordered include list.
+  # Quoted regex hosts keep their own transport/interpolation ordering.
   'regex-double-quoted-common':
     'patterns': [
       {
@@ -5532,9 +5529,7 @@
         'include': '#regex-quoted-common'
       }
     ]
-  # Keep quoted-host group ordering centralized. These lists are mostly wired
-  # through one wrapper each, and inlining them would duplicate a large,
-  # host-specific precedence contract across multiple group entries.
+  # Quoted regex hosts keep group precedence centralized in one include list.
   'regex-double-quoted-groups-common':
     'patterns': [
       {
@@ -6008,6 +6003,8 @@
     # Doubled backslashes must stay separate so raw-host constructs like `\\[` or `\\\[` keep their regex parity.
     'match': '\\\\[.$^\\[\\]{}]'
     'name': 'constant.character.escape.regexp.php'
+  # The "-explicit" suffix means source-visible regex syntax shared across raw hosts and quoted
+  # hosts after their host-specific transport/interpolation rules have already run.
   'regex-group-escape-explicit':
     'match': '\\\\[()]'
     'name': 'constant.character.escape.regexp.php'
@@ -6243,9 +6240,8 @@
     'match': '\\\\K'
     'name': 'keyword.control.regexp.php'
   'regex-invalid-escape-explicit':
-    # Invalid raw body escapes for PHP's default PCRE2 behavior.
-    # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
-    # anchors, `\\Q...\\E`, and valid-but-mode-sensitive forms like `\\N{U+...}`.
+    # Invalid raw body escapes under PHP's PCRE2 surface.
+    # Leave valid and mode-sensitive forms to the more specific rules above.
     'match': '''(?x)
       \\\\
       (?:
@@ -6733,9 +6729,8 @@
         'name': 'keyword.control.regexp.php'
     'match': '(\\\\\\\\)(K)'
   'regex-decoded-invalid-escape-interpreted':
-    # Invalid decoded body escapes for PHP's default PCRE2 behavior.
-    # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`, stray
-    # `\\E`, anchors, and valid-but-mode-sensitive forms like `\\N{U+...}`.
+    # Invalid decoded body escapes under PHP's PCRE2 surface.
+    # Leave valid and mode-sensitive doubled forms to the more specific rules above.
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -6935,10 +6930,9 @@
     'match': '\\\\o\\{(?![0-7]+\\})[^}]*\\}'
     'name': 'invalid.illegal.escape.regexp.php'
   'regex-character-class-invalid-escape-explicit':
-    # Invalid raw class escapes for PHP's default PCRE2 behavior.
-    # Keep them distinct from valid families like `\\pL`, `\\c;`, stray `\\E`,
-    # `\\o{...}`, and `\\Q...\\E` inside character classes.
-    'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
+    # Invalid raw character-class escapes under PHP's PCRE2 surface.
+    # Leave valid and mode-sensitive forms to the more specific class rules above.
+    'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|Nf(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
     'name': 'invalid.illegal.escape.regexp.php'
   'regex-character-class-literal-escape-explicit':
     'match': '\\\\(?:[0-7]{1,3}|c[ -~]|.)'
@@ -7098,9 +7092,8 @@
         'name': 'invalid.illegal.escape.regexp.php'
     'match': '((\\\\\\\\))(o\\{(?![0-7]+\\})[^}]*\\})'
   'regex-character-class-decoded-invalid-escape-interpreted':
-    # Invalid decoded class escapes for PHP's default PCRE2 behavior.
-    # Keep them distinct from valid doubled forms like `\\pL`, `\\c;`,
-    # stray `\\E`, `\\o{...}`, and `\\Q...\\E`.
+    # Invalid decoded character-class escapes under PHP's PCRE2 surface.
+    # Leave valid and mode-sensitive doubled forms to the more specific class rules above.
     'captures':
       '1':
         'name': 'constant.character.escape.php'
@@ -7476,13 +7469,8 @@
         'name': 'keyword.operator.range.regexp.php'
       }
     ]
-  # Character-class content needs two nested scopes:
-  # - "string.*" so VS Code does not treat escaped/literal class contents like `\]`, `[` or `{`
-  #   as real bracket tokens
-  # - "constant.other.character-class.set.*" for the normal regex class-set semantics/themes
-  # We avoid space-joined scope names for compatibility, so each host keeps a tiny
-  # nested "...set-..." wrapper that mirrors the outer host-specific end
-  # condition and stops right before the real closing `]`.
+  # Character-class content uses a nested set scope inside the host string scope.
+  # This keeps literals like `[`, `(` or `{` from being treated as structural tokens.
   'regex-character-class-heredoc':
     'begin': '(\\[)(\\^)?((\\])?)'
     'beginCaptures':
@@ -7568,8 +7556,6 @@
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-    # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
-    # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
@@ -7603,14 +7589,11 @@
       '4':
         'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
-    # In quoted hosts, unclosed classes must yield at the actual PHP string end,
-    # not only at the regex wrapper terminator or end-of-line.
+    # In quoted hosts, unclosed classes yield at the actual PHP string end.
     'end': '(\\])|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-    # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
-    # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
@@ -7674,14 +7657,11 @@
       '4':
         'name': 'constant.other.character-class.set.regexp.php'
     'contentName': 'string.regexp.character-class.php'
-    # In quoted hosts, unclosed classes must yield at the actual PHP string end,
-    # not only at the regex wrapper terminator or end-of-line.
+    # In quoted hosts, unclosed classes yield at the actual PHP string end.
     'end': '(\\])|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
       '1':
         'name': 'punctuation.definition.character-class.regexp.php'
-    # Keep meta.embedded.character-class.regexp.php as the wrapper, but prefer
-    # the standard regex "character-class set" scope for the content itself.
     'name': 'meta.embedded.character-class.regexp.php'
     'patterns': [
       {
@@ -7859,8 +7839,8 @@
         'include': '#regex-double-quoted-body'
       }
     ]
-  # Split the assertion condition from the outer conditional group so the first
-  # `)` can terminate the condition before the yes/no branches continue.
+  # Split the assertion condition from the outer conditional group so the first `)`
+  # can terminate the condition before the yes/no branches continue.
   'regex-conditional-assertion-condition-double-quoted':
     'begin': '''(?x)
       (
@@ -9924,7 +9904,7 @@
       }
     ]
   'regex-line-comment':
-    # We are restrictive in what we allow to go after the comment to avoid false positives,
+    # We are conservative in what we allow to go after the comment to avoid false positives,
     # since the availability of comments depend on regexp flags.
     'begin': '(?i)(?<=^|\\s)(#)\\s(?=[[a-z0-9_\\x{7f}-\\x{10ffff},. \\t?!-][^\\x{00}-\\x{7f}]]*$)'
     'beginCaptures':
