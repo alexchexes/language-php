@@ -3252,6 +3252,2183 @@
         }
       }
     },
+    "scope-resolution": {
+      "patterns": [
+        {
+          "match": "(?i)([a-z_\\x{7f}-\\x{10ffff}\\\\][a-z0-9_\\x{7f}-\\x{10ffff}\\\\]*)(?=\\s*::)",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "match": "\\b(self|static|parent)\\b",
+                  "name": "storage.type.php"
+                },
+                {
+                  "include": "#class-name"
+                },
+                {
+                  "include": "#variable-name"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "begin": "(?i)(::)\\s*([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)\\s*(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.operator.class.php"
+            },
+            "2": {
+              "name": "entity.name.function.php"
+            },
+            "3": {
+              "name": "punctuation.definition.arguments.begin.bracket.round.php"
+            }
+          },
+          "end": "\\)|(?=\\?>)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.arguments.end.bracket.round.php"
+            }
+          },
+          "name": "meta.method-call.static.php",
+          "patterns": [
+            {
+              "include": "#named-arguments"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "match": "(?i)(::)\\s*(class)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.class.php"
+            },
+            "2": {
+              "name": "keyword.other.class.php"
+            }
+          }
+        },
+        {
+          "match": "(?xi)\n(::)\\s*\n(?:\n  ((\\$+)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*) # Variable\n  |\n  ([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)       # Constant\n)?",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.class.php"
+            },
+            "2": {
+              "name": "variable.other.class.php"
+            },
+            "3": {
+              "name": "punctuation.definition.variable.php"
+            },
+            "4": {
+              "name": "constant.other.class.php"
+            }
+          }
+        }
+      ]
+    },
+    "single_quote_escape_only": {
+      "match": "\\\\[\\\\']",
+      "name": "constant.character.escape.php"
+    },
+    "sql-delimited-segments-heredoc": {
+      "patterns": [
+        {
+          "begin": "'",
+          "end": "(')|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.single.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "\"",
+          "end": "(\")|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.double.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "`",
+          "end": "(`)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.other.backtick.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          },
+          "end": "(\\*/)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          },
+          "name": "comment.block",
+          "patterns": [
+            {
+              "include": "#sql-delimited-segments-heredoc"
+            }
+          ]
+        },
+        {
+          "begin": "%\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "name": "string.other.quoted.brackets.sql"
+        },
+        {
+          "begin": "%r\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "name": "string.regexp.modr.sql"
+        }
+      ]
+    },
+    "sql-delimited-segments-nowdoc": {
+      "patterns": [
+        {
+          "begin": "'",
+          "end": "(')|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.single.sql"
+        },
+        {
+          "begin": "\"",
+          "end": "(\")|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.double.sql"
+        },
+        {
+          "begin": "`",
+          "end": "(`)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "name": "string.quoted.other.backtick.sql"
+        },
+        {
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          },
+          "end": "(\\*/)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          },
+          "name": "comment.block",
+          "patterns": [
+            {
+              "include": "#sql-delimited-segments-nowdoc"
+            }
+          ]
+        },
+        {
+          "begin": "%\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "name": "string.other.quoted.brackets.sql"
+        },
+        {
+          "begin": "%r\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.sql"
+            }
+          },
+          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.sql"
+            }
+          },
+          "name": "string.regexp.modr.sql"
+        }
+      ]
+    },
+    "sql-string-double-quoted": {
+      "begin": "(\")\\s*(?=(?:(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH|WHERE)\\b|(?:(?:(?:FULL|LEFT|RIGHT)(?:\\s+OUTER)?|INNER|OUTER|CROSS)\\s+)?JOIN\\b))",
+      "beginCaptures": {
+        "0": {
+          "name": "string.quoted.double.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.begin.php"
+        }
+      },
+      "contentName": "source.sql.embedded.php",
+      "end": "(\")",
+      "endCaptures": {
+        "0": {
+          "name": "string.quoted.double.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "meta.embedded.sql",
+      "patterns": [
+        {
+          "match": "(#)(\\\\\"|[^\"])*(?=\"|$)",
+          "name": "comment.line.number-sign.sql",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          }
+        },
+        {
+          "match": "(--)(\\\\\"|[^\"])*(?=\"|$)",
+          "name": "comment.line.double-dash.sql",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          }
+        },
+        {
+          "match": "\\\\[\\\\\"`']",
+          "name": "constant.character.escape.php"
+        },
+        {
+          "match": "\\[(?=((\\\\\")|[^\\]\"])*(\"|$))",
+          "name": "text.bracketed.unclosed.sql"
+        },
+        {
+          "match": "/\\*(?=((\\\\\")|(?:(?!\\*/|\").))*(\"|$))",
+          "name": "comment.block.unclosed.sql"
+        },
+        {
+          "match": "%\\{(?=((\\\\\")|[^}\"])*(\"|$))",
+          "name": "string.other.quoted.brackets.unclosed.sql"
+        },
+        {
+          "match": "%r\\{(?=((\\\\\")|[^}\"])*(\"|$))",
+          "name": "string.regexp.modr.unclosed.sql"
+        },
+        {
+          "match": "'(?=((\\\\')|[^'\"])*(\"|$))",
+          "name": "string.quoted.single.unclosed.sql"
+        },
+        {
+          "match": "`(?=((\\\\`)|[^`\"])*(\"|$))",
+          "name": "string.quoted.other.backtick.unclosed.sql"
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "begin": "`",
+          "end": "`",
+          "name": "string.quoted.other.backtick.sql",
+          "patterns": [
+            {
+              "include": "#interpolation_double_quoted"
+            }
+          ]
+        },
+        {
+          "include": "#interpolation_double_quoted"
+        },
+        {
+          "include": "source.sql"
+        }
+      ]
+    },
+    "sql-string-single-quoted": {
+      "begin": "(')\\s*(?=(?:(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH|WHERE)\\b|(?:(?:(?:FULL|LEFT|RIGHT)(?:\\s+OUTER)?|INNER|OUTER|CROSS)\\s+)?JOIN\\b))",
+      "beginCaptures": {
+        "0": {
+          "name": "string.quoted.single.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.begin.php"
+        }
+      },
+      "contentName": "source.sql.embedded.php",
+      "end": "(')",
+      "endCaptures": {
+        "0": {
+          "name": "string.quoted.single.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "meta.embedded.sql",
+      "patterns": [
+        {
+          "match": "(#)(\\\\'|[^'])*(?='|$)",
+          "name": "comment.line.number-sign.sql",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          }
+        },
+        {
+          "match": "(--)(\\\\'|[^'])*(?='|$)",
+          "name": "comment.line.double-dash.sql",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.sql"
+            }
+          }
+        },
+        {
+          "match": "\\\\[\\\\'`\"]",
+          "name": "constant.character.escape.php"
+        },
+        {
+          "match": "N(?=')"
+        },
+        {
+          "match": "\\[(?=((\\\\')|[^\\]'])*('|$))",
+          "name": "text.bracketed.unclosed.sql"
+        },
+        {
+          "match": "/\\*(?=((\\\\')|(?:(?!\\*/|').))*('|$))",
+          "name": "comment.block.unclosed.sql"
+        },
+        {
+          "match": "%\\{(?=((\\\\')|[^}'])*('|$))",
+          "name": "string.other.quoted.brackets.unclosed.sql"
+        },
+        {
+          "match": "%r\\{(?=((\\\\')|[^}'])*('|$))",
+          "name": "string.regexp.modr.unclosed.sql"
+        },
+        {
+          "match": "`(?=((\\\\`)|[^`'])*('|$))",
+          "name": "string.quoted.other.backtick.unclosed.sql"
+        },
+        {
+          "match": "\"(?=((\\\\\")|[^\"'])*('|$))",
+          "name": "string.quoted.double.unclosed.sql"
+        },
+        {
+          "include": "source.sql"
+        }
+      ]
+    },
+    "string-backtick": {
+      "begin": "`",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.php"
+        }
+      },
+      "end": "`",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "string.interpolated.php",
+      "patterns": [
+        {
+          "match": "\\\\`",
+          "name": "constant.character.escape.php"
+        },
+        {
+          "include": "#interpolation"
+        }
+      ]
+    },
+    "string-double-quoted": {
+      "begin": "\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.php"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "string.quoted.double.php",
+      "patterns": [
+        {
+          "include": "#interpolation_double_quoted"
+        }
+      ]
+    },
+    "string-single-quoted": {
+      "begin": "'",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.php"
+        }
+      },
+      "end": "'",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "string.quoted.single.php",
+      "patterns": [
+        {
+          "match": "\\\\[\\\\']",
+          "name": "constant.character.escape.php"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "include": "#regexp-double-quoted"
+        },
+        {
+          "include": "#sql-string-double-quoted"
+        },
+        {
+          "include": "#string-double-quoted"
+        },
+        {
+          "include": "#regexp-single-quoted"
+        },
+        {
+          "include": "#sql-string-single-quoted"
+        },
+        {
+          "include": "#string-single-quoted"
+        }
+      ]
+    },
+    "support": {
+      "patterns": [
+        {
+          "match": "(?xi)\n\\b\napc_(\n  store|sma_info|compile_file|clear_cache|cas|cache_info|inc|dec|define_constants|delete(_file)?|\n  exists|fetch|load_constants|add|bin_(dump|load)(file)?\n)\\b",
+          "name": "support.function.apc.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  compact|count|current|end|extract|in_array|key(_exists)?|list|nat(case)?sort|\n  next|pos|prev|range|reset|shuffle|sizeof|[ak]?r?sort|u[ak]?sort|\n  array_(\n    all|any|change_key_case|chunk|column|combine|count_values|\n    fill(_keys)?|filter|find(_key)?|flip|is_list|key_(exists|first|last)|keys|\n    map|multisort|pad|pop|product|push|rand|reduce|reverse|\n    search|shift|slice|splice|sum|unique|unshift|values|\n    u?(diff|intersect)(_u?(key|assoc))?|(walk|replace|merge)(_recursive)?\n  )\n)\\b",
+          "name": "support.function.array.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  connection_(aborted|status)|constant|defined?|die|eval|exit|get_browser|\n  __halt_compiler|highlight_(file|string)|hrtime|ignore_user_abort|pack|php_strip_whitespace|\n  show_source|u?sleep|sys_getloadavg|time_(nanosleep|sleep_until)|uniqid|unpack\n)\\b",
+          "name": "support.function.basic_functions.php"
+        },
+        {
+          "match": "(?i)\\b(bc(add|ceil|comp|(div|pow)(mod)?|floor|mod|mul|round|scale|sqrt|sub))\\b",
+          "name": "support.function.bcmath.php"
+        },
+        {
+          "match": "(?i)\\b(blenc_encrypt)\\b",
+          "name": "support.function.blenc.php"
+        },
+        {
+          "match": "(?i)\\b(bz(compress|close|open|decompress|errstr|errno|error|flush|write|read))\\b",
+          "name": "support.function.bz2.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  (French|Gregorian|Jewish|Julian)ToJD|cal_(to_jd|info|days_in_month|from_jd)|unixtojd|\n  jdto(unix|jewish)|easter_(date|days)|JD(MonthName|To(Gregorian|Julian|French)|DayOfWeek)\n)\\b",
+          "name": "support.function.calendar.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  __autoload|class_alias|(class|interface|method|property|trait|enum)_exists|\n  is_(a|subclass_of)|\n  get_(class(_(vars|methods))?|(called|parent)_class|\n    (mangled_)?object_vars|declared_(classes|interfaces|traits))\n)\\b",
+          "name": "support.function.classobj.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  com_(create_guid|print_typeinfo|event_sink|load_typelib|get_active_object|message_pump)|\n  variant_(sub|set(_type)?|not|neg|cast|cat|cmp|int|idiv|imp|or|div|date_(from|to)_timestamp|\n           pow|eqv|fix|and|add|abs|round|get_type|xor|mod|mul)\n)\\b",
+          "name": "support.function.com.php"
+        },
+        {
+          "match": "(?i)\\b(isset|unset|eval|empty|list)\\b",
+          "name": "support.function.construct.php"
+        },
+        {
+          "match": "(?i)\\b(print|echo)\\b",
+          "name": "support.function.construct.output.php"
+        },
+        {
+          "match": "(?i)\\b(ctype_(space|cntrl|digit|upper|punct|print|lower|alnum|alpha|graph|xdigit))\\b",
+          "name": "support.function.ctype.php"
+        },
+        {
+          "match": "(?xi)\\b\ncurl_(\n  close|copy_handle|errno|error|escape|exec|file_create|getinfo|init|pause|reset|\n  setopt(_array)?|strerror|unescape|upkeep|version|\n  multi_((add|remove)_handle|close|errno|exec|getcontent|\n    info_read|init|select|setopt|strerror)|\n  share_(close|errno|init(_persistent)?|setopt|strerror)\n)\\b",
+          "name": "support.function.curl.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  strtotime|str[fp]time|checkdate|time|timezone_name_(from_abbr|get)|idate|\n  timezone_((location|offset|transitions|version)_get|(abbreviations|identifiers)_list|open)|\n  date(_(sun(rise|set)|sun_info|sub|create(_immutable)?(_from_format)?|timestamp_[gs]et|timezone_[gs]et|time_set|\n         isodate_set|interval_(create_from_date_string|format)|offset_get|diff|default_timezone_[gs]et|date_set|\n         parse(_from_format)?|format|add|get_last_errors|modify))?|\n  localtime|get(date|timeofday)|gm(strftime|date|mktime)|microtime|mktime\n)\\b",
+          "name": "support.function.datetime.php"
+        },
+        {
+          "match": "(?i)\\b(dba_(sync|handlers|nextkey|close|insert|optimize|open|delete|popen|exists|key_split|firstkey|fetch|list|replace))\\b",
+          "name": "support.function.dba.php"
+        },
+        {
+          "match": "(?i)\\b(dbx_(sort|connect|compare|close|escape_string|error|query|fetch_row))\\b",
+          "name": "support.function.dbx.php"
+        },
+        {
+          "match": "(?i)\\b(scandir|chdir|chroot|closedir|opendir|dir|rewinddir|readdir|getcwd)\\b",
+          "name": "support.function.dir.php"
+        },
+        {
+          "match": "(?xi)\\b\neio_(\n  sync(fs)?|sync_file_range|symlink|stat(vfs)?|sendfile|set_min_parallel|set_max_(idle|poll_(reqs|time)|parallel)|\n  seek|n(threads|op|pending|reqs|ready)|chown|chmod|custom|close|cancel|truncate|init|open|dup2|unlink|utime|poll|\n  event_loop|f(sync|stat(vfs)?|chown|chmod|truncate|datasync|utime|allocate)|write|lstat|link|rename|realpath|\n  read(ahead|dir|link)?|rmdir|get_(event_stream|last_error)|grp(_(add|cancel|limit))?|mknod|mkdir|busy\n)\\b",
+          "name": "support.function.eio.php"
+        },
+        {
+          "match": "(?xi)\\b\nenchant_(\n  dict_(store_replacement|suggest|check|is_in_session|describe|quick_check|add_to_(personal|session)|get_error)|\n  broker_(set_ordering|init|dict_exists|describe|free(_dict)?|list_dicts|request_(pwl_)?dict|get_error)\n)\\b",
+          "name": "support.function.enchant.php"
+        },
+        {
+          "match": "(?i)\\b(split(i)?|sql_regcase|ereg(i)?(_replace)?)\\b",
+          "name": "support.function.ereg.php"
+        },
+        {
+          "match": "(?i)\\b((restore|set)_(error|exception)_handler|trigger_error|debug_(print_)?backtrace|user_error|error_(log|reporting|(clear|get)_last))\\b",
+          "name": "support.function.errorfunc.php"
+        },
+        {
+          "match": "(?i)\\b(shell_exec|system|passthru|proc_(nice|close|terminate|open|get_status)|escapeshell(arg|cmd)|exec)\\b",
+          "name": "support.function.exec.php"
+        },
+        {
+          "match": "(?i)\\b(exif_(thumbnail|tagname|imagetype|read_data)|read_exif_data)\\b",
+          "name": "support.function.exif.php"
+        },
+        {
+          "match": "(?xi)\\b\nfann_(\n  (duplicate|length|merge|shuffle|subset)_train_data|scale_(train(_data)?|(input|output)(_train_data)?)|\n  set_(scaling_params|sarprop_(step_error_(shift|threshold_factor)|temperature|weight_decay_shift)|\n       cascade_(num_candidate_groups|candidate_(change_fraction|limit|stagnation_epochs)|\n                output_(change_fraction|stagnation_epochs)|weight_multiplier|activation_(functions|steepnesses)|\n                (max|min)_(cand|out)_epochs)|\n       callback|training_algorithm|train_(error|stop)_function|(input|output)_scaling_params|error_log|\n       quickprop_(decay|mu)|weight(_array)?|learning_(momentum|rate)|bit_fail_limit|\n       activation_(function|steepness)(_(hidden|layer|output))?|\n       rprop_((decrease|increase)_factor|delta_(max|min|zero)))|\n  save(_train)?|num_(input|output)_train_data|copy|clear_scaling_params|cascadetrain_on_(file|data)|\n  create_((sparse|shortcut|standard)(_array)?|train(_from_callback)?|from_file)|\n  test(_data)?|train(_(on_(file|data)|epoch))?|init_weights|descale_(input|output|train)|destroy(_train)?|\n  print_error|run|reset_(MSE|err(no|str))|read_train_from_file|randomize_weights|\n  get_(sarprop_(step_error_(shift|threshold_factor)|temperature|weight_decay_shift)|num_(input|output|layers)|\n       network_type|MSE|connection_(array|rate)|bias_array|bit_fail(_limit)?|\n       cascade_(num_(candidates|candidate_groups)|(candidate|output)_(change_fraction|limit|stagnation_epochs)|\n                weight_multiplier|activation_(functions|steepnesses)(_count)?|(max|min)_(cand|out)_epochs)|\n       total_(connections|neurons)|training_algorithm|train_(error|stop)_function|err(no|str)|\n       quickprop_(decay|mu)|learning_(momentum|rate)|layer_array|activation_(function|steepness)|\n       rprop_((decrease|increase)_factor|delta_(max|min|zero)))\n)\\b",
+          "name": "support.function.fann.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  symlink|stat|set_file_buffer|chown|chgrp|chmod|copy|clearstatcache|touch|tempnam|tmpfile|\n  is_(dir|(uploaded_)?file|executable|link|readable|writ(e)?able)|disk_(free|total)_space|diskfreespace|\n  dirname|delete|unlink|umask|pclose|popen|pathinfo|parse_ini_(file|string)|fscanf|fstat|fseek|fnmatch|\n  fclose|ftell|ftruncate|file(size|[acm]time|type|inode|owner|perms|group)?|file_(exists|(get|put)_contents)|\n  f(open|puts|putcsv|passthru|eof|flush|write|lock|read|gets(s)?|getc(sv)?)|lstat|lchown|lchgrp|link(info)?|\n  rename|rewind|read(file|link)|realpath(_cache_(get|size))?|rmdir|glob|move_uploaded_file|mkdir|basename|\n  f(data)?sync\n)\\b",
+          "name": "support.function.file.php"
+        },
+        {
+          "match": "(?i)\\b(finfo_(set_flags|close|open|file|buffer)|mime_content_type)\\b",
+          "name": "support.function.fileinfo.php"
+        },
+        {
+          "match": "(?i)\\b(filter_(has_var|input(_array)?|id|var(_array)?|list))\\b",
+          "name": "support.function.filter.php"
+        },
+        {
+          "match": "(?i)\\b(fastcgi_finish_request|fpm_get_status)\\b",
+          "name": "support.function.fpm.php"
+        },
+        {
+          "match": "(?i)\\b(call_user_(func|method)(_array)?|create_function|unregister_tick_function|forward_static_call(_array)?|function_exists|func_(num_args|get_arg(s)?)|register_(shutdown|tick)_function|get_defined_functions)\\b",
+          "name": "support.function.funchand.php"
+        },
+        {
+          "match": "(?i)\\b((n)?gettext|_|textdomain|d((n)?gettext|c(n)?gettext)|bind(textdomain|_textdomain_codeset))\\b",
+          "name": "support.function.gettext.php"
+        },
+        {
+          "match": "(?xi)\\b\ngmp_(\n  scan[01]|strval|sign|sub|setbit|sqrt(rem)?|hamdist|neg|nextprime|com|clrbit|cmp|testbit|\n  intval|init|invert|import|or|div(exact)?|div_(q|qr|r)|jacobi|popcount|pow(m)?|perfect_(square|power)|\n  prob_prime|export|fact|legendre|and|add|abs|root(rem)?|random(_(bits|range|seed))?|gcd(ext)?|xor|mod|mul|\n  binomial|kronecker|lcm\n)\\b",
+          "name": "support.function.gmp.php"
+        },
+        {
+          "match": "(?xi)\\b hash(_( algos|copy|equals|file|final|hkdf|hmac(_(file|algos)?)?| init|pbkdf2|update(_(file|stream))? ))? \\b",
+          "name": "support.function.hash.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  http_(support|send_(status|stream|content_(disposition|type)|data|file|last_modified)|head|\n        negotiate_(charset|content_type|language)|chunked_decode|cache_(etag|last_modified)|throttle|\n        inflate|deflate|date|post_(data|fields)|put_(data|file|stream)|persistent_handles_(count|clean|ident)|\n        parse_(cookie|headers|message|params)|redirect|request(_(method_(exists|name|(un)?register)|body_encode))?|\n        get(_request_(headers|body(_stream)?))?|match_(etag|modified|request_header)|build_(cookie|str|url))|\n  ob_(etag|deflate|inflate)handler\n)\\b",
+          "name": "support.function.http.php"
+        },
+        {
+          "match": "(?i)\\b(iconv(_(str(pos|len|rpos)|substr|[gs]et_encoding|mime_(decode(_headers)?|encode)))?|ob_iconv_handler)\\b",
+          "name": "support.function.iconv.php"
+        },
+        {
+          "match": "(?i)\\b(iis_((start|stop)_(service|server)|set_(script_map|server_rights|dir_security|app_settings)|(add|remove)_server|get_(script_map|service_state|server_(rights|by_(comment|path))|dir_security)))\\b",
+          "name": "support.function.iisfunc.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  iptc(embed|parse)|(jpeg|png)2wbmp|gd_info|getimagesize(fromstring)?|\n  image(s[xy]|scale|(char|string)(up)?|set(clip|style|thickness|tile|interpolation|pixel|brush)|savealpha|\n        convolution|copy(resampled|resized|merge(gray)?)?|colors(forindex|total)|\n        color(set|closest(alpha|hwb)?|transparent|deallocate|(allocate|exact|resolve)(alpha)?|at|match)|\n        crop(auto)?|create(truecolor|from(avif|bmp|string|jpeg|png|wbmp|webp|gif|gd(2(part)?)?|tga|xpm|xbm))?|\n        types|ttf(bbox|text)|truecolortopalette|istruecolor|interlace|2wbmp|destroy|dashedline|jpeg|\n        _type_to_(extension|mime_type)|ps(slantfont|text|(encode|extend|free|load)font|bbox)|png|polygon|\n        palette(copy|totruecolor)|ellipse|ft(text|bbox)|filter|fill|filltoborder|\n        filled(arc|ellipse|polygon|rectangle)|font(height|width)|flip|webp|wbmp|line|loadfont|layereffect|\n        antialias|affine(matrix(concat|get))?|alphablending|arc|rotate|rectangle|gif|gd2?|gammacorrect|\n        grab(screen|window)|xbm|resolution|openpolygon|get(clip|interpolation)|avif|bmp)\n)\\b",
+          "name": "support.function.image.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  sys_get_temp_dir|set_(time_limit|include_path|magic_quotes_runtime)|cli_[gs]et_process_title|\n  ini_(alter|get(_all)?|parse_quantity|restore|set)|zend_(thread_id|version|logo_guid)|dl|php(credits|info|version)|\n  php_(sapi_name|ini_(scanned_files|loaded_file)|uname|logo_guid)|putenv|extension_loaded|version_compare|\n  assert(_options)?|restore_include_path|gc_(collect_cycles|disable|enable(d)?|mem_caches|status)|getopt|\n  get_(cfg_var|current_user|defined_constants|extension_funcs|include_path|included_files|loaded_extensions|\n       magic_quotes_(gpc|runtime)|required_files|resources)|\n  get(env|lastmod|rusage|my(inode|[gup]id))|\n  memory_(get_(peak_)?usage|reset_peak_usage)|\n  main|magic_quotes_runtime\n)\\b",
+          "name": "support.function.info.php"
+        },
+        {
+          "match": "(?xi)\\b\nibase_(\n  set_event_handler|service_(attach|detach)|server_info|num_(fields|params)|name_result|connect|\n  commit(_ret)?|close|trans|delete_user|drop_db|db_info|pconnect|param_info|prepare|err(code|msg)|\n  execute|query|field_info|fetch_(assoc|object|row)|free_(event_handler|query|result)|wait_event|\n  add_user|affected_rows|rollback(_ret)?|restore|gen_id|modify_user|maintain_db|backup|\n  blob_(cancel|close|create|import|info|open|echo|add|get)\n)\\b",
+          "name": "support.function.interbase.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  normalizer_(normalize|is_normalized|get_raw_decomposition)|\n  idn_to_(unicode|utf8|ascii)|\n  numfmt_(\n          set_(symbol|(text_)?attribute|pattern)|\n          create|\n          (parse|format)(_currency)?|\n          get_(\n               symbol|\n               (text_)?attribute|\n               pattern|\n               error_(code|message)|\n               locale\n          )\n  )|\n  collator_(\n            sort(_with_sort_keys)?|\n            set_(attribute|strength)|\n            compare|create|asort|\n            get_(\n                 strength|sort_key|\n                 error_(code|message)|\n                 locale|attribute\n            )\n  )|\n  transliterator_(\n                  create(_(inverse|from_rules))?|\n                  transliterate|list_ids|\n                  get_error_(code|message)\n  )|\n  intl(cal|tz)_get_error_(code|message)|\n  intlcal_(\n           add|after|before|clear|create_instance|equals|field_difference|from_date_time|\n           get(_(\n                 available_locales|\n                 (actual_)?(maximum|minimum)|\n                 day_of_week_type|\n                 first_day_of_week|\n                 greatest_minimum|\n                 keyword_values_for_locale|\n                 least_maximum|\n                 locale|\n                 minimal_days_in_first_week|\n                 now|\n                 repeated_wall_time_option|\n                 skipped_wall_time_option|\n                 time(_zone)?|\n                 type|\n                 weekend_transition\n           ))?|\n           in_daylight_time|\n           is_(equivalent_to|lenient|set|weekend)|\n           roll|\n           set(_(\n                 first_day_of_week|\n                 lenient|\n                 minimal_days_in_first_week|\n                 repeated_wall_time_option|\n                 skipped_wall_time_option|\n                 time(_zone)?\n           ))?|\n           to_date_time\n  )|\n  intltz_(\n          count_equivalent_ids|\n          create_(\n                  default|\n                  enumeration|\n                  time_zone(_id_enumeration)?\n          )|\n          from_date_time_zone|\n          get_(\n               canonical_id|\n               display_name|\n               dst_savings|\n               equivalent_id|\n               gmt|\n               iana_id|\n               id(_for_windows_id)?|\n               offset|\n               raw_offset|\n               region|\n               tz_data_version|\n               unknown|\n               windows_id\n          )|\n          has_same_rules|\n          to_date_time_zone|\n          use_daylight_time\n  )|\n  intlgregcal_(\n               create_instance|\n               (get|set)_gregorian_change|\n               is_leap_year\n  )|\n  intl_(\n        is_failure|\n        error_name|\n        get_error_(code|message)\n  )|\n  datefmt_(\n           set_(\n                calendar|lenient|pattern|\n                timezone(_id)?\n           )|\n           create|is_lenient|parse|\n           format(_object)?|\n           localtime|\n           get_(\n                calendar(_object)?|\n                time(type|zone(_id)?)|\n                datetype|\n                pattern|\n                error_(code|message)|\n                locale\n           )\n  )|\n  locale_(\n          set_default|compose|canonicalize|parse|filter_matches|lookup|accept_from_http|\n          get_(\n               script|\n               display_(script|name|variant|language|region)|\n               default|\n               primary_language|\n               keywords|\n               all_variants|\n               region\n          )\n  )|\n  resourcebundle_(\n                  create|count|locales|\n                  get(_(error_(code|message)))?\n  )|\n  grapheme_(\n            str(i?str|r?i?pos|len|_split)|\n            substr|extract\n  )|\n  msgfmt_(\n          set_pattern|\n          create|\n          (format|parse)(_message)?|\n          get_(\n               pattern|\n               error_(code|message)|\n               locale\n          )\n  )\n)\\b",
+          "name": "support.function.intl.php"
+        },
+        {
+          "match": "(?i)\\b(json_(decode|encode|last_error(_msg)?|validate))\\b",
+          "name": "support.function.json.php"
+        },
+        {
+          "match": "(?xi)\\b\nldap_(\n  start|tls|sort|search|sasl_bind|set_(option|rebind_proc)|(first|next)_(attribute|entry|reference)|\n  connect|control_paged_result(_response)?|count_entries|compare|close|t61_to_8859|8859_to_t61|\n  dn2ufn|delete|unbind|parse_(reference|result)|escape|errno|err2str|error|explode_dn|bind|\n  free_result|list|add|rename|read|get_(option|dn|entries|values(_len)?|attributes)|modify(_batch)?|\n  mod_(add|del|replace)\n)\\b",
+          "name": "support.function.ldap.php"
+        },
+        {
+          "match": "(?xi)\\b\nlibxml_(\n  set_(streams_context|external_entity_loader)|\n  clear_errors|\n  disable_entity_loader|\n  use_internal_errors|\n  get_(errors|last_error|external_entity_loader)\n)\\b",
+          "name": "support.function.libxml.php"
+        },
+        {
+          "match": "(?i)\\b(ezmlm_hash|mail)\\b",
+          "name": "support.function.mail.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  a?(cos|sin|tan)h?|sqrt|srand|hypot|hexdec|ceil|is_(nan|(in)?finite)|octdec|dec(hex|oct|bin)|deg2rad|\n  pi|pow|exp(m1)?|floor|f(div|mod|pow)|lcg_value|log(1[p0])?|atan2|abs|round|rand|rad2deg|getrandmax|\n  mt_(srand|rand|getrandmax)|max|min|bindec|base_convert|intdiv|random_(int|bytes)\n)\\b",
+          "name": "support.function.math.php"
+        },
+        {
+          "match": "(?xi)\\b\nmb_(\n  str(cut|str|to(lower|upper)|istr|ipos|imwidth|pos|width|len|rchr|richr|ripos|rpos|_pad|_split)|\n  substitute_character|substr(_count)?|split|send_mail|http_(input|output)|check_encoding|\n  convert_(case|encoding|kana|variables)|internal_encoding|output_handler|decode_(numericentity|mimeheader)|\n  detect_(encoding|order)|parse_str|preferred_mime_name|encoding_aliases|encode_(numericentity|mimeheader)|\n  ereg(i(_replace)?)?|ereg_(search(_(get(pos|regs)|init|regs|(set)?pos))?|replace(_callback)?|match)|\n  list_encodings|language|regex_(set_options|encoding)|get_info|\n  [lr]?trim|[lu]cfirst|ord|chr|scrub\n)\\b",
+          "name": "support.function.mbstring.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  mcrypt_(\n    cfb|create_iv|cbc|ofb|decrypt|encrypt|ecb|list_(algorithms|modes)|generic(_((de)?init|end))?|\n    enc_(self_test|is_block_(algorithm|algorithm_mode|mode)|\n    get_(supported_key_sizes|(block|iv|key)_size|(algorithms|modes)_name))|\n    get_(cipher_name|(block|iv|key)_size)|\n    module_(close|self_test|is_block_(algorithm|algorithm_mode|mode)|open|\n            get_(supported_key_sizes|algo_(block|key)_size)))|\n  mdecrypt_generic\n)\\b",
+          "name": "support.function.mcrypt.php"
+        },
+        {
+          "match": "(?i)\\b(memcache_debug)\\b",
+          "name": "support.function.memcache.php"
+        },
+        {
+          "match": "(?i)\\b(mhash(_(count|keygen_s2k|get_(hash_name|block_size)))?)\\b",
+          "name": "support.function.mhash.php"
+        },
+        {
+          "match": "(?i)\\b(log_(cmd_(insert|delete|update)|killcursor|write_batch|reply|getmore)|bson_(decode|encode))\\b",
+          "name": "support.function.mongo.php"
+        },
+        {
+          "match": "(?xi)\\b\nmysql_(\n  stat|set_charset|select_db|num_(fields|rows)|connect|client_encoding|close|create_db|escape_string|\n  thread_id|tablename|insert_id|info|data_seek|drop_db|db_(name|query)|unbuffered_query|pconnect|ping|\n  errno|error|query|field_(seek|name|type|table|flags|len)|fetch_(object|field|lengths|assoc|array|row)|\n  free_result|list_(tables|dbs|processes|fields)|affected_rows|result|real_escape_string|\n  get_(client|host|proto|server)_info\n)\\b",
+          "name": "support.function.mysql.php"
+        },
+        {
+          "match": "(?xi)\\b\nmysqli_(\n  ssl_set|store_result|stat|send_(query|long_data)|set_(charset|opt|local_infile_(default|handler))|\n  stmt_(store_result|send_long_data|next_result|close|init|data_seek|prepare|execute|fetch|free_result|\n        attr_[gs]et|result_metadata|reset|get_(result|warnings)|more_results|bind_(param|result))|\n  select_db|slave_query|savepoint|next_result|change_user|character_set_name|connect|commit|\n  client_encoding|close|thread_safe|init|options|(enable|disable)_(reads_from_master|rpl_parse)|\n  dump_debug_info|debug|data_seek|use_result|ping|poll|param_count|prepare|escape_string|execute|\n  embedded_server_(start|end)|kill|query|field_seek|free_result|autocommit|rollback|report|refresh|\n  fetch(_(object|fields|field(_direct)?|assoc|all|array|row))?|rpl_(parse_enabled|probe|query_type)|\n  release_savepoint|reap_async_query|real_(connect|escape_string|query)|more_results|multi_query|\n  get_(charset|connection_stats|client_(stats|info|version)|cache_stats|warnings|links_stats|metadata)|\n  master_query|bind_(param|result)|begin_transaction\n)\\b",
+          "name": "support.function.mysqli.php"
+        },
+        {
+          "match": "(?i)\\b(mysqlnd_memcache_(set|get_config))\\b",
+          "name": "support.function.mysqlnd-memcache.php"
+        },
+        {
+          "match": "(?i)\\b(mysqlnd_ms_(set_(user_pick_server|qos)|dump_servers|query_is_select|fabric_select_(shard|global)|get_(stats|last_(used_connection|gtid))|xa_(commit|rollback|gc|begin)|match_wild))\\b",
+          "name": "support.function.mysqlnd-ms.php"
+        },
+        {
+          "match": "(?i)\\b(mysqlnd_qc_(set_(storage_handler|cache_condition|is_select|user_handlers)|clear_cache|get_(normalized_query_trace_log|core_stats|cache_info|query_trace_log|available_handlers)))\\b",
+          "name": "support.function.mysqlnd-qc.php"
+        },
+        {
+          "match": "(?i)\\b(mysqlnd_uh_(set_(statement|connection)_proxy|convert_to_mysqlnd))\\b",
+          "name": "support.function.mysqlnd-uh.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  syslog|socket_(set_(blocking|timeout)|get_status)|set(raw)?cookie|http_response_code|openlog|\n  headers_(list|sent)|header(_(register_callback|remove))?|checkdnsrr|closelog|inet_(ntop|pton)|ip2long|\n  openlog|dns_(check_record|get_(record|mx))|define_syslog_variables|(p)?fsockopen|long2ip|\n  get(servby(name|port)|host(name|by(name(l)?|addr))|protoby(name|number)|mxrr)|\n  http_(clear|get)_last_response_headers|net_get_interfaces|request_parse_body\n)\\b",
+          "name": "support.function.network.php"
+        },
+        {
+          "match": "(?i)\\b(nsapi_(virtual|response_headers|request_headers))\\b",
+          "name": "support.function.nsapi.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  oci(statementtype|setprefetch|serverversion|savelob(file)?|numcols|new(collection|cursor|descriptor)|nlogon|\n      column(scale|size|name|type(raw)?|isnull|precision)|coll(size|trim|assign(elem)?|append|getelem|max)|commit|\n      closelob|cancel|internaldebug|definebyname|plogon|parse|error|execute|fetch(statement|into)?|\n      free(statement|collection|cursor|desc)|write(temporarylob|lobtofile)|loadlob|log(on|off)|rowcount|rollback|\n      result|bindbyname)|\n  oci_(statement_type|set_(client_(info|identifier)|prefetch|edition|action|module_name)|server_version|\n       num_(fields|rows)|new_(connect|collection|cursor|descriptor)|connect|commit|client_version|close|cancel|\n       internal_debug|define_by_name|pconnect|password_change|parse|error|execute|bind_(array_)?by_name|\n       field_(scale|size|name|type(_raw)?|is_null|precision)|fetch(_(object|assoc|all|array|row))?|\n       free_(statement|descriptor)|lob_(copy|is_equal)|rollback|result|get_implicit_resultset)\n)\\b",
+          "name": "support.function.oci8.php"
+        },
+        {
+          "match": "(?i)\\b(opcache_(compile_file|invalidate|is_script_cached|reset|get_(status|configuration)|jit_blacklist))\\b",
+          "name": "support.function.opcache.php"
+        },
+        {
+          "match": "(?xi)\\b\nopenssl_(\n  sign|spki_(new|export(_challenge)?|verify)|seal|csr_(sign|new|export(_to_file)?|get_(subject|public_key))|\n  cipher_(iv|key)_length|open|dh_compute_key|digest|decrypt|public_(decrypt|encrypt)|encrypt|error_string|\n  pkcs12_(export(_to_file)?|read)|(cms|pkcs7)_(sign|decrypt|encrypt|verify|read)|verify|free_key|random_pseudo_bytes|\n  pkey_(derive|new|export(_to_file)?|free|get_(details|public|private))|private_(decrypt|encrypt)|pbkdf2|\n  get_((cipher|md)_methods|cert_locations|curve_names|(public|private)key)|\n  x509_(check_private_key|checkpurpose|parse|export(_to_file)?|fingerprint|free|read|verify)\n)\\b",
+          "name": "support.function.openssl.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  output_(add_rewrite_var|reset_rewrite_vars)|flush|\n  ob_(start|clean|implicit_flush|end_(clean|flush)|flush|list_handlers|gzhandler|\n      get_(status|contents|clean|flush|length|level))\n)\\b",
+          "name": "support.function.output.php"
+        },
+        {
+          "match": "(?i)\\b(password_(algos|hash|needs_rehash|verify|get_info))\\b",
+          "name": "support.function.password.php"
+        },
+        {
+          "match": "(?xi)\\b\npcntl_(\n  alarm|async_signals|errno|exec|r?fork|get(_last_error|cpu)|[gs]et(cpuaffinity|priority)|setns|\n  signal(_(dispatch|get_handler))?|sig(procmask|timedwait|waitinfo)|strerror|unshare|\n  wait(p?id)?|wexitstatus|wif(continued|exited|signaled|stopped)|w(stop|term)sig\n)\\b",
+          "name": "support.function.pcntl.php"
+        },
+        {
+          "match": "(?xi)\\b\npg_(\n  socket(_poll)?|\n  send_(prepare|execute|query(_params)?)|\n  set_(chunked_rows_size|client_encoding|error_(verbosity|context_visibility))|\n  setclientencoding|\n  select|\n  host|\n  num_?(fields|rows)|\n  consume_input|\n  connection_(status|reset|busy)|\n  connect(_poll)?|\n  convert|\n  copy_(from|to)|\n  client_?encoding|close|cancel_query|tty|transaction_status|\n  change_password|cmdtuples|errormessage|jit|\n  trace|insert|options|delete|dbname|untrace|unescape_bytea|\n  update|pconnect|ping|port|\n  put_(line|copy_(data|end))|\n  parameter_status|prepare|version|\n  query(_params)?|\n  escape_(string|identifier|literal|bytea)|\n  end_copy|\n  exec(ute)?|\n  flush|\n  free_?result|\n  last_(notice|error|oid)|\n  field(\n    _?(size|num|name|type|prtlen)|  # with or without _\n    isnull|                         # only without _\n    _(type_oid|table|is_null)       # only with _\n  )|\n  affected_rows|\n  result(_(status|seek|error(_field)?|memory_size))?|\n  fetch_(object|assoc|all(_columns)?|array|row|result)|\n  get(lastoid|_(notify|pid|result))|\n  meta_data|\n  lo(\n    _?(close|create|export|import|open|read|unlink|write)|  # with or without _\n    readall|                                                # only without _\n    _(read_all|seek|tell|truncate)                          # only with _\n  )\n)\\b",
+          "name": "support.function.pgsql.php"
+        },
+        {
+          "match": "(?i)\\b(virtual|getallheaders|apache_([gs]etenv|note|child_terminate|lookup_uri|response_headers|reset_timeout|request_headers|get_(version|modules)))\\b",
+          "name": "support.function.php_apache.php"
+        },
+        {
+          "match": "(?i)\\b(dom_import_simplexml)\\b",
+          "name": "support.function.php_dom.php"
+        },
+        {
+          "match": "(?xi)\\b\nftp_(\n  ssl_connect|systype|site|size|set_option|nlist|nb_(continue|f?(put|get))|ch(dir|mod)|connect|cdup|close|\n  delete|put|pwd|pasv|exec|quit|f(put|get)|login|alloc|append|rename|raw(list)?|rmdir|get(_option)?|mdtm|mkdir|mlsd\n)\\b",
+          "name": "support.function.php_ftp.php"
+        },
+        {
+          "match": "(?xi)\\b\nimap_(\n  (create|delete|list|rename|scan)(mailbox)?|\n  status|sort|subscribe|set_quota|\n  set(flag_full|acl)|\n  search|savebody|\n  num_(recent|msg)|\n  check|close|clearflag_full|thread|timeout|open|\n  header(info)?|\n  headers|append|alerts|is_open|reopen|\n  8bit|unsubscribe|undelete|\n  utf7_(decode|encode)|\n  utf8|uid|ping|errors|expunge|qprint|gc|\n  mutf7_to_utf8|utf8_to_mutf7|\n  fetch(structure|header|text|mime|body)|\n  fetch_overview|lsub|\n  list(scan|subscribed)|\n  last_error|\n  rfc822_(parse_(headers|adrlist)|write_address)|\n  get(subscribed|acl|mailboxes)|\n  get_quota(root)?|\n  msgno|mime_header_decode|\n  mail_(copy|compose|move)|\n  mail|mailboxmsginfo|binary|\n  body(struct)?|\n  base64\n)\\b",
+          "name": "support.function.php_imap.php"
+        },
+        {
+          "match": "(?xi)\\b\nmssql_(\n  select_db|num_(fields|rows)|next_result|connect|close|init|data_seek|pconnect|execute|query|\n  field_(seek|name|type|length)|fetch_(object|field|assoc|array|row|batch)|free_(statement|result)|\n  rows_affected|result|guid_string|get_last_message|min_(error|message)_severity|bind\n)\\b",
+          "name": "support.function.php_mssql.php"
+        },
+        {
+          "match": "(?xi)\\b\nodbc_(\n  statistics|specialcolumns|setoption|num_(fields|rows)|next_result|connect|columns|columnprivileges|commit|\n  cursor|close(_all)?|tables|tableprivileges|do|data_source|pconnect|primarykeys|procedures|procedurecolumns|\n  prepare|error(msg)?|exec(ute)?|field_(scale|num|name|type|precision|len)|foreignkeys|free_result|\n  fetch_(into|object|array|row)|longreadlen|autocommit|rollback|result(_all)?|gettypeinfo|binmode\n)\\b",
+          "name": "support.function.php_odbc.php"
+        },
+        {
+          "match": "(?i)\\b(preg_(split|quote|filter|last_error(_msg)?|replace(_callback(_array)?)?|grep|match(_all)?))\\b",
+          "name": "support.function.php_pcre.php"
+        },
+        {
+          "match": "(?i)\\b(spl_(classes|object_(hash|id)|autoload(_(call|unregister|extensions|functions|register))?)|class_(implements|uses|parents)|iterator_(count|to_array|apply))\\b",
+          "name": "support.function.php_spl.php"
+        },
+        {
+          "match": "(?i)\\b(zip_(close|open|entry_(name|compressionmethod|compressedsize|close|open|filesize|read)|read))\\b",
+          "name": "support.function.php_zip.php"
+        },
+        {
+          "match": "(?xi)\\b\nposix_(\n  strerror|set(s|e?u|[ep]?g)id|ctermid|ttyname|times|isatty|initgroups|uname|errno|kill|e?access|\n  get(sid|cwd|uid|pid|ppid|pwnam|pwuid|pgid|pgrp|euid|egid|login|rlimit|gid|grnam|groups|grgid)|\n  get_last_error|mknod|mkfifo|(sys|f?path)conf|setrlimit\n)\\b",
+          "name": "support.function.posix.php"
+        },
+        {
+          "match": "(?i)\\b(set(thread|proc)title)\\b",
+          "name": "support.function.proctitle.php"
+        },
+        {
+          "match": "(?xi)\\b\npspell_(\n  store_replacement|suggest|save_wordlist|new(_(config|personal))?|check|clear_session|\n  config_(save_repl|create|ignore|(data|dict)_dir|personal|runtogether|repl|mode)|add_to_(session|personal)\n)\\b",
+          "name": "support.function.pspell.php"
+        },
+        {
+          "match": "(?i)\\b(readline(_(completion_function|clear_history|callback_(handler_(install|remove)|read_char)|info|on_new_line|write_history|list_history|add_history|redisplay|read_history))?)\\b",
+          "name": "support.function.readline.php"
+        },
+        {
+          "match": "(?i)\\b(recode(_(string|file))?)\\b",
+          "name": "support.function.recode.php"
+        },
+        {
+          "match": "(?i)\\b(rrd(c_disconnect|_(create|tune|info|update|error|version|first|fetch|last(update)?|restore|graph|xport)))\\b",
+          "name": "support.function.rrd.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  shm_((get|has|remove|put)_var|detach|attach|remove)|sem_(acquire|release|remove|get)|ftok|\n  msg_((get|remove|set|stat)_queue|send|queue_exists|receive)\n)\\b",
+          "name": "support.function.sem.php"
+        },
+        {
+          "match": "(?xi)\\b\nsession_(\n  status|start|set_(save_handler|cookie_params)|save_path|name|commit|cache_(expire|limiter)|\n  is_registered|id|destroy|decode|unset|unregister|encode|write_close|abort|reset|register(_shutdown)?|\n  (regenerate|create)_id|get_cookie_params|module_name|gc\n)\\b",
+          "name": "support.function.session.php"
+        },
+        {
+          "match": "(?i)\\b(shmop_(size|close|open|delete|write|read))\\b",
+          "name": "support.function.shmop.php"
+        },
+        {
+          "match": "(?i)\\b(simplexml_(import_dom|load_(string|file)))\\b",
+          "name": "support.function.simplexml.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  snmp(walk(oid)?|realwalk|get(next)?|set)|\n  snmp_(set_(valueretrieval|quick_print|enum_print|oid_(numeric_print|output_format))|read_mib|\n        get_(valueretrieval|quick_print))|\n  snmp[23]_(set|walk|real_walk|get(next)?)\n)\\b",
+          "name": "support.function.snmp.php"
+        },
+        {
+          "match": "(?i)\\b(is_soap_fault|use_soap_error_handler)\\b",
+          "name": "support.function.soap.php"
+        },
+        {
+          "match": "(?xi)\\b\nsocket_(\n  accept|addrinfo_(bind|connect|explain|lookup)|atmark|bind|(clear|last)_error|close|cmsg_space|connect|\n  create(_(listen|pair))?|(ex|im)port_stream|[gs]et_option|[gs]etopt|get(peer|sock)name|\n  listen|read|recv(from|msg)?|select|send(msg|to)?|set_(non)?block|shutdown|strerror|write|\n  wsaprotocol_info_(export|import|release)\n)\\b",
+          "name": "support.function.sockets.php"
+        },
+        {
+          "match": "(?xi)\\b\nsodium_(\n        add|\n        base642bin|\n        bin2base64|\n        bin2hex|\n        compare|\n        crypto_(\n                aead_(\n                      aes256gcm_((de|en)crypt|is_available|keygen)|\n                      chacha20poly1305_((de|en)crypt|keygen)|\n                      x?chacha20poly1305_ietf_((de|en)crypt|keygen)\n                )|\n                auth(_(keygen|verify))?|\n                box(_(\n                      keypair(_from_secretkey_and_publickey)?|\n                      open|\n                      publickey(_from_secretkey)?|\n                      seal(_open)?|\n                      secretkey|\n                      seed_keypair\n                ))?|\n                core_ristretto255_(\n                                  add|from_hash|is_valid_point|random|\n                                  scalar_(add|complement|invert|mul|negate|random|reduce|sub)|\n                                  sub\n                )|\n                generichash(_(final|init|keygen|update))?|\n                kdf_(derive_from_key|keygen)|\n                kx_(\n                    ((client|server)_session_keys)|\n                    (seed_)?keypair|\n                    ((public|secret)key)\n                )|\n                pwhash(_(\n                      scryptsalsa208sha256(_(str(_verify)?))?|\n                      str(_(needs_rehash|verify))?\n                ))?|\n                scalarmult(_(\n                            base|\n                            ristretto255(_base)?\n                ))?|\n                secretbox(_(keygen|open))?|\n                secretstream_xchacha20poly1305_(\n                                                (init_)?(pull|push)|\n                                                keygen|rekey\n                )|\n                shorthash(_keygen)?|\n                sign(_(\n                      (verify_)?detached|\n                      ed25519_[ps]k_to_curve25519|\n                      (seed_)?keypair|\n                      keypair_from_secretkey_and_publickey|\n                      open|\n                      publickey(_from_secretkey)?|\n                      secretkey\n                ))?|\n                stream(_(\n                      keygen|\n                      xchacha20(_(keygen|xor(_ic)?))?|\n                      xor\n                ))?\n        )|\n        hex2bin|\n        increment|\n        mem(cmp|zero)|\n        (un)?pad\n)\\b",
+          "name": "support.function.sodium.php"
+        },
+        {
+          "match": "(?xi)\\b\nsqlite_(\n  single_query|seek|has_(more|prev)|num_(fields|rows)|next|changes|column|current|close|\n  create_(aggregate|function)|open|unbuffered_query|udf_(decode|encode)_binary|popen|prev|\n  escape_string|error_string|exec|valid|key|query|field_name|factory|\n  fetch_(string|single|column_types|object|all|array)|lib(encoding|version)|\n  last_(insert_rowid|error)|array_query|rewind|busy_timeout\n)\\b",
+          "name": "support.function.sqlite.php"
+        },
+        {
+          "match": "(?xi)\\b\nsqlsrv_(\n  send_stream_data|server_info|has_rows|num_(fields|rows)|next_result|connect|configure|commit|\n  client_info|close|cancel|prepare|errors|execute|query|field_metadata|fetch(_(array|object))?|\n  free_stmt|rows_affected|rollback|get_(config|field)|begin_transaction\n)\\b",
+          "name": "support.function.sqlsrv.php"
+        },
+        {
+          "match": "(?xi)\\b\nstats_(\n  harmonic_mean|covariance|standard_deviation|skew|\n  cdf_(noncentral_(chisquare|f)|negative_binomial|chisquare|cauchy|t|uniform|poisson|exponential|f|weibull|\n       logistic|laplace|gamma|binomial|beta)|\n  stat_(noncentral_t|correlation|innerproduct|independent_t|powersum|percentile|paired_t|gennch|binomial_coef)|\n  dens_(normal|negative_binomial|chisquare|cauchy|t|pmf_(hypergeometric|poisson|binomial)|exponential|f|\n        weibull|logistic|laplace|gamma|beta)|\n  den_uniform|variance|kurtosis|absolute_deviation|\n  rand_(setall|phrase_to_seeds|ranf|get_seeds|\n        gen_(noncentral_[ft]|noncenral_chisquare|normal|chisquare|t|int|\n             i(uniform|poisson|binomial(_negative)?)|exponential|f(uniform)?|gamma|beta))\n)\\b",
+          "name": "support.function.stats.php"
+        },
+        {
+          "match": "(?xi)\\b\nstream_(\n  bucket_(new|prepend|append|make_writeable)|\n  context_(create|[gs]et_(options?|default|params))|copy_to_stream|filter_((ap|pre)pend|register|remove)|\n  get_(contents|filters|line|meta_data|transports|wrappers)|is(atty|_local)|notification_callback|register_wrapper|resolve_include_path|select|\n  set_(blocking|chunk_size|(read|write)_buffer|timeout)|\n  socket_(accept|client|enable_crypto|get_name|pair|recvfrom|sendto|server|shutdown)|\n  supports_lock|wrapper_((un)?register|restore)\n)\\b",
+          "name": "support.function.streamsfuncs.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  money_format|md5(_file)?|metaphone|bin2hex|sscanf|sha1(_file)?|\n  str(str|c?spn|n(at)?(case)?cmp|chr|coll|(case)?cmp|to(upper|lower)|tok|tr|istr|pos|pbrk|len|rchr|ri?pos|rev)|\n  str_(getcsv|i?replace|pad|repeat|rot13|shuffle|split|word_count|\n    contains|(starts|ends)_with|(in|de)crement)|\n  strip(c?slashes|os)|strip_tags|similar_text|soundex|substr(_(count|compare|replace))?|setlocale|\n  html(specialchars(_decode)?|entities)|html_entity_decode|hex2bin|hebrev(c)?|number_format|nl2br|nl_langinfo|\n  chop|chunk_split|chr|convert_(cyr_string|uu(decode|encode))|count_chars|crypt|crc32|trim|implode|ord|\n  uc(first|words)|join|parse_str|print(f)?|echo|explode|v?[fs]?printf|quoted_printable_(decode|encode)|\n  quotemeta|wordwrap|lcfirst|[lr]trim|localeconv|levenshtein|addc?slashes|get_html_translation_table\n)\\b",
+          "name": "support.function.string.php"
+        },
+        {
+          "match": "(?xi)\\b\nsybase_(\n  set_message_handler|select_db|num_(fields|rows)|connect|close|deadlock_retry_count|data_seek|\n  unbuffered_query|pconnect|query|field_seek|fetch_(object|field|assoc|array|row)|free_result|\n  affected_rows|result|get_last_message|min_(client|error|message|server)_severity\n)\\b",
+          "name": "support.function.sybase.php"
+        },
+        {
+          "match": "(?i)\\b(taint|is_tainted|untaint)\\b",
+          "name": "support.function.taint.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  tidy_([gs]etopt|set_encoding|save_config|config_count|clean_repair|is_(xhtml|xml)|diagnose|\n        (access|error|warning)_count|load_config|reset_config|(parse|repair)_(string|file)|\n        get_(status|html(_ver)?|head|config|output|opt_doc|root|release|body))|\n  ob_tidyhandler\n)\\b",
+          "name": "support.function.tidy.php"
+        },
+        {
+          "match": "(?i)\\b(token_(name|get_all))\\b",
+          "name": "support.function.tokenizer.php"
+        },
+        {
+          "match": "(?xi)\\b\ntrader_(\n  stoch(f|r|rsi)?|stddev|sin(h)?|sum|sub|set_(compat|unstable_period)|sqrt|sar(ext)?|sma|\n  ht_(sine|trend(line|mode)|dc(period|phase)|phasor)|natr|cci|cos(h)?|correl|\n  cdl(shootingstar|shortline|sticksandwich|stalledpattern|spinningtop|separatinglines|\n      hikkake(mod)?|highwave|homingpigeon|hangingman|harami(cross)?|hammer|concealbabyswall|\n      counterattack|closingmarubozu|thrusting|tasukigap|takuri|tristar|inneck|invertedhammer|\n      identical3crows|2crows|onneck|doji(star)?|darkcloudcover|dragonflydoji|unique3river|\n      upsidegap2crows|3(starsinsouth|inside|outside|whitesoldiers|linestrike|blackcrows)|\n      piercing|engulfing|evening(doji)?star|kicking(bylength)?|longline|longleggeddoji|\n      ladderbottom|advanceblock|abandonedbaby|risefall3methods|rickshawman|gapsidesidewhite|\n      gravestonedoji|xsidegap3methods|morning(doji)?star|mathold|matchinglow|marubozu|\n      belthold|breakaway)|\n  ceil|cmo|tsf|typprice|t3|tema|tan(h)?|trix|trima|trange|obv|div|dema|dx|ultosc|ppo|\n  plus_d[im]|errno|exp|ema|var|kama|floor|wclprice|willr|wma|ln|log10|bop|beta|bbands|\n  linearreg(_(slope|intercept|angle))?|asin|acos|atan|atr|adosc|ad|add|adx(r)?|apo|avgprice|\n  aroon(osc)?|rsi|roc|rocp|rocr(100)?|get_(compat|unstable_period)|min(index)?|minus_d[im]|\n  minmax(index)?|mid(point|price)|mom|mult|medprice|mfi|macd(ext|fix)?|mavp|max(index)?|ma(ma)?\n)\\b",
+          "name": "support.function.trader.php"
+        },
+        {
+          "match": "(?i)\\b(uopz_(copy|compose|implement|overload|delete|undefine|extend|function|flags|restore|rename|redefine|backup))\\b",
+          "name": "support.function.uopz.php"
+        },
+        {
+          "match": "(?i)\\b(http_build_query|(raw)?url(decode|encode)|parse_url|get_(headers|meta_tags)|base64_(decode|encode))\\b",
+          "name": "support.function.url.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  (bool|double|float|int|str)val|debug_zval_dump|empty|get_(debug_type|defined_vars|resource_(id|type))|[gs]ettype|\n  is_(array|bool|callable|countable|double|float|int(eger)?|iterable|long|null|numeric|object|real|resource|scalar|string)|\n  isset|print_r|(un)?serialize|unset|var_(dump|export)\n)\\b",
+          "name": "support.function.var.php"
+        },
+        {
+          "match": "(?i)\\b(wddx_(serialize_(value|vars)|deserialize|packet_(start|end)|add_vars))\\b",
+          "name": "support.function.wddx.php"
+        },
+        {
+          "match": "(?i)\\b(xhprof_(sample_)?(disable|enable))\\b",
+          "name": "support.function.xhprof.php"
+        },
+        {
+          "match": "(?xi)\n\\b\n(\n  utf8_(decode|encode)|\n  xml_(set_((notation|(end|start)_namespace|unparsed_entity)_decl_handler|\n            (character_data|default|element|external_entity_ref|processing_instruction)_handler|object)|\n       parse(_into_struct)?|parser_([gs]et_option|create(_ns)?|free)|error_string|\n       get_(current_((column|line)_number|byte_index)|error_code))\n)\\b",
+          "name": "support.function.xml.php"
+        },
+        {
+          "match": "(?xi)\\b\nxmlrpc_(\n  server_(call_method|create|destroy|add_introspection_data|register_(introspection_callback|method))|\n  is_fault|decode(_request)?|parse_method_descriptions|encode(_request)?|[gs]et_type\n)\\b",
+          "name": "support.function.xmlrpc.php"
+        },
+        {
+          "match": "(?xi)\\b\nxmlwriter_(\n  (end|start|write)_(comment|cdata|dtd(_(attlist|entity|element))?|document|pi|attribute|element)|\n  (start|write)_(attribute|element)_ns|write_raw|set_indent(_string)?|text|output_memory|open_(memory|uri)|\n  full_end_element|flush|\n)\\b",
+          "name": "support.function.xmlwriter.php"
+        },
+        {
+          "match": "(?xi)\\b\n(\n  zlib_(decode|encode|get_coding_type)|readgzfile|\n  gz(seek|compress|close|tell|inflate|open|decode|deflate|uncompress|puts|passthru|encode|eof|file|\n     write|rewind|read|getc|getss?)|deflate_(add|init)|inflate_(add|get_(read_len|status)|init)\n)\\b",
+          "name": "support.function.zlib.php"
+        },
+        {
+          "match": "(?i)\\b(pdo_drivers)\\b",
+          "name": "support.function.pdo.php"
+        }
+      ]
+    },
+    "switch_statement": {
+      "patterns": [
+        {
+          "match": "\\s+(?=switch\\b)"
+        },
+        {
+          "begin": "\\bswitch\\b(?!\\s*\\(.*\\)\\s*:)",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.control.switch.php"
+            }
+          },
+          "end": "}|(?=\\?>)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.section.switch-block.end.bracket.curly.php"
+            }
+          },
+          "name": "meta.switch-statement.php",
+          "patterns": [
+            {
+              "begin": "\\(",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.switch-expression.begin.bracket.round.php"
+                }
+              },
+              "end": "\\)|(?=\\?>)",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.switch-expression.end.bracket.round.php"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            },
+            {
+              "begin": "{",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.section.switch-block.begin.bracket.curly.php"
+                }
+              },
+              "end": "(?=}|\\?>)",
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "match_statement": {
+      "patterns": [
+        {
+          "match": "\\s+(?=match\\b)"
+        },
+        {
+          "begin": "\\bmatch\\b",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.control.match.php"
+            }
+          },
+          "end": "}|(?=\\?>)",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.section.match-block.end.bracket.curly.php"
+            }
+          },
+          "name": "meta.match-statement.php",
+          "patterns": [
+            {
+              "begin": "\\(",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.match-expression.begin.bracket.round.php"
+                }
+              },
+              "end": "\\)|(?=\\?>)",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.match-expression.end.bracket.round.php"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            },
+            {
+              "begin": "{",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.section.match-block.begin.bracket.curly.php"
+                }
+              },
+              "end": "(?=}|\\?>)",
+              "patterns": [
+                {
+                  "match": "=>",
+                  "name": "keyword.definition.arrow.php"
+                },
+                {
+                  "include": "$self"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "use-inner": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "begin": "(?i)\\b(as)\\s+",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.use-as.php"
+            }
+          },
+          "end": "(?i)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*",
+          "endCaptures": {
+            "0": {
+              "name": "entity.other.alias.php"
+            }
+          }
+        },
+        {
+          "include": "#class-name"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.delimiter.php"
+        }
+      ]
+    },
+    "var_basic": {
+      "patterns": [
+        {
+          "match": "(?i)(\\$+)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*",
+          "name": "variable.other.php",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.variable.php"
+            }
+          }
+        }
+      ]
+    },
+    "var_global": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.variable.php"
+        }
+      },
+      "match": "(\\$)((_(COOKIE|FILES|GET|POST|REQUEST))|arg(v|c))\\b",
+      "name": "variable.other.global.php"
+    },
+    "var_global_safer": {
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.variable.php"
+        }
+      },
+      "match": "(\\$)((GLOBALS|_(ENV|SERVER|SESSION)))",
+      "name": "variable.other.global.safer.php"
+    },
+    "var_language": {
+      "match": "(\\$)this\\b",
+      "name": "variable.language.this.php",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.variable.php"
+        }
+      }
+    },
+    "variable-name": {
+      "patterns": [
+        {
+          "include": "#var_global"
+        },
+        {
+          "include": "#var_global_safer"
+        },
+        {
+          "captures": {
+            "1": {
+              "name": "variable.other.php"
+            },
+            "2": {
+              "name": "punctuation.definition.variable.php"
+            },
+            "4": {
+              "name": "keyword.operator.class.php"
+            },
+            "5": {
+              "name": "variable.other.property.php"
+            },
+            "6": {
+              "name": "punctuation.section.array.begin.php"
+            },
+            "7": {
+              "name": "constant.numeric.index.php"
+            },
+            "8": {
+              "name": "variable.other.index.php"
+            },
+            "9": {
+              "name": "punctuation.definition.variable.php"
+            },
+            "10": {
+              "name": "string.unquoted.index.php"
+            },
+            "11": {
+              "name": "punctuation.section.array.end.php"
+            }
+          },
+          "match": "(?xi)\n((\\$)(?<name>[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))\\s*\n(?:\n  (\\??->)\\s*(\\g<name>)\n  |\n  (\\[)(?:(\\d+)|((\\$)\\g<name>)|([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))(\\])\n)?"
+        },
+        {
+          "captures": {
+            "1": {
+              "name": "variable.other.php"
+            },
+            "2": {
+              "name": "punctuation.definition.variable.php"
+            },
+            "4": {
+              "name": "punctuation.definition.variable.php"
+            }
+          },
+          "match": "(?i)((\\${)(?<name>[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)(}))"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "include": "#var_language"
+        },
+        {
+          "include": "#var_global"
+        },
+        {
+          "include": "#var_global_safer"
+        },
+        {
+          "include": "#var_basic"
+        },
+        {
+          "begin": "\\${(?=.*?})",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.variable.php"
+            }
+          },
+          "end": "}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.variable.php"
+            }
+          },
+          "patterns": [
+            {
+              "include": "$self"
+            }
+          ]
+        }
+      ]
+    },
+    "ternary_shorthand": {
+      "match": "\\?:",
+      "name": "keyword.operator.ternary.php"
+    },
+    "ternary_expression": {
+      "begin": "\\?",
+      "beginCaptures": {
+        "0": {
+          "name": "keyword.operator.ternary.php"
+        }
+      },
+      "end": "(?<!:):(?!:)",
+      "endCaptures": {
+        "0": {
+          "name": "keyword.operator.ternary.php"
+        }
+      },
+      "patterns": [
+        {
+          "match": "(?i)^\\s*([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)\\s*(?=:(?!:))",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "$self"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "null_coalescing": {
+      "match": "\\?\\?",
+      "name": "keyword.operator.null-coalescing.php"
+    },
+    "regexp-double-quoted": {
+      "begin": "(?x)\n(\")  # PHP string opener\n(/)  # regex delimiter\n(?=\n  # Entry heuristic for one local quoted /.../flags wrapper.\n  #\n  # It only recognizes top-level constructs that can legally contain a\n  # raw `/` before the local wrapper tail, and it must not look through\n  # the current PHP string boundary into later same-line PHP code.\n  (?:\n    # Raw Q...E blocks can contain literal `/`\n    \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*\" | \" ). )* (?: \\\\E )?\n\n    # The same Q...E construct after PHP decoding\n    | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*\" | \" ). )* (?: \\\\\\\\E )?\n\n    # Ordinary regex escapes can also include characters\n    # that would otherwise look like the wrapper tail.\n    | \\\\                          # regex backslash\n          (?: \\\\                  # escaped thing also starts with ``\n                  (?: \\\\[\\\\\"]?  # another ``, optionally followed by `` or `\"`\n                      | [^\"] )      # or any non-quote char\n                  | .               # fallback: consume one char after `` to allow `.`, `d`, `/`, etc.\n          )\n\n    # Character classes are treated as opaque top-level atoms for entry,\n    # because they can contain raw `/`, but this branch must still stop at\n    # the local wrapper tail or host quote.\n    | \\[\n        (?: \\^? \\] )?\n        (?: \\\\ (?: \\\\(?: \\\\[\\\\\"]? | [^\"] ) | . ) | (?! /[imsxeADSUXu]*\" | \" ). )*\n        \n    # Any other raw atom that does not begin the wrapper tail.\n    | (?! [\"/\\\\\\[] ).\n  )++\n  /[imsxeADSUXu]*\"\n)",
+      "beginCaptures": {
+        "0": {
+          "name": "string.regexp.double-quoted.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.begin.php"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.double-quoted.php",
+      "end": "((/)([imsxeADSUXu]*)(\"))|(\")",
+      "endCaptures": {
+        "0": {
+          "name": "string.regexp.double-quoted.php"
+        },
+        "2": {
+          "name": "punctuation.definition.string.end.regexp.php"
+        },
+        "3": {
+          "name": "storage.modifier.regexp.php"
+        },
+        "4": {
+          "name": "punctuation.definition.string.end.php"
+        },
+        "5": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "meta.embedded.regexp.php",
+      "patterns": [
+        {
+          "include": "#regexp-double-quoted-body"
+        }
+      ]
+    },
+    "regexp-single-quoted": {
+      "begin": "(?x)\n(')\n(/)\n(?=\n  (?:\n    \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?\n    | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?\n    | \\\\\n          (?: \\\\\n                  (?: \\\\[\\\\']?\n                      | [^'] )\n                  | .\n          )\n    | \\[\n        (?: \\^? \\] )?\n        (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*\n\n    | (?! ['/\\\\\\[] ).\n  )++\n  /[imsxeADSUXu]*'\n)",
+      "beginCaptures": {
+        "0": {
+          "name": "string.regexp.single-quoted.php"
+        },
+        "1": {
+          "name": "punctuation.definition.string.begin.php"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.regexp.php"
+        }
+      },
+      "contentName": "string.regexp.single-quoted.php",
+      "end": "((/)([imsxeADSUXu]*)('))|(')",
+      "endCaptures": {
+        "0": {
+          "name": "string.regexp.single-quoted.php"
+        },
+        "2": {
+          "name": "punctuation.definition.string.end.regexp.php"
+        },
+        "3": {
+          "name": "storage.modifier.regexp.php"
+        },
+        "4": {
+          "name": "punctuation.definition.string.end.php"
+        },
+        "5": {
+          "name": "punctuation.definition.string.end.php"
+        }
+      },
+      "name": "meta.embedded.regexp.php",
+      "patterns": [
+        {
+          "include": "#regexp-single-quoted-body"
+        }
+      ]
+    },
+    "regexp-heredoc-common": {
+      "patterns": [
+        {
+          "include": "#regexp-quoted-literal-heredoc"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-heredoc"
+        },
+        {
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-end-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-hex-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-unicode-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-backslash-before-interpolation-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-overlap-escapes-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-apostrophe-escape-interpreted"
+        },
+        {
+          "include": "#regexp-dollar-anchor-php-interpreted"
+        },
+        {
+          "include": "#interpolation"
+        },
+        {
+          "include": "#regexp-backreference-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-braced-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-braced-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
+          "include": "#regexp-recursion-whole-pattern-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-ampersand-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-apostrophe-escape-explicit"
+        },
+        {
+          "include": "#regexp-quoted-literal-end-explicit"
+        },
+        {
+          "include": "#regexp-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-explicit-escapes"
+        },
+        {
+          "include": "#regexp-comment-group-heredoc-nowdoc"
+        },
+        {
+          "include": "#regexp-group-assertion-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-assertion-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-numeric-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-angle-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-single-quoted-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-numbered-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-named-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-define-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-version-heredoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-bare-heredoc"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
+          "include": "#regexp-group-non-capturing-heredoc"
+        },
+        {
+          "include": "#regexp-group-options-heredoc"
+        },
+        {
+          "include": "#regexp-group-named-angle-heredoc"
+        },
+        {
+          "include": "#regexp-group-named-single-quoted-heredoc"
+        },
+        {
+          "include": "#regexp-group-named-pcre-heredoc"
+        },
+        {
+          "include": "#regexp-group-heredoc"
+        },
+        {
+          "include": "#regexp-character-class-heredoc"
+        },
+        {
+          "include": "#regexp-explicit-operators"
+        }
+      ]
+    },
+    "regexp-nowdoc-common": {
+      "patterns": [
+        {
+          "include": "#regexp-backreference-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-braced-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-braced-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-recursion-whole-pattern-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-ampersand-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-quoted-literal-nowdoc"
+        },
+        {
+          "include": "#regexp-apostrophe-escape-explicit"
+        },
+        {
+          "include": "#regexp-double-quote-escape-explicit"
+        },
+        {
+          "include": "#regexp-quoted-literal-end-explicit"
+        },
+        {
+          "include": "#regexp-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-explicit-escapes"
+        },
+        {
+          "include": "#regexp-comment-group-heredoc-nowdoc"
+        },
+        {
+          "include": "#regexp-group-assertion-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-assertion-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-numeric-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-angle-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-single-quoted-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-numbered-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-named-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-define-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-version-nowdoc"
+        },
+        {
+          "include": "#regexp-group-conditional-named-bare-nowdoc"
+        },
+        {
+          "include": "#regexp-backtracking-verb-mark-short-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
+          "include": "#regexp-group-non-capturing-nowdoc"
+        },
+        {
+          "include": "#regexp-group-options-nowdoc"
+        },
+        {
+          "include": "#regexp-group-named-angle-nowdoc"
+        },
+        {
+          "include": "#regexp-group-named-single-quoted-nowdoc"
+        },
+        {
+          "include": "#regexp-group-named-pcre-nowdoc"
+        },
+        {
+          "include": "#regexp-group-nowdoc"
+        },
+        {
+          "include": "#regexp-character-class-nowdoc"
+        },
+        {
+          "include": "#regexp-explicit-operators"
+        }
+      ]
+    },
+    "regexp-quoted-common": {
+      "patterns": [
+        {
+          "include": "#regexp-anchor-explicit"
+        },
+        {
+          "include": "#regexp-range-quantifier"
+        },
+        {
+          "include": "#regexp-simple-quantifier-explicit"
+        },
+        {
+          "include": "#regexp-alternation-explicit"
+        },
+        {
+          "include": "#regexp-dot-explicit"
+        },
+        {
+          "include": "#regexp-operators-basic"
+        }
+      ]
+    },
+    "regexp-double-quoted-groups-common": {
+      "patterns": [
+        {
+          "include": "#regexp-comment-group-double-quoted"
+        },
+        {
+          "include": "#regexp-group-assertion-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-assertion-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-numeric-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-angle-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-single-quoted-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-numbered-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-named-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-define-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-version-double-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-bare-double-quoted"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
+          "include": "#regexp-group-non-capturing-double-quoted"
+        },
+        {
+          "include": "#regexp-group-options-double-quoted"
+        },
+        {
+          "include": "#regexp-group-named-angle-double-quoted"
+        },
+        {
+          "include": "#regexp-group-named-single-quoted-double-quoted"
+        },
+        {
+          "include": "#regexp-group-named-pcre-double-quoted"
+        },
+        {
+          "include": "#regexp-group-double-quoted"
+        }
+      ]
+    },
+    "regexp-single-quoted-groups-common": {
+      "patterns": [
+        {
+          "include": "#regexp-comment-group-single-quoted"
+        },
+        {
+          "include": "#regexp-group-assertion-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-assertion-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-numeric-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-angle-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-numbered-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-recursion-named-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-define-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-version-single-quoted"
+        },
+        {
+          "include": "#regexp-group-conditional-named-bare-single-quoted"
+        },
+        {
+          "include": "#regexp-backtracking-verb-named-explicit"
+        },
+        {
+          "include": "#regexp-backtracking-verb-explicit"
+        },
+        {
+          "include": "#regexp-start-directive-explicit"
+        },
+        {
+          "include": "#regexp-group-non-capturing-single-quoted"
+        },
+        {
+          "include": "#regexp-group-options-single-quoted"
+        },
+        {
+          "include": "#regexp-group-named-angle-single-quoted"
+        },
+        {
+          "include": "#regexp-group-named-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-group-named-pcre-single-quoted"
+        },
+        {
+          "include": "#regexp-group-single-quoted"
+        }
+      ]
+    },
+    "regexp-double-quoted-common": {
+      "patterns": [
+        {
+          "include": "#regexp-quoted-literal-double-quoted"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-double-quoted"
+        },
+        {
+          "include": "#regexp-decoded-double-quote-escape-double-quoted"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-end-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-octal-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-basic-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-hex-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-php-unicode-escape-interpreted"
+        },
+        {
+          "include": "#regexp-transported-backslash-before-interpolation-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-overlap-escapes-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-apostrophe-escape-interpreted"
+        },
+        {
+          "include": "#regexp-dollar-anchor-php-interpreted"
+        },
+        {
+          "include": "#regexp-group-escape-explicit"
+        },
+        {
+          "include": "#regexp-structural-escape"
+        },
+        {
+          "include": "#regexp-apostrophe-escape-explicit"
+        },
+        {
+          "include": "#regexp-quoted-literal-end-explicit"
+        },
+        {
+          "include": "#regexp-reset-start-explicit"
+        },
+        {
+          "include": "#regexp-octal-escape-explicit"
+        },
+        {
+          "include": "#interpolation_double_quoted"
+        },
+        {
+          "include": "#regexp-backreference-numeric-double-quoted"
+        },
+        {
+          "include": "#regexp-literal-escape-explicit"
+        },
+        {
+          "include": "#regexp-character-type-escape"
+        },
+        {
+          "include": "#regexp-special-character-type-body-explicit"
+        },
+        {
+          "include": "#regexp-property-escape"
+        },
+        {
+          "include": "#regexp-invalid-braced-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-invalid-braced-hex-escape-explicit"
+        },
+        {
+          "include": "#regexp-short-hex-escape-explicit"
+        },
+        {
+          "include": "#regexp-braced-hex-escape"
+        },
+        {
+          "include": "#regexp-unicode-code-point-escape"
+        },
+        {
+          "include": "#regexp-hex-escape"
+        },
+        {
+          "include": "#regexp-invalid-escape-explicit"
+        },
+        {
+          "include": "#regexp-invalid-k-reference-closed-explicit"
+        },
+        {
+          "include": "#regexp-invalid-g-reference-closed-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-braced-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-braced-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-recursion-whole-pattern-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-ampersand-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-quoted-common"
+        }
+      ]
+    },
+    "regexp-single-quoted-common": {
+      "patterns": [
+        {
+          "include": "#regexp-backreference-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-angle-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-braced-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-numeric-explicit"
+        },
+        {
+          "include": "#regexp-backreference-g-braced-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-angle-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
+        },
+        {
+          "include": "#regexp-option-toggle-explicit"
+        },
+        {
+          "include": "#regexp-recursion-whole-pattern-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-numeric-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-ampersand-explicit"
+        },
+        {
+          "include": "#regexp-subroutine-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-backreference-named-pcre-explicit"
+        },
+        {
+          "include": "#regexp-character-type-escape"
+        },
+        {
+          "include": "#regexp-property-escape"
+        },
+        {
+          "include": "#regexp-hex-escape"
+        },
+        {
+          "include": "#regexp-braced-hex-escape"
+        },
+        {
+          "include": "#regexp-unicode-code-point-escape"
+        },
+        {
+          "include": "#regexp-quoted-literal-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-single-quoted"
+        },
+        {
+          "include": "#regexp-backreference-named-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-subroutine-g-single-quoted-numeric-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-backreference-named-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-subroutine-g-single-quoted-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-apostrophe-escape-single-quoted"
+        },
+        {
+          "include": "#regexp-decoded-quoted-literal-end-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
+        },
+        {
+          "include": "#regexp-decoded-overlap-escapes-interpreted"
+        },
+        {
+          "include": "#regexp-double-quote-escape-explicit"
+        },
+        {
+          "include": "#regexp-quoted-literal-end-explicit"
+        },
+        {
+          "include": "#regexp-octal-escape-explicit"
+        },
+        {
+          "include": "#regexp-explicit-escapes"
+        },
+        {
+          "include": "#single_quote_escape_only"
+        },
+        {
+          "include": "#regexp-quoted-common"
+        }
+      ]
+    },
+    "regexp-double-quoted-body": {
+      "patterns": [
+        {
+          "include": "#regexp-double-quoted-common"
+        },
+        {
+          "include": "#regexp-double-quoted-groups-common"
+        },
+        {
+          "include": "#regexp-character-class-double-quoted"
+        }
+      ]
+    },
+    "regexp-single-quoted-body": {
+      "patterns": [
+        {
+          "include": "#regexp-single-quoted-common"
+        },
+        {
+          "include": "#regexp-single-quoted-groups-common"
+        },
+        {
+          "include": "#regexp-character-class-single-quoted"
+        }
+      ]
+    },
     "regexp-structural-escape": {
       "match": "\\\\[.$^\\[\\]{}]",
       "name": "constant.character.escape.regexp.php"
@@ -8470,2183 +10647,6 @@
           "include": "#regexp-line-comment"
         }
       ]
-    },
-    "regexp-heredoc-common": {
-      "patterns": [
-        {
-          "include": "#regexp-quoted-literal-heredoc"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-heredoc"
-        },
-        {
-          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-end-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-octal-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-basic-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-hex-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-unicode-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-backslash-before-interpolation-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-overlap-escapes-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-apostrophe-escape-interpreted"
-        },
-        {
-          "include": "#regexp-dollar-anchor-php-interpreted"
-        },
-        {
-          "include": "#interpolation"
-        },
-        {
-          "include": "#regexp-backreference-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-angle-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-braced-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-braced-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
-        },
-        {
-          "include": "#regexp-option-toggle-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-mark-short-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-start-directive-explicit"
-        },
-        {
-          "include": "#regexp-recursion-whole-pattern-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-ampersand-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-apostrophe-escape-explicit"
-        },
-        {
-          "include": "#regexp-quoted-literal-end-explicit"
-        },
-        {
-          "include": "#regexp-octal-escape-explicit"
-        },
-        {
-          "include": "#regexp-explicit-escapes"
-        },
-        {
-          "include": "#regexp-comment-group-heredoc-nowdoc"
-        },
-        {
-          "include": "#regexp-group-assertion-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-assertion-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-numeric-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-angle-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-single-quoted-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-numbered-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-named-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-define-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-version-heredoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-bare-heredoc"
-        },
-        {
-          "include": "#regexp-backtracking-verb-mark-short-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-start-directive-explicit"
-        },
-        {
-          "include": "#regexp-group-non-capturing-heredoc"
-        },
-        {
-          "include": "#regexp-group-options-heredoc"
-        },
-        {
-          "include": "#regexp-group-named-angle-heredoc"
-        },
-        {
-          "include": "#regexp-group-named-single-quoted-heredoc"
-        },
-        {
-          "include": "#regexp-group-named-pcre-heredoc"
-        },
-        {
-          "include": "#regexp-group-heredoc"
-        },
-        {
-          "include": "#regexp-character-class-heredoc"
-        },
-        {
-          "include": "#regexp-explicit-operators"
-        }
-      ]
-    },
-    "regexp-nowdoc-common": {
-      "patterns": [
-        {
-          "include": "#regexp-backreference-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-angle-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-braced-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-braced-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
-        },
-        {
-          "include": "#regexp-option-toggle-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-mark-short-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-recursion-whole-pattern-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-ampersand-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-quoted-literal-nowdoc"
-        },
-        {
-          "include": "#regexp-apostrophe-escape-explicit"
-        },
-        {
-          "include": "#regexp-double-quote-escape-explicit"
-        },
-        {
-          "include": "#regexp-quoted-literal-end-explicit"
-        },
-        {
-          "include": "#regexp-octal-escape-explicit"
-        },
-        {
-          "include": "#regexp-explicit-escapes"
-        },
-        {
-          "include": "#regexp-comment-group-heredoc-nowdoc"
-        },
-        {
-          "include": "#regexp-group-assertion-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-assertion-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-numeric-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-angle-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-single-quoted-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-numbered-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-named-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-define-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-version-nowdoc"
-        },
-        {
-          "include": "#regexp-group-conditional-named-bare-nowdoc"
-        },
-        {
-          "include": "#regexp-backtracking-verb-mark-short-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-start-directive-explicit"
-        },
-        {
-          "include": "#regexp-group-non-capturing-nowdoc"
-        },
-        {
-          "include": "#regexp-group-options-nowdoc"
-        },
-        {
-          "include": "#regexp-group-named-angle-nowdoc"
-        },
-        {
-          "include": "#regexp-group-named-single-quoted-nowdoc"
-        },
-        {
-          "include": "#regexp-group-named-pcre-nowdoc"
-        },
-        {
-          "include": "#regexp-group-nowdoc"
-        },
-        {
-          "include": "#regexp-character-class-nowdoc"
-        },
-        {
-          "include": "#regexp-explicit-operators"
-        }
-      ]
-    },
-    "regexp-quoted-common": {
-      "patterns": [
-        {
-          "include": "#regexp-anchor-explicit"
-        },
-        {
-          "include": "#regexp-range-quantifier"
-        },
-        {
-          "include": "#regexp-simple-quantifier-explicit"
-        },
-        {
-          "include": "#regexp-alternation-explicit"
-        },
-        {
-          "include": "#regexp-dot-explicit"
-        },
-        {
-          "include": "#regexp-operators-basic"
-        }
-      ]
-    },
-    "regexp-double-quoted-groups-common": {
-      "patterns": [
-        {
-          "include": "#regexp-comment-group-double-quoted"
-        },
-        {
-          "include": "#regexp-group-assertion-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-assertion-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-numeric-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-angle-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-single-quoted-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-numbered-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-named-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-define-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-version-double-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-bare-double-quoted"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-start-directive-explicit"
-        },
-        {
-          "include": "#regexp-group-non-capturing-double-quoted"
-        },
-        {
-          "include": "#regexp-group-options-double-quoted"
-        },
-        {
-          "include": "#regexp-group-named-angle-double-quoted"
-        },
-        {
-          "include": "#regexp-group-named-single-quoted-double-quoted"
-        },
-        {
-          "include": "#regexp-group-named-pcre-double-quoted"
-        },
-        {
-          "include": "#regexp-group-double-quoted"
-        }
-      ]
-    },
-    "regexp-single-quoted-groups-common": {
-      "patterns": [
-        {
-          "include": "#regexp-comment-group-single-quoted"
-        },
-        {
-          "include": "#regexp-group-assertion-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-assertion-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-numeric-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-angle-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-numbered-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-recursion-named-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-define-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-version-single-quoted"
-        },
-        {
-          "include": "#regexp-group-conditional-named-bare-single-quoted"
-        },
-        {
-          "include": "#regexp-backtracking-verb-named-explicit"
-        },
-        {
-          "include": "#regexp-backtracking-verb-explicit"
-        },
-        {
-          "include": "#regexp-start-directive-explicit"
-        },
-        {
-          "include": "#regexp-group-non-capturing-single-quoted"
-        },
-        {
-          "include": "#regexp-group-options-single-quoted"
-        },
-        {
-          "include": "#regexp-group-named-angle-single-quoted"
-        },
-        {
-          "include": "#regexp-group-named-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-group-named-pcre-single-quoted"
-        },
-        {
-          "include": "#regexp-group-single-quoted"
-        }
-      ]
-    },
-    "regexp-double-quoted-common": {
-      "patterns": [
-        {
-          "include": "#regexp-quoted-literal-double-quoted"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-double-quoted"
-        },
-        {
-          "include": "#regexp-decoded-double-quote-escape-double-quoted"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-end-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-octal-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-basic-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-hex-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-php-unicode-escape-interpreted"
-        },
-        {
-          "include": "#regexp-transported-backslash-before-interpolation-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-overlap-escapes-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-apostrophe-escape-interpreted"
-        },
-        {
-          "include": "#regexp-dollar-anchor-php-interpreted"
-        },
-        {
-          "include": "#regexp-group-escape-explicit"
-        },
-        {
-          "include": "#regexp-structural-escape"
-        },
-        {
-          "include": "#regexp-apostrophe-escape-explicit"
-        },
-        {
-          "include": "#regexp-quoted-literal-end-explicit"
-        },
-        {
-          "include": "#regexp-reset-start-explicit"
-        },
-        {
-          "include": "#regexp-octal-escape-explicit"
-        },
-        {
-          "include": "#interpolation_double_quoted"
-        },
-        {
-          "include": "#regexp-backreference-numeric-double-quoted"
-        },
-        {
-          "include": "#regexp-literal-escape-explicit"
-        },
-        {
-          "include": "#regexp-character-type-escape"
-        },
-        {
-          "include": "#regexp-special-character-type-body-explicit"
-        },
-        {
-          "include": "#regexp-property-escape"
-        },
-        {
-          "include": "#regexp-invalid-braced-octal-escape-explicit"
-        },
-        {
-          "include": "#regexp-invalid-braced-hex-escape-explicit"
-        },
-        {
-          "include": "#regexp-short-hex-escape-explicit"
-        },
-        {
-          "include": "#regexp-braced-hex-escape"
-        },
-        {
-          "include": "#regexp-unicode-code-point-escape"
-        },
-        {
-          "include": "#regexp-hex-escape"
-        },
-        {
-          "include": "#regexp-invalid-escape-explicit"
-        },
-        {
-          "include": "#regexp-invalid-k-reference-closed-explicit"
-        },
-        {
-          "include": "#regexp-invalid-g-reference-closed-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-angle-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-braced-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-braced-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
-        },
-        {
-          "include": "#regexp-option-toggle-explicit"
-        },
-        {
-          "include": "#regexp-recursion-whole-pattern-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-ampersand-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-quoted-common"
-        }
-      ]
-    },
-    "regexp-single-quoted-common": {
-      "patterns": [
-        {
-          "include": "#regexp-backreference-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-angle-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-braced-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-numeric-explicit"
-        },
-        {
-          "include": "#regexp-backreference-g-braced-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-angle-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-numeric-explicit"
-        },
-        {
-          "include": "#regexp-option-toggle-explicit"
-        },
-        {
-          "include": "#regexp-recursion-whole-pattern-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-numeric-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-ampersand-explicit"
-        },
-        {
-          "include": "#regexp-subroutine-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-backreference-named-pcre-explicit"
-        },
-        {
-          "include": "#regexp-character-type-escape"
-        },
-        {
-          "include": "#regexp-property-escape"
-        },
-        {
-          "include": "#regexp-hex-escape"
-        },
-        {
-          "include": "#regexp-braced-hex-escape"
-        },
-        {
-          "include": "#regexp-unicode-code-point-escape"
-        },
-        {
-          "include": "#regexp-quoted-literal-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-single-quoted"
-        },
-        {
-          "include": "#regexp-backreference-named-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-subroutine-g-single-quoted-numeric-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-backreference-named-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-subroutine-g-single-quoted-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-subroutine-g-single-quoted-numeric-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-apostrophe-escape-single-quoted"
-        },
-        {
-          "include": "#regexp-decoded-quoted-literal-end-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-double-quote-escape-regex-interpreted"
-        },
-        {
-          "include": "#regexp-decoded-overlap-escapes-interpreted"
-        },
-        {
-          "include": "#regexp-double-quote-escape-explicit"
-        },
-        {
-          "include": "#regexp-quoted-literal-end-explicit"
-        },
-        {
-          "include": "#regexp-octal-escape-explicit"
-        },
-        {
-          "include": "#regexp-explicit-escapes"
-        },
-        {
-          "include": "#single_quote_escape_only"
-        },
-        {
-          "include": "#regexp-quoted-common"
-        }
-      ]
-    },
-    "regexp-double-quoted-body": {
-      "patterns": [
-        {
-          "include": "#regexp-double-quoted-common"
-        },
-        {
-          "include": "#regexp-double-quoted-groups-common"
-        },
-        {
-          "include": "#regexp-character-class-double-quoted"
-        }
-      ]
-    },
-    "regexp-single-quoted-body": {
-      "patterns": [
-        {
-          "include": "#regexp-single-quoted-common"
-        },
-        {
-          "include": "#regexp-single-quoted-groups-common"
-        },
-        {
-          "include": "#regexp-character-class-single-quoted"
-        }
-      ]
-    },
-    "regexp-double-quoted": {
-      "begin": "(?x)\n(\")  # PHP string opener\n(/)  # regex delimiter\n(?=\n  # Entry heuristic for one local quoted /.../flags wrapper.\n  #\n  # It only recognizes top-level constructs that can legally contain a\n  # raw `/` before the local wrapper tail, and it must not look through\n  # the current PHP string boundary into later same-line PHP code.\n  (?:\n    # Raw Q...E blocks can contain literal `/`\n    \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*\" | \" ). )* (?: \\\\E )?\n\n    # The same Q...E construct after PHP decoding\n    | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*\" | \" ). )* (?: \\\\\\\\E )?\n\n    # Ordinary regex escapes can also include characters\n    # that would otherwise look like the wrapper tail.\n    | \\\\                          # regex backslash\n          (?: \\\\                  # escaped thing also starts with ``\n                  (?: \\\\[\\\\\"]?  # another ``, optionally followed by `` or `\"`\n                      | [^\"] )      # or any non-quote char\n                  | .               # fallback: consume one char after `` to allow `.`, `d`, `/`, etc.\n          )\n\n    # Character classes are treated as opaque top-level atoms for entry,\n    # because they can contain raw `/`, but this branch must still stop at\n    # the local wrapper tail or host quote.\n    | \\[\n        (?: \\^? \\] )?\n        (?: \\\\ (?: \\\\(?: \\\\[\\\\\"]? | [^\"] ) | . ) | (?! /[imsxeADSUXu]*\" | \" ). )*\n    # Any other raw atom that does not begin the wrapper tail.\n    | (?! [\"/\\\\\\[] ).\n  )++\n  /[imsxeADSUXu]*\"\n)",
-      "beginCaptures": {
-        "0": {
-          "name": "string.regexp.double-quoted.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.begin.php"
-        },
-        "2": {
-          "name": "punctuation.definition.string.begin.regexp.php"
-        }
-      },
-      "contentName": "string.regexp.double-quoted.php",
-      "end": "((/)([imsxeADSUXu]*)(\"))|(\")",
-      "endCaptures": {
-        "0": {
-          "name": "string.regexp.double-quoted.php"
-        },
-        "2": {
-          "name": "punctuation.definition.string.end.regexp.php"
-        },
-        "3": {
-          "name": "storage.modifier.regexp.php"
-        },
-        "4": {
-          "name": "punctuation.definition.string.end.php"
-        },
-        "5": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "meta.embedded.regexp.php",
-      "patterns": [
-        {
-          "include": "#regexp-double-quoted-body"
-        }
-      ]
-    },
-    "regexp-single-quoted": {
-      "begin": "(?x)\n(')\n(/)\n(?=\n  (?:\n    \\\\Q (?: \\\\. | (?! \\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\E )?\n    | \\\\\\\\Q (?: \\\\. | (?! \\\\\\\\E | /[imsxeADSUXu]*' | ' ). )* (?: \\\\\\\\E )?\n    | \\\\\n          (?: \\\\\n                  (?: \\\\[\\\\']?\n                      | [^'] )\n                  | .\n          )\n    | \\[\n        (?: \\^? \\] )?\n        (?: \\\\ (?: \\\\(?: \\\\[\\\\']? | [^'] ) | . ) | (?! /[imsxeADSUXu]*' | ' ). )*\n\n    | (?! ['/\\\\\\[] ).\n  )++\n  /[imsxeADSUXu]*'\n)",
-      "beginCaptures": {
-        "0": {
-          "name": "string.regexp.single-quoted.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.begin.php"
-        },
-        "2": {
-          "name": "punctuation.definition.string.begin.regexp.php"
-        }
-      },
-      "contentName": "string.regexp.single-quoted.php",
-      "end": "((/)([imsxeADSUXu]*)('))|(')",
-      "endCaptures": {
-        "0": {
-          "name": "string.regexp.single-quoted.php"
-        },
-        "2": {
-          "name": "punctuation.definition.string.end.regexp.php"
-        },
-        "3": {
-          "name": "storage.modifier.regexp.php"
-        },
-        "4": {
-          "name": "punctuation.definition.string.end.php"
-        },
-        "5": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "meta.embedded.regexp.php",
-      "patterns": [
-        {
-          "include": "#regexp-single-quoted-body"
-        }
-      ]
-    },
-    "scope-resolution": {
-      "patterns": [
-        {
-          "match": "(?i)([a-z_\\x{7f}-\\x{10ffff}\\\\][a-z0-9_\\x{7f}-\\x{10ffff}\\\\]*)(?=\\s*::)",
-          "captures": {
-            "1": {
-              "patterns": [
-                {
-                  "match": "\\b(self|static|parent)\\b",
-                  "name": "storage.type.php"
-                },
-                {
-                  "include": "#class-name"
-                },
-                {
-                  "include": "#variable-name"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "begin": "(?i)(::)\\s*([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)\\s*(\\()",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.operator.class.php"
-            },
-            "2": {
-              "name": "entity.name.function.php"
-            },
-            "3": {
-              "name": "punctuation.definition.arguments.begin.bracket.round.php"
-            }
-          },
-          "end": "\\)|(?=\\?>)",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.arguments.end.bracket.round.php"
-            }
-          },
-          "name": "meta.method-call.static.php",
-          "patterns": [
-            {
-              "include": "#named-arguments"
-            },
-            {
-              "include": "$self"
-            }
-          ]
-        },
-        {
-          "match": "(?i)(::)\\s*(class)\\b",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.class.php"
-            },
-            "2": {
-              "name": "keyword.other.class.php"
-            }
-          }
-        },
-        {
-          "match": "(?xi)\n(::)\\s*\n(?:\n  ((\\$+)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*) # Variable\n  |\n  ([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)       # Constant\n)?",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.class.php"
-            },
-            "2": {
-              "name": "variable.other.class.php"
-            },
-            "3": {
-              "name": "punctuation.definition.variable.php"
-            },
-            "4": {
-              "name": "constant.other.class.php"
-            }
-          }
-        }
-      ]
-    },
-    "single_quote_escape_only": {
-      "match": "\\\\[\\\\']",
-      "name": "constant.character.escape.php"
-    },
-    "sql-delimited-segments-heredoc": {
-      "patterns": [
-        {
-          "begin": "'",
-          "end": "(')|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.single.sql",
-          "patterns": [
-            {
-              "include": "#interpolation_double_quoted"
-            }
-          ]
-        },
-        {
-          "begin": "\"",
-          "end": "(\")|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.double.sql",
-          "patterns": [
-            {
-              "include": "#interpolation_double_quoted"
-            }
-          ]
-        },
-        {
-          "begin": "`",
-          "end": "(`)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.other.backtick.sql",
-          "patterns": [
-            {
-              "include": "#interpolation_double_quoted"
-            }
-          ]
-        },
-        {
-          "begin": "/\\*",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          },
-          "end": "(\\*/)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          },
-          "name": "comment.block",
-          "patterns": [
-            {
-              "include": "#sql-delimited-segments-heredoc"
-            }
-          ]
-        },
-        {
-          "begin": "%\\{",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "name": "string.other.quoted.brackets.sql"
-        },
-        {
-          "begin": "%r\\{",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "name": "string.regexp.modr.sql"
-        }
-      ]
-    },
-    "sql-delimited-segments-nowdoc": {
-      "patterns": [
-        {
-          "begin": "'",
-          "end": "(')|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.single.sql"
-        },
-        {
-          "begin": "\"",
-          "end": "(\")|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.double.sql"
-        },
-        {
-          "begin": "`",
-          "end": "(`)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "name": "string.quoted.other.backtick.sql"
-        },
-        {
-          "begin": "/\\*",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          },
-          "end": "(\\*/)|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          },
-          "name": "comment.block",
-          "patterns": [
-            {
-              "include": "#sql-delimited-segments-nowdoc"
-            }
-          ]
-        },
-        {
-          "begin": "%\\{",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "name": "string.other.quoted.brackets.sql"
-        },
-        {
-          "begin": "%r\\{",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.string.begin.sql"
-            }
-          },
-          "end": "(\\})|(?=^\\s*(?:SQL|DQL)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.string.end.sql"
-            }
-          },
-          "name": "string.regexp.modr.sql"
-        }
-      ]
-    },
-    "sql-string-double-quoted": {
-      "begin": "(\")\\s*(?=(?:(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH|WHERE)\\b|(?:(?:(?:FULL|LEFT|RIGHT)(?:\\s+OUTER)?|INNER|OUTER|CROSS)\\s+)?JOIN\\b))",
-      "beginCaptures": {
-        "0": {
-          "name": "string.quoted.double.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.begin.php"
-        }
-      },
-      "contentName": "source.sql.embedded.php",
-      "end": "(\")",
-      "endCaptures": {
-        "0": {
-          "name": "string.quoted.double.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "meta.embedded.sql",
-      "patterns": [
-        {
-          "match": "(#)(\\\\\"|[^\"])*(?=\"|$)",
-          "name": "comment.line.number-sign.sql",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          }
-        },
-        {
-          "match": "(--)(\\\\\"|[^\"])*(?=\"|$)",
-          "name": "comment.line.double-dash.sql",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          }
-        },
-        {
-          "match": "\\\\[\\\\\"`']",
-          "name": "constant.character.escape.php"
-        },
-        {
-          "match": "\\[(?=((\\\\\")|[^\\]\"])*(\"|$))",
-          "name": "text.bracketed.unclosed.sql"
-        },
-        {
-          "match": "/\\*(?=((\\\\\")|(?:(?!\\*/|\").))*(\"|$))",
-          "name": "comment.block.unclosed.sql"
-        },
-        {
-          "match": "%\\{(?=((\\\\\")|[^}\"])*(\"|$))",
-          "name": "string.other.quoted.brackets.unclosed.sql"
-        },
-        {
-          "match": "%r\\{(?=((\\\\\")|[^}\"])*(\"|$))",
-          "name": "string.regexp.modr.unclosed.sql"
-        },
-        {
-          "match": "'(?=((\\\\')|[^'\"])*(\"|$))",
-          "name": "string.quoted.single.unclosed.sql"
-        },
-        {
-          "match": "`(?=((\\\\`)|[^`\"])*(\"|$))",
-          "name": "string.quoted.other.backtick.unclosed.sql"
-        },
-        {
-          "begin": "'",
-          "end": "'",
-          "name": "string.quoted.single.sql",
-          "patterns": [
-            {
-              "include": "#interpolation_double_quoted"
-            }
-          ]
-        },
-        {
-          "begin": "`",
-          "end": "`",
-          "name": "string.quoted.other.backtick.sql",
-          "patterns": [
-            {
-              "include": "#interpolation_double_quoted"
-            }
-          ]
-        },
-        {
-          "include": "#interpolation_double_quoted"
-        },
-        {
-          "include": "source.sql"
-        }
-      ]
-    },
-    "sql-string-single-quoted": {
-      "begin": "(')\\s*(?=(?:(?:SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER|AND|WITH|WHERE)\\b|(?:(?:(?:FULL|LEFT|RIGHT)(?:\\s+OUTER)?|INNER|OUTER|CROSS)\\s+)?JOIN\\b))",
-      "beginCaptures": {
-        "0": {
-          "name": "string.quoted.single.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.begin.php"
-        }
-      },
-      "contentName": "source.sql.embedded.php",
-      "end": "(')",
-      "endCaptures": {
-        "0": {
-          "name": "string.quoted.single.php"
-        },
-        "1": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "meta.embedded.sql",
-      "patterns": [
-        {
-          "match": "(#)(\\\\'|[^'])*(?='|$)",
-          "name": "comment.line.number-sign.sql",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          }
-        },
-        {
-          "match": "(--)(\\\\'|[^'])*(?='|$)",
-          "name": "comment.line.double-dash.sql",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.comment.sql"
-            }
-          }
-        },
-        {
-          "match": "\\\\[\\\\'`\"]",
-          "name": "constant.character.escape.php"
-        },
-        {
-          "match": "N(?=')"
-        },
-        {
-          "match": "\\[(?=((\\\\')|[^\\]'])*('|$))",
-          "name": "text.bracketed.unclosed.sql"
-        },
-        {
-          "match": "/\\*(?=((\\\\')|(?:(?!\\*/|').))*('|$))",
-          "name": "comment.block.unclosed.sql"
-        },
-        {
-          "match": "%\\{(?=((\\\\')|[^}'])*('|$))",
-          "name": "string.other.quoted.brackets.unclosed.sql"
-        },
-        {
-          "match": "%r\\{(?=((\\\\')|[^}'])*('|$))",
-          "name": "string.regexp.modr.unclosed.sql"
-        },
-        {
-          "match": "`(?=((\\\\`)|[^`'])*('|$))",
-          "name": "string.quoted.other.backtick.unclosed.sql"
-        },
-        {
-          "match": "\"(?=((\\\\\")|[^\"'])*('|$))",
-          "name": "string.quoted.double.unclosed.sql"
-        },
-        {
-          "include": "source.sql"
-        }
-      ]
-    },
-    "string-backtick": {
-      "begin": "`",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.php"
-        }
-      },
-      "end": "`",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "string.interpolated.php",
-      "patterns": [
-        {
-          "match": "\\\\`",
-          "name": "constant.character.escape.php"
-        },
-        {
-          "include": "#interpolation"
-        }
-      ]
-    },
-    "string-double-quoted": {
-      "begin": "\"",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.php"
-        }
-      },
-      "end": "\"",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "string.quoted.double.php",
-      "patterns": [
-        {
-          "include": "#interpolation_double_quoted"
-        }
-      ]
-    },
-    "string-single-quoted": {
-      "begin": "'",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.php"
-        }
-      },
-      "end": "'",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.php"
-        }
-      },
-      "name": "string.quoted.single.php",
-      "patterns": [
-        {
-          "match": "\\\\[\\\\']",
-          "name": "constant.character.escape.php"
-        }
-      ]
-    },
-    "strings": {
-      "patterns": [
-        {
-          "include": "#regexp-double-quoted"
-        },
-        {
-          "include": "#sql-string-double-quoted"
-        },
-        {
-          "include": "#string-double-quoted"
-        },
-        {
-          "include": "#regexp-single-quoted"
-        },
-        {
-          "include": "#sql-string-single-quoted"
-        },
-        {
-          "include": "#string-single-quoted"
-        }
-      ]
-    },
-    "support": {
-      "patterns": [
-        {
-          "match": "(?xi)\n\\b\napc_(\n  store|sma_info|compile_file|clear_cache|cas|cache_info|inc|dec|define_constants|delete(_file)?|\n  exists|fetch|load_constants|add|bin_(dump|load)(file)?\n)\\b",
-          "name": "support.function.apc.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  compact|count|current|end|extract|in_array|key(_exists)?|list|nat(case)?sort|\n  next|pos|prev|range|reset|shuffle|sizeof|[ak]?r?sort|u[ak]?sort|\n  array_(\n    all|any|change_key_case|chunk|column|combine|count_values|\n    fill(_keys)?|filter|find(_key)?|flip|is_list|key_(exists|first|last)|keys|\n    map|multisort|pad|pop|product|push|rand|reduce|reverse|\n    search|shift|slice|splice|sum|unique|unshift|values|\n    u?(diff|intersect)(_u?(key|assoc))?|(walk|replace|merge)(_recursive)?\n  )\n)\\b",
-          "name": "support.function.array.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  connection_(aborted|status)|constant|defined?|die|eval|exit|get_browser|\n  __halt_compiler|highlight_(file|string)|hrtime|ignore_user_abort|pack|php_strip_whitespace|\n  show_source|u?sleep|sys_getloadavg|time_(nanosleep|sleep_until)|uniqid|unpack\n)\\b",
-          "name": "support.function.basic_functions.php"
-        },
-        {
-          "match": "(?i)\\b(bc(add|ceil|comp|(div|pow)(mod)?|floor|mod|mul|round|scale|sqrt|sub))\\b",
-          "name": "support.function.bcmath.php"
-        },
-        {
-          "match": "(?i)\\b(blenc_encrypt)\\b",
-          "name": "support.function.blenc.php"
-        },
-        {
-          "match": "(?i)\\b(bz(compress|close|open|decompress|errstr|errno|error|flush|write|read))\\b",
-          "name": "support.function.bz2.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  (French|Gregorian|Jewish|Julian)ToJD|cal_(to_jd|info|days_in_month|from_jd)|unixtojd|\n  jdto(unix|jewish)|easter_(date|days)|JD(MonthName|To(Gregorian|Julian|French)|DayOfWeek)\n)\\b",
-          "name": "support.function.calendar.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  __autoload|class_alias|(class|interface|method|property|trait|enum)_exists|\n  is_(a|subclass_of)|\n  get_(class(_(vars|methods))?|(called|parent)_class|\n    (mangled_)?object_vars|declared_(classes|interfaces|traits))\n)\\b",
-          "name": "support.function.classobj.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  com_(create_guid|print_typeinfo|event_sink|load_typelib|get_active_object|message_pump)|\n  variant_(sub|set(_type)?|not|neg|cast|cat|cmp|int|idiv|imp|or|div|date_(from|to)_timestamp|\n           pow|eqv|fix|and|add|abs|round|get_type|xor|mod|mul)\n)\\b",
-          "name": "support.function.com.php"
-        },
-        {
-          "match": "(?i)\\b(isset|unset|eval|empty|list)\\b",
-          "name": "support.function.construct.php"
-        },
-        {
-          "match": "(?i)\\b(print|echo)\\b",
-          "name": "support.function.construct.output.php"
-        },
-        {
-          "match": "(?i)\\b(ctype_(space|cntrl|digit|upper|punct|print|lower|alnum|alpha|graph|xdigit))\\b",
-          "name": "support.function.ctype.php"
-        },
-        {
-          "match": "(?xi)\\b\ncurl_(\n  close|copy_handle|errno|error|escape|exec|file_create|getinfo|init|pause|reset|\n  setopt(_array)?|strerror|unescape|upkeep|version|\n  multi_((add|remove)_handle|close|errno|exec|getcontent|\n    info_read|init|select|setopt|strerror)|\n  share_(close|errno|init(_persistent)?|setopt|strerror)\n)\\b",
-          "name": "support.function.curl.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  strtotime|str[fp]time|checkdate|time|timezone_name_(from_abbr|get)|idate|\n  timezone_((location|offset|transitions|version)_get|(abbreviations|identifiers)_list|open)|\n  date(_(sun(rise|set)|sun_info|sub|create(_immutable)?(_from_format)?|timestamp_[gs]et|timezone_[gs]et|time_set|\n         isodate_set|interval_(create_from_date_string|format)|offset_get|diff|default_timezone_[gs]et|date_set|\n         parse(_from_format)?|format|add|get_last_errors|modify))?|\n  localtime|get(date|timeofday)|gm(strftime|date|mktime)|microtime|mktime\n)\\b",
-          "name": "support.function.datetime.php"
-        },
-        {
-          "match": "(?i)\\b(dba_(sync|handlers|nextkey|close|insert|optimize|open|delete|popen|exists|key_split|firstkey|fetch|list|replace))\\b",
-          "name": "support.function.dba.php"
-        },
-        {
-          "match": "(?i)\\b(dbx_(sort|connect|compare|close|escape_string|error|query|fetch_row))\\b",
-          "name": "support.function.dbx.php"
-        },
-        {
-          "match": "(?i)\\b(scandir|chdir|chroot|closedir|opendir|dir|rewinddir|readdir|getcwd)\\b",
-          "name": "support.function.dir.php"
-        },
-        {
-          "match": "(?xi)\\b\neio_(\n  sync(fs)?|sync_file_range|symlink|stat(vfs)?|sendfile|set_min_parallel|set_max_(idle|poll_(reqs|time)|parallel)|\n  seek|n(threads|op|pending|reqs|ready)|chown|chmod|custom|close|cancel|truncate|init|open|dup2|unlink|utime|poll|\n  event_loop|f(sync|stat(vfs)?|chown|chmod|truncate|datasync|utime|allocate)|write|lstat|link|rename|realpath|\n  read(ahead|dir|link)?|rmdir|get_(event_stream|last_error)|grp(_(add|cancel|limit))?|mknod|mkdir|busy\n)\\b",
-          "name": "support.function.eio.php"
-        },
-        {
-          "match": "(?xi)\\b\nenchant_(\n  dict_(store_replacement|suggest|check|is_in_session|describe|quick_check|add_to_(personal|session)|get_error)|\n  broker_(set_ordering|init|dict_exists|describe|free(_dict)?|list_dicts|request_(pwl_)?dict|get_error)\n)\\b",
-          "name": "support.function.enchant.php"
-        },
-        {
-          "match": "(?i)\\b(split(i)?|sql_regcase|ereg(i)?(_replace)?)\\b",
-          "name": "support.function.ereg.php"
-        },
-        {
-          "match": "(?i)\\b((restore|set)_(error|exception)_handler|trigger_error|debug_(print_)?backtrace|user_error|error_(log|reporting|(clear|get)_last))\\b",
-          "name": "support.function.errorfunc.php"
-        },
-        {
-          "match": "(?i)\\b(shell_exec|system|passthru|proc_(nice|close|terminate|open|get_status)|escapeshell(arg|cmd)|exec)\\b",
-          "name": "support.function.exec.php"
-        },
-        {
-          "match": "(?i)\\b(exif_(thumbnail|tagname|imagetype|read_data)|read_exif_data)\\b",
-          "name": "support.function.exif.php"
-        },
-        {
-          "match": "(?xi)\\b\nfann_(\n  (duplicate|length|merge|shuffle|subset)_train_data|scale_(train(_data)?|(input|output)(_train_data)?)|\n  set_(scaling_params|sarprop_(step_error_(shift|threshold_factor)|temperature|weight_decay_shift)|\n       cascade_(num_candidate_groups|candidate_(change_fraction|limit|stagnation_epochs)|\n                output_(change_fraction|stagnation_epochs)|weight_multiplier|activation_(functions|steepnesses)|\n                (max|min)_(cand|out)_epochs)|\n       callback|training_algorithm|train_(error|stop)_function|(input|output)_scaling_params|error_log|\n       quickprop_(decay|mu)|weight(_array)?|learning_(momentum|rate)|bit_fail_limit|\n       activation_(function|steepness)(_(hidden|layer|output))?|\n       rprop_((decrease|increase)_factor|delta_(max|min|zero)))|\n  save(_train)?|num_(input|output)_train_data|copy|clear_scaling_params|cascadetrain_on_(file|data)|\n  create_((sparse|shortcut|standard)(_array)?|train(_from_callback)?|from_file)|\n  test(_data)?|train(_(on_(file|data)|epoch))?|init_weights|descale_(input|output|train)|destroy(_train)?|\n  print_error|run|reset_(MSE|err(no|str))|read_train_from_file|randomize_weights|\n  get_(sarprop_(step_error_(shift|threshold_factor)|temperature|weight_decay_shift)|num_(input|output|layers)|\n       network_type|MSE|connection_(array|rate)|bias_array|bit_fail(_limit)?|\n       cascade_(num_(candidates|candidate_groups)|(candidate|output)_(change_fraction|limit|stagnation_epochs)|\n                weight_multiplier|activation_(functions|steepnesses)(_count)?|(max|min)_(cand|out)_epochs)|\n       total_(connections|neurons)|training_algorithm|train_(error|stop)_function|err(no|str)|\n       quickprop_(decay|mu)|learning_(momentum|rate)|layer_array|activation_(function|steepness)|\n       rprop_((decrease|increase)_factor|delta_(max|min|zero)))\n)\\b",
-          "name": "support.function.fann.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  symlink|stat|set_file_buffer|chown|chgrp|chmod|copy|clearstatcache|touch|tempnam|tmpfile|\n  is_(dir|(uploaded_)?file|executable|link|readable|writ(e)?able)|disk_(free|total)_space|diskfreespace|\n  dirname|delete|unlink|umask|pclose|popen|pathinfo|parse_ini_(file|string)|fscanf|fstat|fseek|fnmatch|\n  fclose|ftell|ftruncate|file(size|[acm]time|type|inode|owner|perms|group)?|file_(exists|(get|put)_contents)|\n  f(open|puts|putcsv|passthru|eof|flush|write|lock|read|gets(s)?|getc(sv)?)|lstat|lchown|lchgrp|link(info)?|\n  rename|rewind|read(file|link)|realpath(_cache_(get|size))?|rmdir|glob|move_uploaded_file|mkdir|basename|\n  f(data)?sync\n)\\b",
-          "name": "support.function.file.php"
-        },
-        {
-          "match": "(?i)\\b(finfo_(set_flags|close|open|file|buffer)|mime_content_type)\\b",
-          "name": "support.function.fileinfo.php"
-        },
-        {
-          "match": "(?i)\\b(filter_(has_var|input(_array)?|id|var(_array)?|list))\\b",
-          "name": "support.function.filter.php"
-        },
-        {
-          "match": "(?i)\\b(fastcgi_finish_request|fpm_get_status)\\b",
-          "name": "support.function.fpm.php"
-        },
-        {
-          "match": "(?i)\\b(call_user_(func|method)(_array)?|create_function|unregister_tick_function|forward_static_call(_array)?|function_exists|func_(num_args|get_arg(s)?)|register_(shutdown|tick)_function|get_defined_functions)\\b",
-          "name": "support.function.funchand.php"
-        },
-        {
-          "match": "(?i)\\b((n)?gettext|_|textdomain|d((n)?gettext|c(n)?gettext)|bind(textdomain|_textdomain_codeset))\\b",
-          "name": "support.function.gettext.php"
-        },
-        {
-          "match": "(?xi)\\b\ngmp_(\n  scan[01]|strval|sign|sub|setbit|sqrt(rem)?|hamdist|neg|nextprime|com|clrbit|cmp|testbit|\n  intval|init|invert|import|or|div(exact)?|div_(q|qr|r)|jacobi|popcount|pow(m)?|perfect_(square|power)|\n  prob_prime|export|fact|legendre|and|add|abs|root(rem)?|random(_(bits|range|seed))?|gcd(ext)?|xor|mod|mul|\n  binomial|kronecker|lcm\n)\\b",
-          "name": "support.function.gmp.php"
-        },
-        {
-          "match": "(?xi)\\b hash(_( algos|copy|equals|file|final|hkdf|hmac(_(file|algos)?)?| init|pbkdf2|update(_(file|stream))? ))? \\b",
-          "name": "support.function.hash.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  http_(support|send_(status|stream|content_(disposition|type)|data|file|last_modified)|head|\n        negotiate_(charset|content_type|language)|chunked_decode|cache_(etag|last_modified)|throttle|\n        inflate|deflate|date|post_(data|fields)|put_(data|file|stream)|persistent_handles_(count|clean|ident)|\n        parse_(cookie|headers|message|params)|redirect|request(_(method_(exists|name|(un)?register)|body_encode))?|\n        get(_request_(headers|body(_stream)?))?|match_(etag|modified|request_header)|build_(cookie|str|url))|\n  ob_(etag|deflate|inflate)handler\n)\\b",
-          "name": "support.function.http.php"
-        },
-        {
-          "match": "(?i)\\b(iconv(_(str(pos|len|rpos)|substr|[gs]et_encoding|mime_(decode(_headers)?|encode)))?|ob_iconv_handler)\\b",
-          "name": "support.function.iconv.php"
-        },
-        {
-          "match": "(?i)\\b(iis_((start|stop)_(service|server)|set_(script_map|server_rights|dir_security|app_settings)|(add|remove)_server|get_(script_map|service_state|server_(rights|by_(comment|path))|dir_security)))\\b",
-          "name": "support.function.iisfunc.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  iptc(embed|parse)|(jpeg|png)2wbmp|gd_info|getimagesize(fromstring)?|\n  image(s[xy]|scale|(char|string)(up)?|set(clip|style|thickness|tile|interpolation|pixel|brush)|savealpha|\n        convolution|copy(resampled|resized|merge(gray)?)?|colors(forindex|total)|\n        color(set|closest(alpha|hwb)?|transparent|deallocate|(allocate|exact|resolve)(alpha)?|at|match)|\n        crop(auto)?|create(truecolor|from(avif|bmp|string|jpeg|png|wbmp|webp|gif|gd(2(part)?)?|tga|xpm|xbm))?|\n        types|ttf(bbox|text)|truecolortopalette|istruecolor|interlace|2wbmp|destroy|dashedline|jpeg|\n        _type_to_(extension|mime_type)|ps(slantfont|text|(encode|extend|free|load)font|bbox)|png|polygon|\n        palette(copy|totruecolor)|ellipse|ft(text|bbox)|filter|fill|filltoborder|\n        filled(arc|ellipse|polygon|rectangle)|font(height|width)|flip|webp|wbmp|line|loadfont|layereffect|\n        antialias|affine(matrix(concat|get))?|alphablending|arc|rotate|rectangle|gif|gd2?|gammacorrect|\n        grab(screen|window)|xbm|resolution|openpolygon|get(clip|interpolation)|avif|bmp)\n)\\b",
-          "name": "support.function.image.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  sys_get_temp_dir|set_(time_limit|include_path|magic_quotes_runtime)|cli_[gs]et_process_title|\n  ini_(alter|get(_all)?|parse_quantity|restore|set)|zend_(thread_id|version|logo_guid)|dl|php(credits|info|version)|\n  php_(sapi_name|ini_(scanned_files|loaded_file)|uname|logo_guid)|putenv|extension_loaded|version_compare|\n  assert(_options)?|restore_include_path|gc_(collect_cycles|disable|enable(d)?|mem_caches|status)|getopt|\n  get_(cfg_var|current_user|defined_constants|extension_funcs|include_path|included_files|loaded_extensions|\n       magic_quotes_(gpc|runtime)|required_files|resources)|\n  get(env|lastmod|rusage|my(inode|[gup]id))|\n  memory_(get_(peak_)?usage|reset_peak_usage)|\n  main|magic_quotes_runtime\n)\\b",
-          "name": "support.function.info.php"
-        },
-        {
-          "match": "(?xi)\\b\nibase_(\n  set_event_handler|service_(attach|detach)|server_info|num_(fields|params)|name_result|connect|\n  commit(_ret)?|close|trans|delete_user|drop_db|db_info|pconnect|param_info|prepare|err(code|msg)|\n  execute|query|field_info|fetch_(assoc|object|row)|free_(event_handler|query|result)|wait_event|\n  add_user|affected_rows|rollback(_ret)?|restore|gen_id|modify_user|maintain_db|backup|\n  blob_(cancel|close|create|import|info|open|echo|add|get)\n)\\b",
-          "name": "support.function.interbase.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  normalizer_(normalize|is_normalized|get_raw_decomposition)|\n  idn_to_(unicode|utf8|ascii)|\n  numfmt_(\n          set_(symbol|(text_)?attribute|pattern)|\n          create|\n          (parse|format)(_currency)?|\n          get_(\n               symbol|\n               (text_)?attribute|\n               pattern|\n               error_(code|message)|\n               locale\n          )\n  )|\n  collator_(\n            sort(_with_sort_keys)?|\n            set_(attribute|strength)|\n            compare|create|asort|\n            get_(\n                 strength|sort_key|\n                 error_(code|message)|\n                 locale|attribute\n            )\n  )|\n  transliterator_(\n                  create(_(inverse|from_rules))?|\n                  transliterate|list_ids|\n                  get_error_(code|message)\n  )|\n  intl(cal|tz)_get_error_(code|message)|\n  intlcal_(\n           add|after|before|clear|create_instance|equals|field_difference|from_date_time|\n           get(_(\n                 available_locales|\n                 (actual_)?(maximum|minimum)|\n                 day_of_week_type|\n                 first_day_of_week|\n                 greatest_minimum|\n                 keyword_values_for_locale|\n                 least_maximum|\n                 locale|\n                 minimal_days_in_first_week|\n                 now|\n                 repeated_wall_time_option|\n                 skipped_wall_time_option|\n                 time(_zone)?|\n                 type|\n                 weekend_transition\n           ))?|\n           in_daylight_time|\n           is_(equivalent_to|lenient|set|weekend)|\n           roll|\n           set(_(\n                 first_day_of_week|\n                 lenient|\n                 minimal_days_in_first_week|\n                 repeated_wall_time_option|\n                 skipped_wall_time_option|\n                 time(_zone)?\n           ))?|\n           to_date_time\n  )|\n  intltz_(\n          count_equivalent_ids|\n          create_(\n                  default|\n                  enumeration|\n                  time_zone(_id_enumeration)?\n          )|\n          from_date_time_zone|\n          get_(\n               canonical_id|\n               display_name|\n               dst_savings|\n               equivalent_id|\n               gmt|\n               iana_id|\n               id(_for_windows_id)?|\n               offset|\n               raw_offset|\n               region|\n               tz_data_version|\n               unknown|\n               windows_id\n          )|\n          has_same_rules|\n          to_date_time_zone|\n          use_daylight_time\n  )|\n  intlgregcal_(\n               create_instance|\n               (get|set)_gregorian_change|\n               is_leap_year\n  )|\n  intl_(\n        is_failure|\n        error_name|\n        get_error_(code|message)\n  )|\n  datefmt_(\n           set_(\n                calendar|lenient|pattern|\n                timezone(_id)?\n           )|\n           create|is_lenient|parse|\n           format(_object)?|\n           localtime|\n           get_(\n                calendar(_object)?|\n                time(type|zone(_id)?)|\n                datetype|\n                pattern|\n                error_(code|message)|\n                locale\n           )\n  )|\n  locale_(\n          set_default|compose|canonicalize|parse|filter_matches|lookup|accept_from_http|\n          get_(\n               script|\n               display_(script|name|variant|language|region)|\n               default|\n               primary_language|\n               keywords|\n               all_variants|\n               region\n          )\n  )|\n  resourcebundle_(\n                  create|count|locales|\n                  get(_(error_(code|message)))?\n  )|\n  grapheme_(\n            str(i?str|r?i?pos|len|_split)|\n            substr|extract\n  )|\n  msgfmt_(\n          set_pattern|\n          create|\n          (format|parse)(_message)?|\n          get_(\n               pattern|\n               error_(code|message)|\n               locale\n          )\n  )\n)\\b",
-          "name": "support.function.intl.php"
-        },
-        {
-          "match": "(?i)\\b(json_(decode|encode|last_error(_msg)?|validate))\\b",
-          "name": "support.function.json.php"
-        },
-        {
-          "match": "(?xi)\\b\nldap_(\n  start|tls|sort|search|sasl_bind|set_(option|rebind_proc)|(first|next)_(attribute|entry|reference)|\n  connect|control_paged_result(_response)?|count_entries|compare|close|t61_to_8859|8859_to_t61|\n  dn2ufn|delete|unbind|parse_(reference|result)|escape|errno|err2str|error|explode_dn|bind|\n  free_result|list|add|rename|read|get_(option|dn|entries|values(_len)?|attributes)|modify(_batch)?|\n  mod_(add|del|replace)\n)\\b",
-          "name": "support.function.ldap.php"
-        },
-        {
-          "match": "(?xi)\\b\nlibxml_(\n  set_(streams_context|external_entity_loader)|\n  clear_errors|\n  disable_entity_loader|\n  use_internal_errors|\n  get_(errors|last_error|external_entity_loader)\n)\\b",
-          "name": "support.function.libxml.php"
-        },
-        {
-          "match": "(?i)\\b(ezmlm_hash|mail)\\b",
-          "name": "support.function.mail.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  a?(cos|sin|tan)h?|sqrt|srand|hypot|hexdec|ceil|is_(nan|(in)?finite)|octdec|dec(hex|oct|bin)|deg2rad|\n  pi|pow|exp(m1)?|floor|f(div|mod|pow)|lcg_value|log(1[p0])?|atan2|abs|round|rand|rad2deg|getrandmax|\n  mt_(srand|rand|getrandmax)|max|min|bindec|base_convert|intdiv|random_(int|bytes)\n)\\b",
-          "name": "support.function.math.php"
-        },
-        {
-          "match": "(?xi)\\b\nmb_(\n  str(cut|str|to(lower|upper)|istr|ipos|imwidth|pos|width|len|rchr|richr|ripos|rpos|_pad|_split)|\n  substitute_character|substr(_count)?|split|send_mail|http_(input|output)|check_encoding|\n  convert_(case|encoding|kana|variables)|internal_encoding|output_handler|decode_(numericentity|mimeheader)|\n  detect_(encoding|order)|parse_str|preferred_mime_name|encoding_aliases|encode_(numericentity|mimeheader)|\n  ereg(i(_replace)?)?|ereg_(search(_(get(pos|regs)|init|regs|(set)?pos))?|replace(_callback)?|match)|\n  list_encodings|language|regex_(set_options|encoding)|get_info|\n  [lr]?trim|[lu]cfirst|ord|chr|scrub\n)\\b",
-          "name": "support.function.mbstring.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  mcrypt_(\n    cfb|create_iv|cbc|ofb|decrypt|encrypt|ecb|list_(algorithms|modes)|generic(_((de)?init|end))?|\n    enc_(self_test|is_block_(algorithm|algorithm_mode|mode)|\n    get_(supported_key_sizes|(block|iv|key)_size|(algorithms|modes)_name))|\n    get_(cipher_name|(block|iv|key)_size)|\n    module_(close|self_test|is_block_(algorithm|algorithm_mode|mode)|open|\n            get_(supported_key_sizes|algo_(block|key)_size)))|\n  mdecrypt_generic\n)\\b",
-          "name": "support.function.mcrypt.php"
-        },
-        {
-          "match": "(?i)\\b(memcache_debug)\\b",
-          "name": "support.function.memcache.php"
-        },
-        {
-          "match": "(?i)\\b(mhash(_(count|keygen_s2k|get_(hash_name|block_size)))?)\\b",
-          "name": "support.function.mhash.php"
-        },
-        {
-          "match": "(?i)\\b(log_(cmd_(insert|delete|update)|killcursor|write_batch|reply|getmore)|bson_(decode|encode))\\b",
-          "name": "support.function.mongo.php"
-        },
-        {
-          "match": "(?xi)\\b\nmysql_(\n  stat|set_charset|select_db|num_(fields|rows)|connect|client_encoding|close|create_db|escape_string|\n  thread_id|tablename|insert_id|info|data_seek|drop_db|db_(name|query)|unbuffered_query|pconnect|ping|\n  errno|error|query|field_(seek|name|type|table|flags|len)|fetch_(object|field|lengths|assoc|array|row)|\n  free_result|list_(tables|dbs|processes|fields)|affected_rows|result|real_escape_string|\n  get_(client|host|proto|server)_info\n)\\b",
-          "name": "support.function.mysql.php"
-        },
-        {
-          "match": "(?xi)\\b\nmysqli_(\n  ssl_set|store_result|stat|send_(query|long_data)|set_(charset|opt|local_infile_(default|handler))|\n  stmt_(store_result|send_long_data|next_result|close|init|data_seek|prepare|execute|fetch|free_result|\n        attr_[gs]et|result_metadata|reset|get_(result|warnings)|more_results|bind_(param|result))|\n  select_db|slave_query|savepoint|next_result|change_user|character_set_name|connect|commit|\n  client_encoding|close|thread_safe|init|options|(enable|disable)_(reads_from_master|rpl_parse)|\n  dump_debug_info|debug|data_seek|use_result|ping|poll|param_count|prepare|escape_string|execute|\n  embedded_server_(start|end)|kill|query|field_seek|free_result|autocommit|rollback|report|refresh|\n  fetch(_(object|fields|field(_direct)?|assoc|all|array|row))?|rpl_(parse_enabled|probe|query_type)|\n  release_savepoint|reap_async_query|real_(connect|escape_string|query)|more_results|multi_query|\n  get_(charset|connection_stats|client_(stats|info|version)|cache_stats|warnings|links_stats|metadata)|\n  master_query|bind_(param|result)|begin_transaction\n)\\b",
-          "name": "support.function.mysqli.php"
-        },
-        {
-          "match": "(?i)\\b(mysqlnd_memcache_(set|get_config))\\b",
-          "name": "support.function.mysqlnd-memcache.php"
-        },
-        {
-          "match": "(?i)\\b(mysqlnd_ms_(set_(user_pick_server|qos)|dump_servers|query_is_select|fabric_select_(shard|global)|get_(stats|last_(used_connection|gtid))|xa_(commit|rollback|gc|begin)|match_wild))\\b",
-          "name": "support.function.mysqlnd-ms.php"
-        },
-        {
-          "match": "(?i)\\b(mysqlnd_qc_(set_(storage_handler|cache_condition|is_select|user_handlers)|clear_cache|get_(normalized_query_trace_log|core_stats|cache_info|query_trace_log|available_handlers)))\\b",
-          "name": "support.function.mysqlnd-qc.php"
-        },
-        {
-          "match": "(?i)\\b(mysqlnd_uh_(set_(statement|connection)_proxy|convert_to_mysqlnd))\\b",
-          "name": "support.function.mysqlnd-uh.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  syslog|socket_(set_(blocking|timeout)|get_status)|set(raw)?cookie|http_response_code|openlog|\n  headers_(list|sent)|header(_(register_callback|remove))?|checkdnsrr|closelog|inet_(ntop|pton)|ip2long|\n  openlog|dns_(check_record|get_(record|mx))|define_syslog_variables|(p)?fsockopen|long2ip|\n  get(servby(name|port)|host(name|by(name(l)?|addr))|protoby(name|number)|mxrr)|\n  http_(clear|get)_last_response_headers|net_get_interfaces|request_parse_body\n)\\b",
-          "name": "support.function.network.php"
-        },
-        {
-          "match": "(?i)\\b(nsapi_(virtual|response_headers|request_headers))\\b",
-          "name": "support.function.nsapi.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  oci(statementtype|setprefetch|serverversion|savelob(file)?|numcols|new(collection|cursor|descriptor)|nlogon|\n      column(scale|size|name|type(raw)?|isnull|precision)|coll(size|trim|assign(elem)?|append|getelem|max)|commit|\n      closelob|cancel|internaldebug|definebyname|plogon|parse|error|execute|fetch(statement|into)?|\n      free(statement|collection|cursor|desc)|write(temporarylob|lobtofile)|loadlob|log(on|off)|rowcount|rollback|\n      result|bindbyname)|\n  oci_(statement_type|set_(client_(info|identifier)|prefetch|edition|action|module_name)|server_version|\n       num_(fields|rows)|new_(connect|collection|cursor|descriptor)|connect|commit|client_version|close|cancel|\n       internal_debug|define_by_name|pconnect|password_change|parse|error|execute|bind_(array_)?by_name|\n       field_(scale|size|name|type(_raw)?|is_null|precision)|fetch(_(object|assoc|all|array|row))?|\n       free_(statement|descriptor)|lob_(copy|is_equal)|rollback|result|get_implicit_resultset)\n)\\b",
-          "name": "support.function.oci8.php"
-        },
-        {
-          "match": "(?i)\\b(opcache_(compile_file|invalidate|is_script_cached|reset|get_(status|configuration)|jit_blacklist))\\b",
-          "name": "support.function.opcache.php"
-        },
-        {
-          "match": "(?xi)\\b\nopenssl_(\n  sign|spki_(new|export(_challenge)?|verify)|seal|csr_(sign|new|export(_to_file)?|get_(subject|public_key))|\n  cipher_(iv|key)_length|open|dh_compute_key|digest|decrypt|public_(decrypt|encrypt)|encrypt|error_string|\n  pkcs12_(export(_to_file)?|read)|(cms|pkcs7)_(sign|decrypt|encrypt|verify|read)|verify|free_key|random_pseudo_bytes|\n  pkey_(derive|new|export(_to_file)?|free|get_(details|public|private))|private_(decrypt|encrypt)|pbkdf2|\n  get_((cipher|md)_methods|cert_locations|curve_names|(public|private)key)|\n  x509_(check_private_key|checkpurpose|parse|export(_to_file)?|fingerprint|free|read|verify)\n)\\b",
-          "name": "support.function.openssl.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  output_(add_rewrite_var|reset_rewrite_vars)|flush|\n  ob_(start|clean|implicit_flush|end_(clean|flush)|flush|list_handlers|gzhandler|\n      get_(status|contents|clean|flush|length|level))\n)\\b",
-          "name": "support.function.output.php"
-        },
-        {
-          "match": "(?i)\\b(password_(algos|hash|needs_rehash|verify|get_info))\\b",
-          "name": "support.function.password.php"
-        },
-        {
-          "match": "(?xi)\\b\npcntl_(\n  alarm|async_signals|errno|exec|r?fork|get(_last_error|cpu)|[gs]et(cpuaffinity|priority)|setns|\n  signal(_(dispatch|get_handler))?|sig(procmask|timedwait|waitinfo)|strerror|unshare|\n  wait(p?id)?|wexitstatus|wif(continued|exited|signaled|stopped)|w(stop|term)sig\n)\\b",
-          "name": "support.function.pcntl.php"
-        },
-        {
-          "match": "(?xi)\\b\npg_(\n  socket(_poll)?|\n  send_(prepare|execute|query(_params)?)|\n  set_(chunked_rows_size|client_encoding|error_(verbosity|context_visibility))|\n  setclientencoding|\n  select|\n  host|\n  num_?(fields|rows)|\n  consume_input|\n  connection_(status|reset|busy)|\n  connect(_poll)?|\n  convert|\n  copy_(from|to)|\n  client_?encoding|close|cancel_query|tty|transaction_status|\n  change_password|cmdtuples|errormessage|jit|\n  trace|insert|options|delete|dbname|untrace|unescape_bytea|\n  update|pconnect|ping|port|\n  put_(line|copy_(data|end))|\n  parameter_status|prepare|version|\n  query(_params)?|\n  escape_(string|identifier|literal|bytea)|\n  end_copy|\n  exec(ute)?|\n  flush|\n  free_?result|\n  last_(notice|error|oid)|\n  field(\n    _?(size|num|name|type|prtlen)|  # with or without _\n    isnull|                         # only without _\n    _(type_oid|table|is_null)       # only with _\n  )|\n  affected_rows|\n  result(_(status|seek|error(_field)?|memory_size))?|\n  fetch_(object|assoc|all(_columns)?|array|row|result)|\n  get(lastoid|_(notify|pid|result))|\n  meta_data|\n  lo(\n    _?(close|create|export|import|open|read|unlink|write)|  # with or without _\n    readall|                                                # only without _\n    _(read_all|seek|tell|truncate)                          # only with _\n  )\n)\\b",
-          "name": "support.function.pgsql.php"
-        },
-        {
-          "match": "(?i)\\b(virtual|getallheaders|apache_([gs]etenv|note|child_terminate|lookup_uri|response_headers|reset_timeout|request_headers|get_(version|modules)))\\b",
-          "name": "support.function.php_apache.php"
-        },
-        {
-          "match": "(?i)\\b(dom_import_simplexml)\\b",
-          "name": "support.function.php_dom.php"
-        },
-        {
-          "match": "(?xi)\\b\nftp_(\n  ssl_connect|systype|site|size|set_option|nlist|nb_(continue|f?(put|get))|ch(dir|mod)|connect|cdup|close|\n  delete|put|pwd|pasv|exec|quit|f(put|get)|login|alloc|append|rename|raw(list)?|rmdir|get(_option)?|mdtm|mkdir|mlsd\n)\\b",
-          "name": "support.function.php_ftp.php"
-        },
-        {
-          "match": "(?xi)\\b\nimap_(\n  (create|delete|list|rename|scan)(mailbox)?|\n  status|sort|subscribe|set_quota|\n  set(flag_full|acl)|\n  search|savebody|\n  num_(recent|msg)|\n  check|close|clearflag_full|thread|timeout|open|\n  header(info)?|\n  headers|append|alerts|is_open|reopen|\n  8bit|unsubscribe|undelete|\n  utf7_(decode|encode)|\n  utf8|uid|ping|errors|expunge|qprint|gc|\n  mutf7_to_utf8|utf8_to_mutf7|\n  fetch(structure|header|text|mime|body)|\n  fetch_overview|lsub|\n  list(scan|subscribed)|\n  last_error|\n  rfc822_(parse_(headers|adrlist)|write_address)|\n  get(subscribed|acl|mailboxes)|\n  get_quota(root)?|\n  msgno|mime_header_decode|\n  mail_(copy|compose|move)|\n  mail|mailboxmsginfo|binary|\n  body(struct)?|\n  base64\n)\\b",
-          "name": "support.function.php_imap.php"
-        },
-        {
-          "match": "(?xi)\\b\nmssql_(\n  select_db|num_(fields|rows)|next_result|connect|close|init|data_seek|pconnect|execute|query|\n  field_(seek|name|type|length)|fetch_(object|field|assoc|array|row|batch)|free_(statement|result)|\n  rows_affected|result|guid_string|get_last_message|min_(error|message)_severity|bind\n)\\b",
-          "name": "support.function.php_mssql.php"
-        },
-        {
-          "match": "(?xi)\\b\nodbc_(\n  statistics|specialcolumns|setoption|num_(fields|rows)|next_result|connect|columns|columnprivileges|commit|\n  cursor|close(_all)?|tables|tableprivileges|do|data_source|pconnect|primarykeys|procedures|procedurecolumns|\n  prepare|error(msg)?|exec(ute)?|field_(scale|num|name|type|precision|len)|foreignkeys|free_result|\n  fetch_(into|object|array|row)|longreadlen|autocommit|rollback|result(_all)?|gettypeinfo|binmode\n)\\b",
-          "name": "support.function.php_odbc.php"
-        },
-        {
-          "match": "(?i)\\b(preg_(split|quote|filter|last_error(_msg)?|replace(_callback(_array)?)?|grep|match(_all)?))\\b",
-          "name": "support.function.php_pcre.php"
-        },
-        {
-          "match": "(?i)\\b(spl_(classes|object_(hash|id)|autoload(_(call|unregister|extensions|functions|register))?)|class_(implements|uses|parents)|iterator_(count|to_array|apply))\\b",
-          "name": "support.function.php_spl.php"
-        },
-        {
-          "match": "(?i)\\b(zip_(close|open|entry_(name|compressionmethod|compressedsize|close|open|filesize|read)|read))\\b",
-          "name": "support.function.php_zip.php"
-        },
-        {
-          "match": "(?xi)\\b\nposix_(\n  strerror|set(s|e?u|[ep]?g)id|ctermid|ttyname|times|isatty|initgroups|uname|errno|kill|e?access|\n  get(sid|cwd|uid|pid|ppid|pwnam|pwuid|pgid|pgrp|euid|egid|login|rlimit|gid|grnam|groups|grgid)|\n  get_last_error|mknod|mkfifo|(sys|f?path)conf|setrlimit\n)\\b",
-          "name": "support.function.posix.php"
-        },
-        {
-          "match": "(?i)\\b(set(thread|proc)title)\\b",
-          "name": "support.function.proctitle.php"
-        },
-        {
-          "match": "(?xi)\\b\npspell_(\n  store_replacement|suggest|save_wordlist|new(_(config|personal))?|check|clear_session|\n  config_(save_repl|create|ignore|(data|dict)_dir|personal|runtogether|repl|mode)|add_to_(session|personal)\n)\\b",
-          "name": "support.function.pspell.php"
-        },
-        {
-          "match": "(?i)\\b(readline(_(completion_function|clear_history|callback_(handler_(install|remove)|read_char)|info|on_new_line|write_history|list_history|add_history|redisplay|read_history))?)\\b",
-          "name": "support.function.readline.php"
-        },
-        {
-          "match": "(?i)\\b(recode(_(string|file))?)\\b",
-          "name": "support.function.recode.php"
-        },
-        {
-          "match": "(?i)\\b(rrd(c_disconnect|_(create|tune|info|update|error|version|first|fetch|last(update)?|restore|graph|xport)))\\b",
-          "name": "support.function.rrd.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  shm_((get|has|remove|put)_var|detach|attach|remove)|sem_(acquire|release|remove|get)|ftok|\n  msg_((get|remove|set|stat)_queue|send|queue_exists|receive)\n)\\b",
-          "name": "support.function.sem.php"
-        },
-        {
-          "match": "(?xi)\\b\nsession_(\n  status|start|set_(save_handler|cookie_params)|save_path|name|commit|cache_(expire|limiter)|\n  is_registered|id|destroy|decode|unset|unregister|encode|write_close|abort|reset|register(_shutdown)?|\n  (regenerate|create)_id|get_cookie_params|module_name|gc\n)\\b",
-          "name": "support.function.session.php"
-        },
-        {
-          "match": "(?i)\\b(shmop_(size|close|open|delete|write|read))\\b",
-          "name": "support.function.shmop.php"
-        },
-        {
-          "match": "(?i)\\b(simplexml_(import_dom|load_(string|file)))\\b",
-          "name": "support.function.simplexml.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  snmp(walk(oid)?|realwalk|get(next)?|set)|\n  snmp_(set_(valueretrieval|quick_print|enum_print|oid_(numeric_print|output_format))|read_mib|\n        get_(valueretrieval|quick_print))|\n  snmp[23]_(set|walk|real_walk|get(next)?)\n)\\b",
-          "name": "support.function.snmp.php"
-        },
-        {
-          "match": "(?i)\\b(is_soap_fault|use_soap_error_handler)\\b",
-          "name": "support.function.soap.php"
-        },
-        {
-          "match": "(?xi)\\b\nsocket_(\n  accept|addrinfo_(bind|connect|explain|lookup)|atmark|bind|(clear|last)_error|close|cmsg_space|connect|\n  create(_(listen|pair))?|(ex|im)port_stream|[gs]et_option|[gs]etopt|get(peer|sock)name|\n  listen|read|recv(from|msg)?|select|send(msg|to)?|set_(non)?block|shutdown|strerror|write|\n  wsaprotocol_info_(export|import|release)\n)\\b",
-          "name": "support.function.sockets.php"
-        },
-        {
-          "match": "(?xi)\\b\nsodium_(\n        add|\n        base642bin|\n        bin2base64|\n        bin2hex|\n        compare|\n        crypto_(\n                aead_(\n                      aes256gcm_((de|en)crypt|is_available|keygen)|\n                      chacha20poly1305_((de|en)crypt|keygen)|\n                      x?chacha20poly1305_ietf_((de|en)crypt|keygen)\n                )|\n                auth(_(keygen|verify))?|\n                box(_(\n                      keypair(_from_secretkey_and_publickey)?|\n                      open|\n                      publickey(_from_secretkey)?|\n                      seal(_open)?|\n                      secretkey|\n                      seed_keypair\n                ))?|\n                core_ristretto255_(\n                                  add|from_hash|is_valid_point|random|\n                                  scalar_(add|complement|invert|mul|negate|random|reduce|sub)|\n                                  sub\n                )|\n                generichash(_(final|init|keygen|update))?|\n                kdf_(derive_from_key|keygen)|\n                kx_(\n                    ((client|server)_session_keys)|\n                    (seed_)?keypair|\n                    ((public|secret)key)\n                )|\n                pwhash(_(\n                      scryptsalsa208sha256(_(str(_verify)?))?|\n                      str(_(needs_rehash|verify))?\n                ))?|\n                scalarmult(_(\n                            base|\n                            ristretto255(_base)?\n                ))?|\n                secretbox(_(keygen|open))?|\n                secretstream_xchacha20poly1305_(\n                                                (init_)?(pull|push)|\n                                                keygen|rekey\n                )|\n                shorthash(_keygen)?|\n                sign(_(\n                      (verify_)?detached|\n                      ed25519_[ps]k_to_curve25519|\n                      (seed_)?keypair|\n                      keypair_from_secretkey_and_publickey|\n                      open|\n                      publickey(_from_secretkey)?|\n                      secretkey\n                ))?|\n                stream(_(\n                      keygen|\n                      xchacha20(_(keygen|xor(_ic)?))?|\n                      xor\n                ))?\n        )|\n        hex2bin|\n        increment|\n        mem(cmp|zero)|\n        (un)?pad\n)\\b",
-          "name": "support.function.sodium.php"
-        },
-        {
-          "match": "(?xi)\\b\nsqlite_(\n  single_query|seek|has_(more|prev)|num_(fields|rows)|next|changes|column|current|close|\n  create_(aggregate|function)|open|unbuffered_query|udf_(decode|encode)_binary|popen|prev|\n  escape_string|error_string|exec|valid|key|query|field_name|factory|\n  fetch_(string|single|column_types|object|all|array)|lib(encoding|version)|\n  last_(insert_rowid|error)|array_query|rewind|busy_timeout\n)\\b",
-          "name": "support.function.sqlite.php"
-        },
-        {
-          "match": "(?xi)\\b\nsqlsrv_(\n  send_stream_data|server_info|has_rows|num_(fields|rows)|next_result|connect|configure|commit|\n  client_info|close|cancel|prepare|errors|execute|query|field_metadata|fetch(_(array|object))?|\n  free_stmt|rows_affected|rollback|get_(config|field)|begin_transaction\n)\\b",
-          "name": "support.function.sqlsrv.php"
-        },
-        {
-          "match": "(?xi)\\b\nstats_(\n  harmonic_mean|covariance|standard_deviation|skew|\n  cdf_(noncentral_(chisquare|f)|negative_binomial|chisquare|cauchy|t|uniform|poisson|exponential|f|weibull|\n       logistic|laplace|gamma|binomial|beta)|\n  stat_(noncentral_t|correlation|innerproduct|independent_t|powersum|percentile|paired_t|gennch|binomial_coef)|\n  dens_(normal|negative_binomial|chisquare|cauchy|t|pmf_(hypergeometric|poisson|binomial)|exponential|f|\n        weibull|logistic|laplace|gamma|beta)|\n  den_uniform|variance|kurtosis|absolute_deviation|\n  rand_(setall|phrase_to_seeds|ranf|get_seeds|\n        gen_(noncentral_[ft]|noncenral_chisquare|normal|chisquare|t|int|\n             i(uniform|poisson|binomial(_negative)?)|exponential|f(uniform)?|gamma|beta))\n)\\b",
-          "name": "support.function.stats.php"
-        },
-        {
-          "match": "(?xi)\\b\nstream_(\n  bucket_(new|prepend|append|make_writeable)|\n  context_(create|[gs]et_(options?|default|params))|copy_to_stream|filter_((ap|pre)pend|register|remove)|\n  get_(contents|filters|line|meta_data|transports|wrappers)|is(atty|_local)|notification_callback|register_wrapper|resolve_include_path|select|\n  set_(blocking|chunk_size|(read|write)_buffer|timeout)|\n  socket_(accept|client|enable_crypto|get_name|pair|recvfrom|sendto|server|shutdown)|\n  supports_lock|wrapper_((un)?register|restore)\n)\\b",
-          "name": "support.function.streamsfuncs.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  money_format|md5(_file)?|metaphone|bin2hex|sscanf|sha1(_file)?|\n  str(str|c?spn|n(at)?(case)?cmp|chr|coll|(case)?cmp|to(upper|lower)|tok|tr|istr|pos|pbrk|len|rchr|ri?pos|rev)|\n  str_(getcsv|i?replace|pad|repeat|rot13|shuffle|split|word_count|\n    contains|(starts|ends)_with|(in|de)crement)|\n  strip(c?slashes|os)|strip_tags|similar_text|soundex|substr(_(count|compare|replace))?|setlocale|\n  html(specialchars(_decode)?|entities)|html_entity_decode|hex2bin|hebrev(c)?|number_format|nl2br|nl_langinfo|\n  chop|chunk_split|chr|convert_(cyr_string|uu(decode|encode))|count_chars|crypt|crc32|trim|implode|ord|\n  uc(first|words)|join|parse_str|print(f)?|echo|explode|v?[fs]?printf|quoted_printable_(decode|encode)|\n  quotemeta|wordwrap|lcfirst|[lr]trim|localeconv|levenshtein|addc?slashes|get_html_translation_table\n)\\b",
-          "name": "support.function.string.php"
-        },
-        {
-          "match": "(?xi)\\b\nsybase_(\n  set_message_handler|select_db|num_(fields|rows)|connect|close|deadlock_retry_count|data_seek|\n  unbuffered_query|pconnect|query|field_seek|fetch_(object|field|assoc|array|row)|free_result|\n  affected_rows|result|get_last_message|min_(client|error|message|server)_severity\n)\\b",
-          "name": "support.function.sybase.php"
-        },
-        {
-          "match": "(?i)\\b(taint|is_tainted|untaint)\\b",
-          "name": "support.function.taint.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  tidy_([gs]etopt|set_encoding|save_config|config_count|clean_repair|is_(xhtml|xml)|diagnose|\n        (access|error|warning)_count|load_config|reset_config|(parse|repair)_(string|file)|\n        get_(status|html(_ver)?|head|config|output|opt_doc|root|release|body))|\n  ob_tidyhandler\n)\\b",
-          "name": "support.function.tidy.php"
-        },
-        {
-          "match": "(?i)\\b(token_(name|get_all))\\b",
-          "name": "support.function.tokenizer.php"
-        },
-        {
-          "match": "(?xi)\\b\ntrader_(\n  stoch(f|r|rsi)?|stddev|sin(h)?|sum|sub|set_(compat|unstable_period)|sqrt|sar(ext)?|sma|\n  ht_(sine|trend(line|mode)|dc(period|phase)|phasor)|natr|cci|cos(h)?|correl|\n  cdl(shootingstar|shortline|sticksandwich|stalledpattern|spinningtop|separatinglines|\n      hikkake(mod)?|highwave|homingpigeon|hangingman|harami(cross)?|hammer|concealbabyswall|\n      counterattack|closingmarubozu|thrusting|tasukigap|takuri|tristar|inneck|invertedhammer|\n      identical3crows|2crows|onneck|doji(star)?|darkcloudcover|dragonflydoji|unique3river|\n      upsidegap2crows|3(starsinsouth|inside|outside|whitesoldiers|linestrike|blackcrows)|\n      piercing|engulfing|evening(doji)?star|kicking(bylength)?|longline|longleggeddoji|\n      ladderbottom|advanceblock|abandonedbaby|risefall3methods|rickshawman|gapsidesidewhite|\n      gravestonedoji|xsidegap3methods|morning(doji)?star|mathold|matchinglow|marubozu|\n      belthold|breakaway)|\n  ceil|cmo|tsf|typprice|t3|tema|tan(h)?|trix|trima|trange|obv|div|dema|dx|ultosc|ppo|\n  plus_d[im]|errno|exp|ema|var|kama|floor|wclprice|willr|wma|ln|log10|bop|beta|bbands|\n  linearreg(_(slope|intercept|angle))?|asin|acos|atan|atr|adosc|ad|add|adx(r)?|apo|avgprice|\n  aroon(osc)?|rsi|roc|rocp|rocr(100)?|get_(compat|unstable_period)|min(index)?|minus_d[im]|\n  minmax(index)?|mid(point|price)|mom|mult|medprice|mfi|macd(ext|fix)?|mavp|max(index)?|ma(ma)?\n)\\b",
-          "name": "support.function.trader.php"
-        },
-        {
-          "match": "(?i)\\b(uopz_(copy|compose|implement|overload|delete|undefine|extend|function|flags|restore|rename|redefine|backup))\\b",
-          "name": "support.function.uopz.php"
-        },
-        {
-          "match": "(?i)\\b(http_build_query|(raw)?url(decode|encode)|parse_url|get_(headers|meta_tags)|base64_(decode|encode))\\b",
-          "name": "support.function.url.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  (bool|double|float|int|str)val|debug_zval_dump|empty|get_(debug_type|defined_vars|resource_(id|type))|[gs]ettype|\n  is_(array|bool|callable|countable|double|float|int(eger)?|iterable|long|null|numeric|object|real|resource|scalar|string)|\n  isset|print_r|(un)?serialize|unset|var_(dump|export)\n)\\b",
-          "name": "support.function.var.php"
-        },
-        {
-          "match": "(?i)\\b(wddx_(serialize_(value|vars)|deserialize|packet_(start|end)|add_vars))\\b",
-          "name": "support.function.wddx.php"
-        },
-        {
-          "match": "(?i)\\b(xhprof_(sample_)?(disable|enable))\\b",
-          "name": "support.function.xhprof.php"
-        },
-        {
-          "match": "(?xi)\n\\b\n(\n  utf8_(decode|encode)|\n  xml_(set_((notation|(end|start)_namespace|unparsed_entity)_decl_handler|\n            (character_data|default|element|external_entity_ref|processing_instruction)_handler|object)|\n       parse(_into_struct)?|parser_([gs]et_option|create(_ns)?|free)|error_string|\n       get_(current_((column|line)_number|byte_index)|error_code))\n)\\b",
-          "name": "support.function.xml.php"
-        },
-        {
-          "match": "(?xi)\\b\nxmlrpc_(\n  server_(call_method|create|destroy|add_introspection_data|register_(introspection_callback|method))|\n  is_fault|decode(_request)?|parse_method_descriptions|encode(_request)?|[gs]et_type\n)\\b",
-          "name": "support.function.xmlrpc.php"
-        },
-        {
-          "match": "(?xi)\\b\nxmlwriter_(\n  (end|start|write)_(comment|cdata|dtd(_(attlist|entity|element))?|document|pi|attribute|element)|\n  (start|write)_(attribute|element)_ns|write_raw|set_indent(_string)?|text|output_memory|open_(memory|uri)|\n  full_end_element|flush|\n)\\b",
-          "name": "support.function.xmlwriter.php"
-        },
-        {
-          "match": "(?xi)\\b\n(\n  zlib_(decode|encode|get_coding_type)|readgzfile|\n  gz(seek|compress|close|tell|inflate|open|decode|deflate|uncompress|puts|passthru|encode|eof|file|\n     write|rewind|read|getc|getss?)|deflate_(add|init)|inflate_(add|get_(read_len|status)|init)\n)\\b",
-          "name": "support.function.zlib.php"
-        },
-        {
-          "match": "(?i)\\b(pdo_drivers)\\b",
-          "name": "support.function.pdo.php"
-        }
-      ]
-    },
-    "switch_statement": {
-      "patterns": [
-        {
-          "match": "\\s+(?=switch\\b)"
-        },
-        {
-          "begin": "\\bswitch\\b(?!\\s*\\(.*\\)\\s*:)",
-          "beginCaptures": {
-            "0": {
-              "name": "keyword.control.switch.php"
-            }
-          },
-          "end": "}|(?=\\?>)",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.section.switch-block.end.bracket.curly.php"
-            }
-          },
-          "name": "meta.switch-statement.php",
-          "patterns": [
-            {
-              "begin": "\\(",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.definition.switch-expression.begin.bracket.round.php"
-                }
-              },
-              "end": "\\)|(?=\\?>)",
-              "endCaptures": {
-                "0": {
-                  "name": "punctuation.definition.switch-expression.end.bracket.round.php"
-                }
-              },
-              "patterns": [
-                {
-                  "include": "$self"
-                }
-              ]
-            },
-            {
-              "begin": "{",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.definition.section.switch-block.begin.bracket.curly.php"
-                }
-              },
-              "end": "(?=}|\\?>)",
-              "patterns": [
-                {
-                  "include": "$self"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    "match_statement": {
-      "patterns": [
-        {
-          "match": "\\s+(?=match\\b)"
-        },
-        {
-          "begin": "\\bmatch\\b",
-          "beginCaptures": {
-            "0": {
-              "name": "keyword.control.match.php"
-            }
-          },
-          "end": "}|(?=\\?>)",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.section.match-block.end.bracket.curly.php"
-            }
-          },
-          "name": "meta.match-statement.php",
-          "patterns": [
-            {
-              "begin": "\\(",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.definition.match-expression.begin.bracket.round.php"
-                }
-              },
-              "end": "\\)|(?=\\?>)",
-              "endCaptures": {
-                "0": {
-                  "name": "punctuation.definition.match-expression.end.bracket.round.php"
-                }
-              },
-              "patterns": [
-                {
-                  "include": "$self"
-                }
-              ]
-            },
-            {
-              "begin": "{",
-              "beginCaptures": {
-                "0": {
-                  "name": "punctuation.definition.section.match-block.begin.bracket.curly.php"
-                }
-              },
-              "end": "(?=}|\\?>)",
-              "patterns": [
-                {
-                  "match": "=>",
-                  "name": "keyword.definition.arrow.php"
-                },
-                {
-                  "include": "$self"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    "use-inner": {
-      "patterns": [
-        {
-          "include": "#comments"
-        },
-        {
-          "begin": "(?i)\\b(as)\\s+",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.other.use-as.php"
-            }
-          },
-          "end": "(?i)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*",
-          "endCaptures": {
-            "0": {
-              "name": "entity.other.alias.php"
-            }
-          }
-        },
-        {
-          "include": "#class-name"
-        },
-        {
-          "match": ",",
-          "name": "punctuation.separator.delimiter.php"
-        }
-      ]
-    },
-    "var_basic": {
-      "patterns": [
-        {
-          "match": "(?i)(\\$+)[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*",
-          "name": "variable.other.php",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.variable.php"
-            }
-          }
-        }
-      ]
-    },
-    "var_global": {
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.variable.php"
-        }
-      },
-      "match": "(\\$)((_(COOKIE|FILES|GET|POST|REQUEST))|arg(v|c))\\b",
-      "name": "variable.other.global.php"
-    },
-    "var_global_safer": {
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.variable.php"
-        }
-      },
-      "match": "(\\$)((GLOBALS|_(ENV|SERVER|SESSION)))",
-      "name": "variable.other.global.safer.php"
-    },
-    "var_language": {
-      "match": "(\\$)this\\b",
-      "name": "variable.language.this.php",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.variable.php"
-        }
-      }
-    },
-    "variable-name": {
-      "patterns": [
-        {
-          "include": "#var_global"
-        },
-        {
-          "include": "#var_global_safer"
-        },
-        {
-          "captures": {
-            "1": {
-              "name": "variable.other.php"
-            },
-            "2": {
-              "name": "punctuation.definition.variable.php"
-            },
-            "4": {
-              "name": "keyword.operator.class.php"
-            },
-            "5": {
-              "name": "variable.other.property.php"
-            },
-            "6": {
-              "name": "punctuation.section.array.begin.php"
-            },
-            "7": {
-              "name": "constant.numeric.index.php"
-            },
-            "8": {
-              "name": "variable.other.index.php"
-            },
-            "9": {
-              "name": "punctuation.definition.variable.php"
-            },
-            "10": {
-              "name": "string.unquoted.index.php"
-            },
-            "11": {
-              "name": "punctuation.section.array.end.php"
-            }
-          },
-          "match": "(?xi)\n((\\$)(?<name>[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))\\s*\n(?:\n  (\\??->)\\s*(\\g<name>)\n  |\n  (\\[)(?:(\\d+)|((\\$)\\g<name>)|([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*))(\\])\n)?"
-        },
-        {
-          "captures": {
-            "1": {
-              "name": "variable.other.php"
-            },
-            "2": {
-              "name": "punctuation.definition.variable.php"
-            },
-            "4": {
-              "name": "punctuation.definition.variable.php"
-            }
-          },
-          "match": "(?i)((\\${)(?<name>[a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)(}))"
-        }
-      ]
-    },
-    "variables": {
-      "patterns": [
-        {
-          "include": "#var_language"
-        },
-        {
-          "include": "#var_global"
-        },
-        {
-          "include": "#var_global_safer"
-        },
-        {
-          "include": "#var_basic"
-        },
-        {
-          "begin": "\\${(?=.*?})",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.variable.php"
-            }
-          },
-          "end": "}",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.variable.php"
-            }
-          },
-          "patterns": [
-            {
-              "include": "$self"
-            }
-          ]
-        }
-      ]
-    },
-    "ternary_shorthand": {
-      "match": "\\?:",
-      "name": "keyword.operator.ternary.php"
-    },
-    "ternary_expression": {
-      "begin": "\\?",
-      "beginCaptures": {
-        "0": {
-          "name": "keyword.operator.ternary.php"
-        }
-      },
-      "end": "(?<!:):(?!:)",
-      "endCaptures": {
-        "0": {
-          "name": "keyword.operator.ternary.php"
-        }
-      },
-      "patterns": [
-        {
-          "match": "(?i)^\\s*([a-z_\\x{7f}-\\x{10ffff}][a-z0-9_\\x{7f}-\\x{10ffff}]*)\\s*(?=:(?!:))",
-          "captures": {
-            "1": {
-              "patterns": [
-                {
-                  "include": "$self"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "include": "$self"
-        }
-      ]
-    },
-    "null_coalescing": {
-      "match": "\\?\\?",
-      "name": "keyword.operator.null-coalescing.php"
     }
   }
 }
