@@ -4729,7 +4729,7 @@
       }
     ]
   # Keep quoted-host group ordering centralized. These lists are mostly wired
-  # through one wrapper each, but inlining them would duplicate a large,
+  # through one wrapper each, and inlining them would duplicate a large,
   # host-specific precedence contract across multiple group entries.
   'regex-double-quoted-groups-common':
     'patterns': [
