@@ -1279,23 +1279,23 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][4]).toEqual value: '\\u{21}', scopes: heredocRegexpScope.concat ['constant.character.escape.unicode.php']
             expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
 
-          it 'should keep transported PHP octal and simple escapes PHP-first in REGEX heredoc bodies', ->
+          it 'should keep transported PHP octal and basic escapes PHP-first in REGEX heredoc bodies', ->
+            basicEscapes = ['n', 'r', 't', 'v', 'e', 'f', '$']
             lines = grammar.tokenizeLines [
               '$r = <<<REGEX'
-              '/' + '\\'.repeat(3) + '1' + '\\'.repeat(3) + 'n' + '\\'.repeat(3) + 'v' + '\\'.repeat(3) + '$/'
+              '/' + '\\'.repeat(3) + '1' + basicEscapes.map((char) -> '\\'.repeat(3) + char).join('') + '/'
               'REGEX;'
             ].join "\n"
 
             expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
             expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
             expect(lines[1][2]).toEqual value: '\\1', scopes: heredocRegexpScope.concat ['constant.character.escape.octal.php']
-            expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][4]).toEqual value: '\\n', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][5]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][6]).toEqual value: '\\v', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][7]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][8]).toEqual value: '\\$', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
+            offset = 3
+            for char in basicEscapes
+              expect(lines[1][offset]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+              expect(lines[1][offset + 1]).toEqual value: '\\' + char, scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+              offset += 2
+            expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
 
           it 'should tokenize decoded octal zero in REGEX heredoc bodies', ->
             lines = grammar.tokenizeLines [
@@ -3278,34 +3278,90 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[2][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[2][7]).toEqual value: '/', scopes: heredocRegexpScope
 
-    it 'tokenizes closed malformed raw \\k/\\g forms as invalid in REGEXP nowdoc', ->
+    it 'tokenizes every closed malformed raw \\k form as invalid in REGEXP nowdoc', ->
+      invalidKForms = ['\\k{}', '\\k{1}', '\\k<>', '\\k<1>', '\\k\'\'', '\\k\'1\'']
       lines = grammar.tokenizeLines [
         "$r = <<<'REGEXP'"
-        '/\\k{}\\k{1}\\g{}\\g{1x}/'
+        '/' + invalidKForms.join('') + '/'
         'REGEXP;'
       ].join "\n"
 
       expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
-      expect(lines[1][1]).toEqual value: '\\k{}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
-      expect(lines[1][2]).toEqual value: '\\k{1}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
-      expect(lines[1][3]).toEqual value: '\\g{}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
-      expect(lines[1][4]).toEqual value: '\\g{1x}', scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
-      expect(lines[1][5]).toEqual value: '/', scopes: nowdocRegexpScope
+      offset = 1
+      for invalidForm in invalidKForms
+        expect(lines[1][offset]).toEqual value: invalidForm, scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+        offset += 1
+      expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
 
-    it 'tokenizes closed malformed decoded \\k/\\g forms as invalid in REGEX heredoc', ->
-      lines = grammar.tokenizeLines """
-        $r = <<<REGEXP
-        /\\\\k{}\\\\k{1}\\\\g{}\\\\g{1x}/
-        REGEXP;
-      """
+    it 'tokenizes every closed malformed raw \\g form as invalid in REGEXP nowdoc', ->
+      invalidGForms = [
+        '\\g{}'
+        '\\g{+}'
+        '\\g{1x}'
+        '\\g{#}'
+        '\\g<>'
+        '\\g<+>'
+        '\\g<1x>'
+        '\\g<#>'
+        '\\g\'\''
+        '\\g\'+\''
+        '\\g\'1x\''
+        '\\g\'#\''
+      ]
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/' + invalidGForms.join('') + '/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      offset = 1
+      for invalidForm in invalidGForms
+        expect(lines[1][offset]).toEqual value: invalidForm, scopes: regexpInvalidEscapeScopes(nowdocRegexpScope)
+        offset += 1
+      expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'tokenizes every closed malformed decoded \\k form as invalid in REGEX heredoc', ->
+      invalidKPayloads = ['k{}', 'k{1}', 'k<>', 'k<1>', 'k\'\'', 'k\'1\'']
+      lines = grammar.tokenizeLines [
+        '$r = <<<REGEXP'
+        '/' + invalidKPayloads.map((payload) -> '\\'.repeat(2) + payload).join('') + '/'
+        'REGEXP;'
+      ].join "\n"
 
       expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-      expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
-      expect(lines[1][2]).toEqual value: 'k{}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
-      expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
-      expect(lines[1][4]).toEqual value: 'k{1}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
-      expect(lines[1][5]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
-      expect(lines[1][6]).toEqual value: 'g{}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
-      expect(lines[1][7]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
-      expect(lines[1][8]).toEqual value: 'g{1x}', scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
-      expect(lines[1][9]).toEqual value: '/', scopes: heredocRegexpScope
+      offset = 1
+      for payload in invalidKPayloads
+        expect(lines[1][offset]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: payload, scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+        offset += 2
+      expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'tokenizes every closed malformed decoded \\g form as invalid in REGEX heredoc', ->
+      invalidGPayloads = [
+        'g{}'
+        'g{+}'
+        'g{1x}'
+        'g{#}'
+        'g<>'
+        'g<+>'
+        'g<1x>'
+        'g<#>'
+        'g\'\''
+        'g\'+\''
+        'g\'1x\''
+        'g\'#\''
+      ]
+      lines = grammar.tokenizeLines [
+        '$r = <<<REGEXP'
+        '/' + invalidGPayloads.map((payload) -> '\\'.repeat(2) + payload).join('') + '/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      offset = 1
+      for payload in invalidGPayloads
+        expect(lines[1][offset]).toEqual value: '\\\\', scopes: regexpDecodedInvalidTransportScopes(heredocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: payload, scopes: regexpInvalidEscapeScopes(heredocRegexpScope)
+        offset += 2
+      expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
