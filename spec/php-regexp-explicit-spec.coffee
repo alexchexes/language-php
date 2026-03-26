@@ -1677,6 +1677,31 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        if sourceSurface is 'raw'
+          it 'should tokenize raw two-digit hex escapes in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/\\x41\\xAf/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\x41', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+            expect(lines[1][2]).toEqual value: '\\xAf', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+            expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should tokenize raw braced hex escapes in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/\\x{4A}\\x{1F600}/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\x{4A}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+            expect(lines[1][2]).toEqual value: '\\x{1F600}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+            expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
+
         it "should tokenize Unicode code point escapes inside character classes in #{description}", ->
           body = if sourceSurface is 'raw' then '/[\\N{U+41}]/' else '/[\\\\N{U+41}]/'
           lines = grammar.tokenizeLines """
