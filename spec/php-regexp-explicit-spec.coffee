@@ -1245,6 +1245,82 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        if sourceSurface is 'raw'
+          it 'should tokenize the full raw named backreference surface in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              "/\\k<word>\\k'word'\\k{word}\\g{word}/"
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+
+            expect(lines[1][1]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+            expect(lines[1][2]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][3]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+            expect(lines[1][4]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][5]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+            expect(lines[1][6]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][7]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+            expect(lines[1][8]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            for [offset, leader] in [[9, '\\k'], [13, '\\g']]
+              expect(lines[1][offset]).toEqual value: leader, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 3]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][17]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should tokenize the full raw \\g numeric backreference and subroutine surface in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              "/\\g1\\g+1\\g-1\\g{1}\\g{+1}\\g{-1}\\g<word>\\g'word'\\g<1>\\g<+1>\\g<-1>\\g'1'\\g'+1'\\g'-1'/"
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            offset = 1
+
+            for payload in ['1', '+1', '-1']
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+              expect(lines[1][offset + 1]).toEqual value: payload, scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+              offset += 2
+
+            for payload in ['1', '+1', '-1']
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+              expect(lines[1][offset + 1]).toEqual value: '{', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: '}', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
+              offset += 4
+
+            for [beginPunctuation, payload, endPunctuation] in [
+              ['<', 'word', '>']
+              ['\'', 'word', '\'']
+            ]
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedSubroutineScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpNamedSubroutineNameScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+              offset += 4
+
+            for [beginPunctuation, payload, endPunctuation] in [
+              ['<', '1', '>']
+              ['<', '+1', '>']
+              ['<', '-1', '>']
+              ['\'', '1', '\'']
+              ['\'', '+1', '\'']
+              ['\'', '-1', '\'']
+            ]
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpSubroutineScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: payload, scopes: regexpSubroutineScopes(nowdocRegexpScope).concat ['constant.numeric.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+              offset += 4
+
+            expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
         if sourceSurface is 'interpreted'
           it 'should keep single-backslash overlapping escapes PHP-first in REGEX heredoc', ->
             lines = grammar.tokenizeLines """
