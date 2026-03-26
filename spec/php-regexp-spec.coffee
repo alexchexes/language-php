@@ -1476,6 +1476,32 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[19]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(tokens[20]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should keep escaped alternation and quantifiers distinct from real operators in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine "\"/" + "\\|" + "\\?" + "\\+" + "\\*" + "a?b+c*" + "/\""
+      singleQuoted = grammar.tokenizeLine "'/" + "\\|" + "\\?" + "\\+" + "\\*" + "a?b+c*" + "/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\|', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\?', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\+', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '\\*', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[6]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[7]).toEqual value: '?', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(doubleQuoted.tokens[8]).toEqual value: 'b', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[9]).toEqual value: '+', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(doubleQuoted.tokens[10]).toEqual value: 'c', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[11]).toEqual value: '*', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+
+      expect(singleQuoted.tokens[2]).toEqual value: '\\|', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: '\\?', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\+', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[5]).toEqual value: '\\*', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[6]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[7]).toEqual value: '?', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(singleQuoted.tokens[8]).toEqual value: 'b', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[9]).toEqual value: '+', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(singleQuoted.tokens[10]).toEqual value: 'c', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[11]).toEqual value: '*', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+
     it 'should tokenize raw octal escapes in single quoted regexes', ->
       {tokens} = grammar.tokenizeLine "'/\\0\\00\\000\\o{141}/'"
 

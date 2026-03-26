@@ -2579,6 +2579,28 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should keep escaped alternation and quantifiers distinct from real operators in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /\\|\\?\\+\\*a?b+c*/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '\\|', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][2]).toEqual value: '\\?', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][3]).toEqual value: '\\+', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][4]).toEqual value: '\\*', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][5]).toEqual value: 'a', scopes: regexScope
+          expect(lines[1][6]).toEqual value: '?', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][7]).toEqual value: 'b', scopes: regexScope
+          expect(lines[1][8]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][9]).toEqual value: 'c', scopes: regexScope
+          expect(lines[1][10]).toEqual value: '*', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][11]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should tokenize quoted literals in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
