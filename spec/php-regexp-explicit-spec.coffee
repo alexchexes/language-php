@@ -1056,6 +1056,31 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should accept Unicode letters and decimal digits in named groups and conditionals in #{description}", ->
+          unicodeName = 'Ж١'
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?<#{unicodeName}>a)(?'#{unicodeName}'a)(?P<#{unicodeName}>a)(?(<#{unicodeName}>)a|b)(?('#{unicodeName}')a|b)(?(R&#{unicodeName})a|b)(?(#{unicodeName})a|b)/
+            #{label};
+          """
+
+          namedTokens = lines[1].filter (token) ->
+            token.value is unicodeName and token.scopes.includes 'variable.other.regexp.php'
+
+          expect(namedTokens.length).toBe 7
+
+        it "should keep invalid Unicode-start named groups and conditionals out of name scopes in #{description}", ->
+          startDigitName = '١foo'
+          emojiName = '💩'
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?<#{startDigitName}>a)(?'#{emojiName}'a)(?(#{startDigitName})a|b)(?(<#{emojiName}>)a|b)(?(R&#{startDigitName})a|b)/
+            #{label};
+          """
+
+          expect(lines[1].some((token) -> token.value.includes(startDigitName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
+          expect(lines[1].some((token) -> token.value.includes(emojiName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
+
         it "should tokenize atomic groups in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -3753,7 +3778,7 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[2][7]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'tokenizes every closed malformed raw \\k form as invalid in REGEXP nowdoc', ->
-      invalidKForms = ['\\k{}', '\\k{1}', '\\k{١foo}', '\\k<>', '\\k<1>', '\\k<💩>', '\\k\'\'', '\\k\'١foo\'']
+      invalidKForms = ['\\k{}', '\\k{1}', '\\k{١foo}', '\\k{a💩}', '\\k<>', '\\k<1>', '\\k<💩>', '\\k<a💩>', '\\k\'\'', '\\k\'١foo\'', '\\k\'a💩\'']
       lines = grammar.tokenizeLines [
         "$r = <<<'REGEXP'"
         '/' + invalidKForms.join('') + '/'
@@ -3773,14 +3798,17 @@ describe 'PHP explicit regexp grammar', ->
         '\\g{+}'
         '\\g{1x}'
         '\\g{١foo}'
+        '\\g{a💩}'
         '\\g<>'
         '\\g<+>'
         '\\g<1x>'
         '\\g<💩>'
+        '\\g<a💩>'
         '\\g\'\''
         '\\g\'+\''
         '\\g\'1x\''
         '\\g\'١foo\''
+        '\\g\'a💩\''
       ]
       lines = grammar.tokenizeLines [
         "$r = <<<'REGEXP'"
@@ -3796,7 +3824,7 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'tokenizes every closed malformed decoded \\k form as invalid in REGEX heredoc', ->
-      invalidKPayloads = ['k{}', 'k{1}', 'k{١foo}', 'k<>', 'k<1>', 'k<💩>', 'k\'\'', 'k\'١foo\'']
+      invalidKPayloads = ['k{}', 'k{1}', 'k{١foo}', 'k{a💩}', 'k<>', 'k<1>', 'k<💩>', 'k<a💩>', 'k\'\'', 'k\'١foo\'', 'k\'a💩\'']
       lines = grammar.tokenizeLines [
         '$r = <<<REGEXP'
         '/' + invalidKPayloads.map((payload) -> '\\'.repeat(2) + payload).join('') + '/'
@@ -3817,14 +3845,17 @@ describe 'PHP explicit regexp grammar', ->
         'g{+}'
         'g{1x}'
         'g{١foo}'
+        'g{a💩}'
         'g<>'
         'g<+>'
         'g<1x>'
         'g<💩>'
+        'g<a💩>'
         'g\'\''
         'g\'+\''
         'g\'1x\''
         'g\'١foo\''
+        'g\'a💩\''
       ]
       lines = grammar.tokenizeLines [
         '$r = <<<REGEXP'
