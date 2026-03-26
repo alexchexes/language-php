@@ -5535,7 +5535,7 @@
       "match": "\\\\[kg](\\{)([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\})"
     },
     "regex-invalid-k-reference-closed-explicit": {
-      "match": "(?x)\n\\\\k\n(?:\n  # Empty or malformed braced forms.\n  \\{\\}\n  | \\{ [^_\\p{L}] [^}]* \\}\n  # Empty or malformed angle-bracket forms.\n  | <>\n  | < [^_\\p{L}] [^>]* >\n  # Empty or malformed apostrophe-delimited forms.\n  | ''\n  | ' [^_\\p{L}] [^']* '\n)",
+      "match": "(?x)\n\\\\k\n(?:\n  # Any closed form that is not a valid named reference.\n  \\{ (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* \\} ) [^}]* \\}\n  | < (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* > ) [^>]* >\n  | ' (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* ' ) [^']* '\n)",
       "name": "invalid.illegal.escape.regexp.php"
     },
     "regex-backreference-g-numeric-explicit": {
@@ -5567,7 +5567,7 @@
       "match": "\\\\g(\\{)([+-]?[0-9]+)(\\})"
     },
     "regex-invalid-g-reference-closed-explicit": {
-      "match": "(?x)\n\\\\g\n(?:\n  # Empty, sign-only, or malformed braced forms.\n  \\{\\}\n  | \\{ [+-]? \\}\n  | \\{ [+-]? [0-9]+ [^}]+ \\}\n  | \\{ [^_\\p{L}0-9+-] [^}]* \\}\n  # Empty, sign-only, or malformed angle-bracket forms.\n  | <>\n  | < [+-]? >\n  | < [+-]? [0-9]+ [^>]+ >\n  | < [^_\\p{L}0-9+-] [^>]* >\n  # Empty, sign-only, or malformed apostrophe-delimited forms.\n  | ''\n  | ' [+-]? '\n  | ' [+-]? [0-9]+ [^']+ '\n  | ' [^_\\p{L}0-9+-] [^']* '\n)",
+      "match": "(?x)\n\\\\g\n(?:\n  # Any closed form that is neither a valid numeric nor named reference.\n  \\{ (?! [+-]? [0-9]+ \\} | [_\\p{L}] [_\\p{L}\\p{Nd}]* \\} ) [^}]* \\}\n  | < (?! [+-]? [0-9]+ > | [_\\p{L}] [_\\p{L}\\p{Nd}]* > ) [^>]* >\n  | ' (?! [+-]? [0-9]+ ' | [_\\p{L}] [_\\p{L}\\p{Nd}]* ' ) [^']* '\n)",
       "name": "invalid.illegal.escape.regexp.php"
     },
     "regex-subroutine-g-angle-explicit": {
@@ -5913,7 +5913,7 @@
           "name": "invalid.illegal.escape.regexp.php"
         }
       },
-      "match": "(?x)\n((\\\\\\\\))\n(\n  k\n  (?:\n    \\{\\}\n    | \\{ [^_\\p{L}] [^}]* \\}\n    | <>\n    | < [^_\\p{L}] [^>]* >\n    | ''\n    | ' [^_\\p{L}] [^']* '\n  )\n)"
+      "match": "(?x)\n((\\\\\\\\))\n(\n  k\n  (?:\n    \\{ (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* \\} ) [^}]* \\}\n    | < (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* > ) [^>]* >\n    | ' (?! [_\\p{L}] [_\\p{L}\\p{Nd}]* ' ) [^']* '\n  )\n)"
     },
     "regex-decoded-backreference-g-numeric-redundant-interpreted": {
       "captures": {
@@ -5967,7 +5967,7 @@
           "name": "invalid.illegal.escape.regexp.php"
         }
       },
-      "match": "(?x)\n((\\\\\\\\))\n(\n  g\n  (?:\n    \\{\\}\n    | \\{ [+-]? \\}\n    | \\{ [+-]? [0-9]+ [^}]+ \\}\n    | \\{ [^_\\p{L}0-9+-] [^}]* \\}\n    | <>\n    | < [+-]? >\n    | < [+-]? [0-9]+ [^>]+ >\n    | < [^_\\p{L}0-9+-] [^>]* >\n    | ''\n    | ' [+-]? '\n    | ' [+-]? [0-9]+ [^']+ '\n    | ' [^_\\p{L}0-9+-] [^']* '\n  )\n)"
+      "match": "(?x)\n((\\\\\\\\))\n(\n  g\n  (?:\n    \\{ (?! [+-]? [0-9]+ \\} | [_\\p{L}] [_\\p{L}\\p{Nd}]* \\} ) [^}]* \\}\n    | < (?! [+-]? [0-9]+ > | [_\\p{L}] [_\\p{L}\\p{Nd}]* > ) [^>]* >\n    | ' (?! [+-]? [0-9]+ ' | [_\\p{L}] [_\\p{L}\\p{Nd}]* ' ) [^']* '\n  )\n)"
     },
     "regex-decoded-subroutine-g-angle-redundant-interpreted": {
       "captures": {
@@ -7901,7 +7901,7 @@
       ]
     },
     "regex-group-conditional-named-angle-double-quoted": {
-      "begin": "(\\()(\\?)(\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))",
+      "begin": "(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -7940,7 +7940,7 @@
       ]
     },
     "regex-group-conditional-named-single-quoted-double-quoted": {
-      "begin": "(\\()(\\?)(\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))",
+      "begin": "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8048,7 +8048,7 @@
       ]
     },
     "regex-group-conditional-recursion-named-double-quoted": {
-      "begin": "(\\()(\\?)(\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()(R&)([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8150,7 +8150,7 @@
       ]
     },
     "regex-group-conditional-named-bare-double-quoted": {
-      "begin": "(\\()(\\?)(\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8216,7 +8216,7 @@
       ]
     },
     "regex-group-conditional-named-angle-single-quoted": {
-      "begin": "(\\()(\\?)(\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))",
+      "begin": "(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8255,7 +8255,7 @@
       ]
     },
     "regex-group-conditional-named-single-quoted-escaped": {
-      "begin": "(\\()(\\?)(\\()((\\\\'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((\\\\'))(\\))",
+      "begin": "(\\()(\\?)(\\()((\\\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\\\'))(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8369,7 +8369,7 @@
       ]
     },
     "regex-group-conditional-recursion-named-single-quoted": {
-      "begin": "(\\()(\\?)(\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()(R&)([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8471,7 +8471,7 @@
       ]
     },
     "regex-group-conditional-named-bare-single-quoted": {
-      "begin": "(\\()(\\?)(\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8654,7 +8654,7 @@
       ]
     },
     "regex-group-named-angle-double-quoted": {
-      "begin": "(\\()((\\?<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8690,7 +8690,7 @@
       ]
     },
     "regex-group-named-angle-single-quoted": {
-      "begin": "(\\()((\\?<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8726,7 +8726,7 @@
       ]
     },
     "regex-group-named-single-quoted-double-quoted": {
-      "begin": "(\\()((\\?'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(('))",
+      "begin": "(\\()((\\?'))([_\\p{L}][_\\p{L}\\p{Nd}]*)(('))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8762,7 +8762,7 @@
       ]
     },
     "regex-group-named-single-quoted-escaped": {
-      "begin": "(\\()((\\?))((\\\\'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((\\\\'))",
+      "begin": "(\\()((\\?))((\\\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\\\'))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8804,7 +8804,7 @@
       ]
     },
     "regex-group-named-pcre-double-quoted": {
-      "begin": "(\\()((\\?P<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?P<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -8840,7 +8840,7 @@
       ]
     },
     "regex-group-named-pcre-single-quoted": {
-      "begin": "(\\()((\\?P<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?P<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9174,7 +9174,7 @@
       ]
     },
     "regex-group-conditional-named-angle-heredoc": {
-      "begin": "(\\()(\\?)(\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))",
+      "begin": "(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9213,7 +9213,7 @@
       ]
     },
     "regex-group-conditional-named-single-quoted-heredoc": {
-      "begin": "(\\()(\\?)(\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))",
+      "begin": "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9321,7 +9321,7 @@
       ]
     },
     "regex-group-conditional-recursion-named-heredoc": {
-      "begin": "(\\()(\\?)(\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()(R&)([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9423,7 +9423,7 @@
       ]
     },
     "regex-group-conditional-named-bare-heredoc": {
-      "begin": "(\\()(\\?)(\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9489,7 +9489,7 @@
       ]
     },
     "regex-group-conditional-named-angle-nowdoc": {
-      "begin": "(\\()(\\?)(\\()(<)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))(\\))",
+      "begin": "(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9528,7 +9528,7 @@
       ]
     },
     "regex-group-conditional-named-single-quoted-nowdoc": {
-      "begin": "(\\()(\\?)(\\()(')([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\')(\\))",
+      "begin": "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9636,7 +9636,7 @@
       ]
     },
     "regex-group-conditional-recursion-named-nowdoc": {
-      "begin": "(\\()(\\?)(\\()(R&)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()(R&)([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9738,7 +9738,7 @@
       ]
     },
     "regex-group-conditional-named-bare-nowdoc": {
-      "begin": "(\\()(\\?)(\\()([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))",
+      "begin": "(\\()(\\?)(\\()([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9921,7 +9921,7 @@
       ]
     },
     "regex-group-named-angle-heredoc": {
-      "begin": "(\\()((\\?<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9957,7 +9957,7 @@
       ]
     },
     "regex-group-named-angle-nowdoc": {
-      "begin": "(\\()((\\?<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -9993,7 +9993,7 @@
       ]
     },
     "regex-group-named-single-quoted-heredoc": {
-      "begin": "(\\()((\\?'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(('))",
+      "begin": "(\\()((\\?'))([_\\p{L}][_\\p{L}\\p{Nd}]*)(('))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -10029,7 +10029,7 @@
       ]
     },
     "regex-group-named-single-quoted-nowdoc": {
-      "begin": "(\\()((\\?'))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(('))",
+      "begin": "(\\()((\\?'))([_\\p{L}][_\\p{L}\\p{Nd}]*)(('))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -10065,7 +10065,7 @@
       ]
     },
     "regex-group-named-pcre-heredoc": {
-      "begin": "(\\()((\\?P<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?P<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
@@ -10101,7 +10101,7 @@
       ]
     },
     "regex-group-named-pcre-nowdoc": {
-      "begin": "(\\()((\\?P<))([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)((>))",
+      "begin": "(\\()((\\?P<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.group.regexp.php"
