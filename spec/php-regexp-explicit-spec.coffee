@@ -2772,6 +2772,54 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[3][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[3][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should allow only the conservative explicit # comment starters in #{description}", ->
+          allowedLines = [
+            'a # note'
+            'b # 1'
+            'c # _'
+            'd # .'
+            'e # ,'
+            'f # ?'
+            'g # !'
+            'h # -'
+            'i # é'
+            "j # \tnote"
+            'k #'
+          ]
+
+          for commentLine in allowedLines
+            lines = grammar.tokenizeLines """
+              $r = #{opener}
+              #{commentLine}
+              z
+              #{label};
+            """
+
+            expect(lines[1].some((token) -> token.scopes.includes 'comment.line.number-sign.php')).toBe true
+            expect(lines[2][0]).toEqual value: 'z', scopes: regexScope
+
+        it "should keep disallowed explicit # starters plain in #{description}", ->
+          disallowedLines = [
+            'a# note'
+            'b #note'
+            'c # :'
+            'd # /'
+            'e # ='
+            'f # "'
+            "g # '"
+          ]
+
+          for commentLine in disallowedLines
+            lines = grammar.tokenizeLines """
+              $r = #{opener}
+              #{commentLine}
+              z
+              #{label};
+            """
+
+            expect(lines[1].some((token) -> token.scopes.includes 'comment.line.number-sign.php')).toBe false
+            expect(lines[2][0]).toEqual value: 'z', scopes: regexScope
+
     it 'should tokenize interpolation inside REGEXP heredoc groups', ->
       lines = grammar.tokenizeLines '''
         $r = <<<REGEXP
