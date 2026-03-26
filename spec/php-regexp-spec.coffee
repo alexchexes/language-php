@@ -210,6 +210,37 @@ describe 'PHP quoted regexp grammar', ->
       expect(doubleQuoted.tokens[7]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[8]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
+    it 'should keep malformed braced quantifier text plain in quoted regex bodies', ->
+      singleQuotedTokens = grammar.tokenizeLine("'/a{}b{,}c{a}d{1a}e{1,2,3}f{,1x}/'").tokens
+      doubleQuotedTokens = grammar.tokenizeLine("\"/a{}b{,}c{a}d{1a}e{1,2,3}f{,1x}/\"").tokens
+      quotedHosts = [
+        [singleQuotedTokens, quotedSingleRegexpScope, '\'']
+        [doubleQuotedTokens, quotedDoubleRegexpScope, '"']
+      ]
+
+      for [tokens, baseScope, quote] in quotedHosts
+        expect(tokens[0]).toEqual value: quote, scopes: regexpWrapperBeginQuoteScopes(baseScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(baseScope)
+        expect(tokens[2]).toEqual value: 'a{}b{,}c{a}d{1a}e{1,2,3}f{,1x}', scopes: baseScope
+        expect(tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(baseScope)
+        expect(tokens[4]).toEqual value: quote, scopes: regexpWrapperEndQuoteScopes(baseScope)
+
+    it 'should let + quantify a literal opening brace in quoted regex bodies', ->
+      doubleQuoted = grammar.tokenizeLine '"/a{+1}/"'
+      singleQuoted = grammar.tokenizeLine "'/a{+1}/'"
+      doubleQuotedMinus = grammar.tokenizeLine '"/a{-1}/"'
+      singleQuotedMinus = grammar.tokenizeLine "'/a{-1}/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: 'a{', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[3]).toEqual value: '+', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '1}', scopes: quotedDoubleRegexpScope
+      expect(singleQuoted.tokens[2]).toEqual value: 'a{', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[3]).toEqual value: '+', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '1}', scopes: quotedSingleRegexpScope
+
+      expect(doubleQuotedMinus.tokens[2]).toEqual value: 'a{-1}', scopes: quotedDoubleRegexpScope
+      expect(singleQuotedMinus.tokens[2]).toEqual value: 'a{-1}', scopes: quotedSingleRegexpScope
+
     it 'should tokenize interpolation inside double quoted regex bodies', ->
       {tokens} = grammar.tokenizeLine "\"/($value)/\""
 
@@ -1501,6 +1532,29 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[9]).toEqual value: '+', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
       expect(singleQuoted.tokens[10]).toEqual value: 'c', scopes: quotedSingleRegexpScope
       expect(singleQuoted.tokens[11]).toEqual value: '*', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+
+    it 'should keep anchors distinct from fallback operator chars in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/^a$+*/"'
+      singleQuoted = grammar.tokenizeLine "'/^a$+*/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '^', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: 'a', scopes: quotedDoubleRegexpScope
+      expect(doubleQuoted.tokens[4]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[5]).toEqual value: '+', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(doubleQuoted.tokens[6]).toEqual value: '*', scopes: quotedDoubleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+
+      expect(singleQuoted.tokens[2]).toEqual value: '^', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: 'a', scopes: quotedSingleRegexpScope
+      expect(singleQuoted.tokens[4]).toEqual value: '$', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[5]).toEqual value: '+', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+      expect(singleQuoted.tokens[6]).toEqual value: '*', scopes: quotedSingleRegexpScope.concat ['keyword.operator.quantifier.regexp.php']
+
+    it 'should keep escaped dots and anchors distinct after interpreted backslash transport in double quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/\\\\.$/"'
+
+      expect(tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(tokens[3]).toEqual value: '.', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(tokens[4]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
 
     it 'should tokenize raw octal escapes in single quoted regexes', ->
       {tokens} = grammar.tokenizeLine "'/\\0\\00\\000\\o{141}/'"

@@ -2601,6 +2601,23 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should keep anchors distinct from fallback operator chars in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /^a$+*/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '^', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
+          expect(lines[1][2]).toEqual value: 'a', scopes: regexScope
+          expect(lines[1][3]).toEqual value: '$', scopes: regexScope.concat ['keyword.control.anchor.regexp.php']
+          expect(lines[1][4]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][5]).toEqual value: '*', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][6]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should tokenize quoted literals in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -2683,6 +2700,32 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[1][13]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should keep malformed braced quantifier text plain in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /a{}b{,}c{a}d{1a}e{1,2,3}f{,1x}/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/a{}b{,}c{a}d{1a}e{1,2,3}f{,1x}/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should let + quantify a literal opening brace in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /a{+1}/
+            /a{-1}/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/a{', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '+', scopes: regexScope.concat ['keyword.operator.quantifier.regexp.php']
+          expect(lines[1][2]).toEqual value: '1}/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: '/a{-1}/', scopes: regexScope
+          expect(lines[3][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[3][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize simple quantifier variants in #{description}", ->
           lines = grammar.tokenizeLines """
