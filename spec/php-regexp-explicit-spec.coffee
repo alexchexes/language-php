@@ -2304,6 +2304,25 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][1]).toEqual value: '\\K', scopes: regexpControlKeywordScopes(nowdocRegexpScope)
             expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
 
+          it 'should tokenize representative raw literal-escape categories in REGEXP nowdoc', ->
+            body = '/' + '\\'.repeat(2) + '\\c~\\e\\f\\n\\r\\t\\;/'
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              body
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: '\\c~', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '\\e', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][4]).toEqual value: '\\f', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][5]).toEqual value: '\\n', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][6]).toEqual value: '\\r', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][7]).toEqual value: '\\t', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][8]).toEqual value: '\\;', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][9]).toEqual value: '/', scopes: nowdocRegexpScope
+
           it 'should tokenize the full raw anchor surface in REGEXP nowdoc', ->
             rawAnchors = ['\\b', '\\B', '\\A', '\\Z', '\\z', '\\G', '^', '$']
             lines = grammar.tokenizeLines [
@@ -3021,6 +3040,22 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][13]).toEqual value: '\\W', scopes: regexpCharacterClassClassEscapeScopes(nowdocRegexpScope)
       expect(lines[1][14]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
       expect(lines[1][15]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should tokenize representative raw class literal-escape categories in REGEXP nowdoc character classes', ->
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/[\\c~\\E\\;\\\\]/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\c~', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][3]).toEqual value: '\\E', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\;', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][5]).toEqual value: '\\\\', scopes: regexpCharacterClassEscapeScopes(nowdocRegexpScope)
+      expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'should tokenize raw \\N, \\o, \\p, and \\P as invalid in REGEXP nowdoc character classes', ->
       lines = grammar.tokenizeLines '''
