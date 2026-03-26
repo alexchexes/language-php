@@ -1186,6 +1186,23 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        if sourceSurface is 'raw'
+          it 'should tokenize raw numeric backreferences in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/\\1\\12\\123/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+            expect(lines[1][2]).toEqual value: '1', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+            expect(lines[1][3]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+            expect(lines[1][4]).toEqual value: '12', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+            expect(lines[1][5]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+            expect(lines[1][6]).toEqual value: '123', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+            expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
+
         it "should tokenize recursion and subroutine calls in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -1506,6 +1523,20 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][2]).toEqual value: '\\00', scopes: regexpOctalScopes(regexScope)
             expect(lines[1][3]).toEqual value: '\\000', scopes: regexpOctalScopes(regexScope)
             expect(lines[1][4]).toEqual value: '/', scopes: regexScope
+
+          it 'should tokenize the full raw octal-escape surface in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              '$r = <<<' + "'REGEXP'"
+              '/\\0\\07\\012\\o{141}/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+            expect(lines[1][1]).toEqual value: '\\0', scopes: regexpOctalScopes(regexScope)
+            expect(lines[1][2]).toEqual value: '\\07', scopes: regexpOctalScopes(regexScope)
+            expect(lines[1][3]).toEqual value: '\\012', scopes: regexpOctalScopes(regexScope)
+            expect(lines[1][4]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(regexScope)
+            expect(lines[1][5]).toEqual value: '/', scopes: regexScope
 
           it "should tokenize supported structural opener parity in #{description} from fixtures", ->
             structuralOpeners = [
