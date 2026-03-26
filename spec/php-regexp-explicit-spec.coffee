@@ -961,6 +961,40 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should allow default-PCRE2 punctuation-heavy verb labels in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/
+            #{label};
+          """
+          expectedVerbs = [
+            ['*:', 'foo-bar']
+            ['*MARK:', 'two words']
+            ['*COMMIT:', '1']
+            ['*SKIP:', '!done']
+            ['*THEN:', '💩']
+          ]
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for [verb, markLabel] in expectedVerbs
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: verb, scopes: regexpBacktrackingVerbScopes(regexScope, verb)
+            expect(lines[1][offset + 2]).toEqual value: markLabel, scopes: regexpGroupScopes(regexScope).concat ['variable.other.regexp.php']
+            expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 4
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+
+        it "should keep incomplete or empty named backtracking verbs plain in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(*MARK:)(*SKIP:two words/
+            #{label};
+          """
+
+          expect(lines[1].some((token) -> token.scopes.some((scope) -> scope.includes 'keyword.control.backtracking'))).toBe false
+          expect(lines[1].some((token) -> token.scopes.includes 'variable.other.regexp.php')).toBe false
+
         it "should tokenize start directives in #{description}", ->
           expectedDirectives = [
             '*LIMIT_DEPTH=10'
