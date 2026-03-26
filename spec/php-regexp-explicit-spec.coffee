@@ -1322,6 +1322,49 @@ describe 'PHP explicit regexp grammar', ->
 
             expect(lines[1][17]).toEqual value: '/', scopes: nowdocRegexpScope
 
+          it 'should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc', ->
+            unicodeName = 'Ж١'
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              "/\\k<#{unicodeName}>\\k'#{unicodeName}'\\k{#{unicodeName}}\\g<#{unicodeName}>\\g'#{unicodeName}'\\g{#{unicodeName}}(?&#{unicodeName})(?P=#{unicodeName})(?P>#{unicodeName})/"
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+
+            offset = 1
+            for [beginPunctuation, endPunctuation] in [['<', '>'], ['\'', '\''], ['{', '}']]
+              expect(lines[1][offset]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+              offset += 4
+
+            for [beginPunctuation, endPunctuation] in [['<', '>'], ['\'', '\'']]
+              expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedSubroutineScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedSubroutineNameScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+              offset += 4
+
+            expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+            expect(lines[1][offset + 1]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+            expect(lines[1][offset + 3]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+            offset += 4
+
+            for head in ['?&', '?P=', '?P>']
+              expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(nowdocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+              if head is '?P='
+                expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupScopes(nowdocRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+              else
+                expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: (if head is '?P=' then regexpGroupScopes(nowdocRegexpScope) else regexpGroupNamedSubroutineScopes(nowdocRegexpScope)).concat ['variable.other.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(nowdocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 4
+
+            expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
           it 'should tokenize the full raw \\g numeric backreference and subroutine surface in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines [
               "$r = <<<'REGEXP'"
@@ -2135,6 +2178,55 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][9]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
             expect(lines[1][10]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
             expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
+            expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+
+          it 'should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc', ->
+            unicodeName = 'Ж١'
+            lines = grammar.tokenizeLines """
+              $r = <<<REGEX
+              /\\\\k<#{unicodeName}>\\\\k{#{unicodeName}}\\\\g<#{unicodeName}>\\\\g{#{unicodeName}}(?&#{unicodeName})(?P=#{unicodeName})(?P>#{unicodeName})/
+              REGEX;
+            """
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+
+            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+            expect(lines[1][6]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+            expect(lines[1][11]).toEqual value: '\\\\', scopes: regexpDecodedNamedSubroutineTransportScopes(heredocRegexpScope)
+            expect(lines[1][16]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+
+            expect(lines[1][2]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+            expect(lines[1][3]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][4]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+            expect(lines[1][5]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][7]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+            expect(lines[1][8]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][9]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+            expect(lines[1][10]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][12]).toEqual value: 'g', scopes: regexpNamedSubroutineScopes(heredocRegexpScope)
+            expect(lines[1][13]).toEqual value: '<', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][14]).toEqual value: unicodeName, scopes: regexpNamedSubroutineNameScopes(heredocRegexpScope)
+            expect(lines[1][15]).toEqual value: '>', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][17]).toEqual value: 'g', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+            expect(lines[1][18]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][19]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+            expect(lines[1][20]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            offset = 21
+            for head in ['?&', '?P=', '?P>']
+              expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+              if head is '?P='
+                expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupScopes(heredocRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+              else
+                expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(heredocRegexpScope)
+              expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: (if head is '?P=' then regexpGroupScopes(heredocRegexpScope) else regexpGroupNamedSubroutineScopes(heredocRegexpScope)).concat ['variable.other.regexp.php']
+              expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+              offset += 4
+
+            expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
             expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
 
           it 'should tokenize decoded braced and g-style backreferences in REGEX heredoc', ->
@@ -3661,7 +3753,7 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[2][7]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'tokenizes every closed malformed raw \\k form as invalid in REGEXP nowdoc', ->
-      invalidKForms = ['\\k{}', '\\k{1}', '\\k<>', '\\k<1>', '\\k\'\'', '\\k\'1\'']
+      invalidKForms = ['\\k{}', '\\k{1}', '\\k{١foo}', '\\k<>', '\\k<1>', '\\k<💩>', '\\k\'\'', '\\k\'١foo\'']
       lines = grammar.tokenizeLines [
         "$r = <<<'REGEXP'"
         '/' + invalidKForms.join('') + '/'
@@ -3680,15 +3772,15 @@ describe 'PHP explicit regexp grammar', ->
         '\\g{}'
         '\\g{+}'
         '\\g{1x}'
-        '\\g{#}'
+        '\\g{١foo}'
         '\\g<>'
         '\\g<+>'
         '\\g<1x>'
-        '\\g<#>'
+        '\\g<💩>'
         '\\g\'\''
         '\\g\'+\''
         '\\g\'1x\''
-        '\\g\'#\''
+        '\\g\'١foo\''
       ]
       lines = grammar.tokenizeLines [
         "$r = <<<'REGEXP'"
@@ -3704,7 +3796,7 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'tokenizes every closed malformed decoded \\k form as invalid in REGEX heredoc', ->
-      invalidKPayloads = ['k{}', 'k{1}', 'k<>', 'k<1>', 'k\'\'', 'k\'1\'']
+      invalidKPayloads = ['k{}', 'k{1}', 'k{١foo}', 'k<>', 'k<1>', 'k<💩>', 'k\'\'', 'k\'١foo\'']
       lines = grammar.tokenizeLines [
         '$r = <<<REGEXP'
         '/' + invalidKPayloads.map((payload) -> '\\'.repeat(2) + payload).join('') + '/'
@@ -3724,15 +3816,15 @@ describe 'PHP explicit regexp grammar', ->
         'g{}'
         'g{+}'
         'g{1x}'
-        'g{#}'
+        'g{١foo}'
         'g<>'
         'g<+>'
         'g<1x>'
-        'g<#>'
+        'g<💩>'
         'g\'\''
         'g\'+\''
         'g\'1x\''
-        'g\'#\''
+        'g\'١foo\''
       ]
       lines = grammar.tokenizeLines [
         '$r = <<<REGEXP'
