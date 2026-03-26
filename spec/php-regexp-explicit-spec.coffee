@@ -2304,6 +2304,48 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][1]).toEqual value: '\\K', scopes: regexpControlKeywordScopes(nowdocRegexpScope)
             expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
 
+          it 'should tokenize the full raw anchor surface in REGEXP nowdoc', ->
+            rawAnchors = ['\\b', '\\B', '\\A', '\\Z', '\\z', '\\G', '^', '$']
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/' + rawAnchors.join('') + '/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            offset = 1
+            for anchor in rawAnchors
+              expect(lines[1][offset]).toEqual value: anchor, scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+              offset += 1
+            expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should tokenize the full raw structural-escape surface in REGEXP nowdoc', ->
+            rawEscapes = ['\\.', '\\$', '\\^', '\\[', '\\]', '\\{', '\\}']
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/' + rawEscapes.join('') + '/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            offset = 1
+            for escape in rawEscapes
+              expect(lines[1][offset]).toEqual value: escape, scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+              offset += 1
+            expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
+          it 'should tokenize raw escaped parentheses in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              '/\\(\\)/'
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+            expect(lines[1][1]).toEqual value: '\\(', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][2]).toEqual value: '\\)', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+            expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
+
           it 'should tokenize neutral non-alnum punctuation escapes in REGEXP nowdoc', ->
             # Build these raw nowdoc fixtures from pieces so CoffeeScript does not collapse the backslashes.
             rawLines = grammar.tokenizeLines ["$r = <<<'REGEXP'", '/\\;/', 'REGEXP;'].join "\n"
