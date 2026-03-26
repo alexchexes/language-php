@@ -790,9 +790,9 @@ describe 'PHP explicit regexp grammar', ->
             [
               ['?', regexpConditionalBeginKeywordScopes(regexScope)]
               ['(', regexpConditionalBeginPunctuationScopes(regexScope)]
-              ['<', regexpConditionalGroupScopes(regexScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+              ['<', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(regexScope), 'punctuation.definition.group.capture.begin.regexp.php')]
               ['word', regexpConditionalGroupScopes(regexScope).concat ['variable.other.regexp.php']]
-              ['>', regexpConditionalGroupScopes(regexScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+              ['>', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(regexScope), 'punctuation.definition.group.capture.end.regexp.php')]
               [')', regexpConditionalPunctuationScopes(regexScope)]
               ['ef', regexpConditionalGroupContentScopes(regexScope)]
               ['|', regexpConditionalGroupContentScopes(regexScope).concat ['keyword.operator.or.regexp.php']]
@@ -801,9 +801,9 @@ describe 'PHP explicit regexp grammar', ->
             [
               ['?', regexpConditionalBeginKeywordScopes(regexScope)]
               ['(', regexpConditionalBeginPunctuationScopes(regexScope)]
-              ['\'', regexpConditionalGroupScopes(regexScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+              ['\'', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(regexScope), 'punctuation.definition.group.capture.begin.regexp.php')]
               ['word', regexpConditionalGroupScopes(regexScope).concat ['variable.other.regexp.php']]
-              ['\'', regexpConditionalGroupScopes(regexScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+              ['\'', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(regexScope), 'punctuation.definition.group.capture.end.regexp.php')]
               [')', regexpConditionalPunctuationScopes(regexScope)]
               ['ij', regexpConditionalGroupContentScopes(regexScope)]
               ['|', regexpConditionalGroupContentScopes(regexScope).concat ['keyword.operator.or.regexp.php']]

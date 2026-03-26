@@ -2490,9 +2490,9 @@ describe 'PHP quoted regexp grammar', ->
         [
           ['?', regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)]
           ['(', regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)]
-          ['<', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+          ['<', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')]
           ['word', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']]
-          ['>', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+          ['>', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')]
           [')', regexpConditionalPunctuationScopes(quotedDoubleRegexpScope)]
           ['ef', regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)]
           ['|', regexpConditionalGroupContentScopes(quotedDoubleRegexpScope).concat ['keyword.operator.or.regexp.php']]
@@ -2501,9 +2501,9 @@ describe 'PHP quoted regexp grammar', ->
         [
           ['?', regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)]
           ['(', regexpConditionalBeginPunctuationScopes(quotedDoubleRegexpScope)]
-          ['\'', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+          ['\'', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')]
           ['word', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']]
-          ['\'', regexpConditionalGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+          ['\'', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')]
           [')', regexpConditionalPunctuationScopes(quotedDoubleRegexpScope)]
           ['ij', regexpConditionalGroupContentScopes(quotedDoubleRegexpScope)]
           ['|', regexpConditionalGroupContentScopes(quotedDoubleRegexpScope).concat ['keyword.operator.or.regexp.php']]
@@ -2582,9 +2582,9 @@ describe 'PHP quoted regexp grammar', ->
         [
           ['?', regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)]
           ['(', regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)]
-          ['<', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']]
+          ['<', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')]
           ['word', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']]
-          ['>', regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']]
+          ['>', regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')]
           [')', regexpConditionalPunctuationScopes(quotedSingleRegexpScope)]
           ['ef', regexpConditionalGroupContentScopes(quotedSingleRegexpScope)]
           ['|', regexpConditionalGroupContentScopes(quotedSingleRegexpScope).concat ['keyword.operator.or.regexp.php']]
@@ -3881,13 +3881,23 @@ describe 'PHP quoted regexp recovery', ->
     expect(singleQuoted.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
     expect(singleQuoted.tokens[3]).toEqual value: '?', scopes: regexpConditionalBeginKeywordScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[4]).toEqual value: '(', scopes: regexpConditionalBeginPunctuationScopes(quotedSingleRegexpScope)
-    expect(singleQuoted.tokens[5]).toEqual value: '<', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+    expect(singleQuoted.tokens[5]).toEqual value: '<', scopes: regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')
     expect(singleQuoted.tokens[6]).toEqual value: 'word', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
-    expect(singleQuoted.tokens[7]).toEqual value: '>', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+    expect(singleQuoted.tokens[7]).toEqual value: '>', scopes: regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedSingleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')
     expect(singleQuoted.tokens[8]).toEqual value: ')', scopes: regexpConditionalPunctuationScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[9]).toEqual value: 'ab', scopes: regexpConditionalGroupContentScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[10]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
     expect(singleQuoted.tokens[11]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+  it 'should layer generic group punctuation on apostrophe-delimited named conditional delimiters in quoted regexes', ->
+    doubleQuoted = grammar.tokenizeLine '"/(?(\'word\')ab|cd)/"'
+    singleQuoted = grammar.tokenizeLine "'/(?(\\'word\\')ab|cd)/'"
+
+    expect(doubleQuoted.tokens[5]).toEqual value: '\'', scopes: regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.begin.regexp.php')
+    expect(doubleQuoted.tokens[7]).toEqual value: '\'', scopes: regexpSpecificGroupPunctuationScopes(regexpConditionalGroupScopes(quotedDoubleRegexpScope), 'punctuation.definition.group.capture.end.regexp.php')
+
+    expect(singleQuoted.tokens[5]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']
+    expect(singleQuoted.tokens[7]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
 
   it 'stops unclosed quoted conditional assertion conditions at the quoted wrapper boundary', ->
     doubleQuoted = grammar.tokenizeLine '"/(?(?=ab/"'
@@ -4082,9 +4092,9 @@ describe 'PHP regexp single-quoted source apostrophe forms', ->
     expect(conditional.tokens[2]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
     expect(conditional.tokens[3]).toEqual value: '?', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['keyword.control.conditional.begin.regexp.php']
     expect(conditional.tokens[4]).toEqual value: '(', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.conditional.regexp.php']
-    expect(conditional.tokens[5]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.capture.begin.regexp.php']
+    expect(conditional.tokens[5]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']
     expect(conditional.tokens[6]).toEqual value: 'word', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['variable.other.regexp.php']
-    expect(conditional.tokens[7]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.capture.end.regexp.php']
+    expect(conditional.tokens[7]).toEqual value: '\\\'', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'punctuation.definition.group.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
     expect(conditional.tokens[8]).toEqual value: ')', scopes: regexpConditionalGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.conditional.regexp.php']
 
   it 'accepts Unicode letters and decimal digits in apostrophe-delimited single quoted regex source forms', ->
