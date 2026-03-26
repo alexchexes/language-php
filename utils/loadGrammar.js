@@ -124,10 +124,20 @@ const loadGrammar = (scopeName) => {
       scopeName: grammar._grammar.scopeName,
       firstLineRegex: { scanner },
       tokenizeLine: (line) => {
-        tokens = extractTokens(line, grammar.tokenizeLine(line).tokens);
+        if (typeof line !== "string") {
+          throw new TypeError(
+            `tokenizeLine expected a string, got ${typeof line}`
+          );
+        }
+        const tokens = extractTokens(line, grammar.tokenizeLine(line).tokens);
         return { tokens };
       },
       tokenizeLines: (lines) => {
+        if (typeof lines !== "string") {
+          throw new TypeError(
+            `tokenizeLines expected a string, got ${typeof lines}`
+          );
+        }
         let currentState = null;
 
         const tokens = lines.split(/\n/).map((line) => {
