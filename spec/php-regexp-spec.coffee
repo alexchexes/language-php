@@ -296,6 +296,37 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[21]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
       expect(tokens[22]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
+    it 'should keep operator-looking punctuation literal inside quoted regex character classes', ->
+      quotedHosts = [
+        [grammar.tokenizeLine('"/[.?+*^$|(){}]/"').tokens, quotedDoubleRegexpScope, '"']
+        [grammar.tokenizeLine("'/[.?+*^$|(){}]/'").tokens, quotedSingleRegexpScope, '\'']
+      ]
+
+      for [tokens, baseScope, quote] in quotedHosts
+        expect(tokens[0]).toEqual value: quote, scopes: regexpWrapperBeginQuoteScopes(baseScope)
+        expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(baseScope)
+        expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(baseScope)
+        for value, i in ['.', '?', '+', '*', '^', '$', '|', '(', ')', '{', '}']
+          expect(tokens[i + 3]).toEqual value: value, scopes: regexpCharacterClassLiteralScopes(baseScope)
+        expect(tokens[14]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(baseScope)
+        expect(tokens[15]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(baseScope)
+        expect(tokens[16]).toEqual value: quote, scopes: regexpWrapperEndQuoteScopes(baseScope)
+
+    it 'should keep braced quantifier-like text literal inside quoted regex character classes', ->
+      quotedHosts = [
+        [grammar.tokenizeLine('"/[{1}]/"').tokens, quotedDoubleRegexpScope, '"']
+        [grammar.tokenizeLine("'/[{1}]/'").tokens, quotedSingleRegexpScope, '\'']
+      ]
+
+      for [tokens, baseScope, quote] in quotedHosts
+        expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(baseScope)
+        expect(tokens[3]).toEqual value: '{', scopes: regexpCharacterClassLiteralScopes(baseScope)
+        expect(tokens[4]).toEqual value: '1', scopes: regexpCharacterClassScopes(baseScope).concat ['constant.numeric.regexp.php']
+        expect(tokens[5]).toEqual value: '}', scopes: regexpCharacterClassLiteralScopes(baseScope)
+        expect(tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(baseScope)
+        expect(tokens[7]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(baseScope)
+        expect(tokens[8]).toEqual value: quote, scopes: regexpWrapperEndQuoteScopes(baseScope)
+
     it 'should keep valid raw class escapes, stray \\E, short \\x, and invalid ones distinct in quoted regex character classes', ->
       doubleQuoted = grammar.tokenizeLine '"/[\\c;\\pL\\PL\\x\\E\\L\\z\\A\\D\\H\\V\\W]/"'
       singleQuoted = grammar.tokenizeLine "'/[\\c;\\pL\\PL\\x\\E\\L\\z\\A\\D\\H\\V\\W]/'"
@@ -432,6 +463,22 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[7]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
       expect(singleQuoted.tokens[8]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[9]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+
+    it 'should keep operator-looking punctuation literal inside quoted regex character-class quoted literals', ->
+      doubleQuoted = grammar.tokenizeLine '"/[\\Q.?+*^$|(){}[]\\E]/"'
+      singleQuoted = grammar.tokenizeLine "'/[\\Q.?+*^$|(){}[]\\E]/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '.?+*^$|(){}[]', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '.?+*^$|(){}[]', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
 
     it 'should tokenize decoded and asymmetric quoted-literal boundaries in quoted regex character classes', ->
       decodedStartDoubleQuoted = grammar.tokenizeLine ['"/[', '\\\\', 'Q', '[', '\\"', ']', '\\E', 'a]/"'].join ''
@@ -3128,6 +3175,18 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[4]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
       expect(singleQuoted.tokens[5]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+    it 'should keep operator-looking punctuation literal inside quoted regex quoted literals', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\Q.?+*^$|(){}[]\\E/"'
+      singleQuoted = grammar.tokenizeLine "'/\\Q.?+*^$|(){}[]\\E/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(doubleQuoted.tokens[3]).toEqual value: '.?+*^$|(){}[]', scopes: regexpQuotedLiteralContentScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.regexp.php']
+
+      expect(singleQuoted.tokens[2]).toEqual value: '\\Q', scopes: regexpQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(singleQuoted.tokens[3]).toEqual value: '.?+*^$|(){}[]', scopes: regexpQuotedLiteralContentScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[4]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
 
     it 'should tokenize decoded quoted literals in quoted regex strings', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\Qfoo/bar\\\\E/"'
