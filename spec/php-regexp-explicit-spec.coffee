@@ -2182,6 +2182,23 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][2]).toEqual value: 'K', scopes: regexpControlKeywordScopes(heredocRegexpScope)
             expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
 
+          it 'should tokenize the reachable decoded body literal-escape surface in REGEX heredoc', ->
+            lines = grammar.tokenizeLines '''
+              $r = <<<REGEX
+              /\\\\a;\\\\n;\\\\r;\\\\t;\\\\f;\\\\e;\\\\$/
+              REGEX;
+            '''
+
+            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+            offset = 1
+            escapeChars = ['a', 'n', 'r', 't', 'f', 'e', '$']
+            for escapeChar, i in escapeChars
+              separator = if i is escapeChars.length - 1 then '/' else ';'
+              expect(lines[1][offset]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+              expect(lines[1][offset + 1]).toEqual value: escapeChar, scopes: heredocRegexpScope.concat ['constant.character.escape.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: separator, scopes: heredocRegexpScope
+              offset += 3
+
         if sourceSurface is 'raw'
           it 'should tokenize raw apostrophe escapes in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines '''
@@ -2825,6 +2842,25 @@ describe 'PHP explicit regexp grammar', ->
       expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
       expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
 
+    it 'should tokenize the reachable decoded class invalid-escape surface in REGEXP heredoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\\\i;\\\\l;\\\\m;\\\\q;\\\\u;\\\\y;\\\\z;\\\\A;\\\\B;\\\\C;\\\\F;\\\\G;\\\\I;\\\\K;\\\\L;\\\\M;\\\\O;\\\\T;\\\\U;\\\\X;\\\\Y;\\\\Z;\\\\N;\\\\o;\\\\p;\\\\P;]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      invalidPayloads = ['i', 'l', 'm', 'q', 'u', 'y', 'z', 'A', 'B', 'C', 'F', 'G', 'I', 'K', 'L', 'M', 'O', 'T', 'U', 'X', 'Y', 'Z', 'N', 'o', 'p', 'P']
+      offset = 2
+      for payload in invalidPayloads
+        expect(lines[1][offset]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedInvalidTransportScopes(heredocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: payload, scopes: regexpCharacterClassInvalidEscapeScopes(heredocRegexpScope)
+        expect(lines[1][offset + 2]).toEqual value: ';', scopes: regexpCharacterClassLiteralScopes(heredocRegexpScope)
+        offset += 3
+      expect(lines[1][offset]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][offset + 1]).toEqual value: '/', scopes: heredocRegexpScope
+
     it 'should treat decoded \\c before the REGEXP heredoc terminator as invalid inside character classes', ->
       lines = grammar.tokenizeLines '''
         $r = <<<REGEXP
@@ -2958,6 +2994,24 @@ describe 'PHP explicit regexp grammar', ->
         expect(lines[1][2 + index]).toEqual value: value, scopes: regexpCharacterClassInvalidEscapeScopes(nowdocRegexpScope)
       expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
       expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should tokenize the reachable raw class invalid-escape surface in REGEXP nowdoc character classes', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<'REGEXP'
+        /[\\i;\\l;\\m;\\q;\\u;\\y;\\z;\\A;\\B;\\C;\\F;\\G;\\I;\\K;\\L;\\M;\\O;\\T;\\U;\\X;\\Y;\\Z;\\N;\\o;\\p;\\P;]/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      invalidEscapes = ['\\i', '\\l', '\\m', '\\q', '\\u', '\\y', '\\z', '\\A', '\\B', '\\C', '\\F', '\\G', '\\I', '\\K', '\\L', '\\M', '\\O', '\\T', '\\U', '\\X', '\\Y', '\\Z', '\\N', '\\o', '\\p', '\\P']
+      offset = 2
+      for invalidEscape in invalidEscapes
+        expect(lines[1][offset]).toEqual value: invalidEscape, scopes: regexpCharacterClassInvalidEscapeScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: ';', scopes: regexpCharacterClassLiteralScopes(nowdocRegexpScope)
+        offset += 2
+      expect(lines[1][offset]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(nowdocRegexpScope)
+      expect(lines[1][offset + 1]).toEqual value: '/', scopes: nowdocRegexpScope
 
     it 'should treat raw \\c before the REGEXP nowdoc terminator as invalid inside character classes', ->
       lines = grammar.tokenizeLines '''
