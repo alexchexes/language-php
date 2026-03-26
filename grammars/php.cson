@@ -6932,7 +6932,17 @@
   'regex-character-class-invalid-escape-explicit':
     # Invalid raw character-class escapes under PHP's PCRE2 surface.
     # Leave valid and mode-sensitive forms to the more specific class rules above.
-    'match': '\\\\(?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z]))'
+    'match': '''(?x)
+      \\\\
+      (?:
+        c (?! [ -~] )
+        | [iklmquyzABCFGIKLMORTUXYZ]
+        | N (?! \\{ )
+        | o (?! \\{ )
+        | p (?! \\{ | [A-Za-z] )
+        | P (?! \\{ | [A-Za-z] )
+      )
+    '''
     'name': 'invalid.illegal.escape.regexp.php'
   'regex-character-class-literal-escape-explicit':
     'match': '\\\\(?:[0-7]{1,3}|c[ -~]|.)'
@@ -7101,7 +7111,19 @@
         'name': 'invalid.illegal.escape.regexp.php'
       '3':
         'name': 'invalid.illegal.escape.regexp.php'
-    'match': '((\\\\\\\\))((?:c(?![ -~])|[iklmquyzABCFGIKLMORTUXYZ]|N(?!\\{)|o(?!\\{)|p(?!\\{|[A-Za-z])|P(?!\\{|[A-Za-z])))'
+    'match': '''(?x)
+      ((\\\\\\\\))
+      (
+        (?:
+          c (?! [ -~] )
+          | [iklmquyzABCFGIKLMORTUXYZ]
+          | N (?! \\{ )
+          | o (?! \\{ )
+          | p (?! \\{ | [A-Za-z] )
+          | P (?! \\{ | [A-Za-z] )
+        )
+      )
+    '''
   'regex-character-class-decoded-escaped-backslash-before-letter-range-interpreted':
     'captures':
       '1':
@@ -9970,7 +9992,36 @@
         'name': 'keyword.control.directive.regexp.php'
       '3':
         'name': 'punctuation.definition.group.regexp.php'
-    'match': '(\\()(\\*(?:LIMIT_DEPTH=\\d+|LIMIT_HEAP=\\d+|LIMIT_MATCH=\\d+|CASELESS_RESTRICT|NOTEMPTY_ATSTART|NOTEMPTY|NO_AUTO_POSSESS|NO_DOTSTAR_ANCHOR|NO_START_OPT|NO_JIT|TURKISH_CASING|BSR_ANYCRLF|BSR_UNICODE|ANYCRLF|CRLF|UTF|UCP|ANY|NUL|CR|LF))(\\))'
+    'match': '''(?x)
+      (\\()
+      (
+        \\*
+        (?:
+          LIMIT_DEPTH=\\d+
+          | LIMIT_HEAP=\\d+
+          | LIMIT_MATCH=\\d+
+          | CASELESS_RESTRICT
+          | NOTEMPTY_ATSTART
+          | NOTEMPTY
+          | NO_AUTO_POSSESS
+          | NO_DOTSTAR_ANCHOR
+          | NO_START_OPT
+          | NO_JIT
+          | TURKISH_CASING
+          | BSR_ANYCRLF
+          | BSR_UNICODE
+          | ANYCRLF
+          | CRLF
+          | UTF
+          | UCP
+          | ANY
+          | NUL
+          | CR
+          | LF
+        )
+      )
+      (\\))
+    '''
     'name': 'meta.embedded.group.regexp.php'
   'regex-simple-quantifier-explicit':
     'match': '[?+*][?+]?'
