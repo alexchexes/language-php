@@ -2771,6 +2771,34 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+    it 'should allow default-PCRE2 punctuation-heavy backtracking verb labels in quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/"'
+      expectedVerbs = [
+        ['*:', 'foo-bar']
+        ['*MARK:', 'two words']
+        ['*COMMIT:', '1']
+        ['*SKIP:', '!done']
+        ['*THEN:', '💩']
+      ]
+
+      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      offset = 2
+      for [verb, label] in expectedVerbs
+        expect(tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(tokens[offset + 1]).toEqual value: verb, scopes: regexpBacktrackingVerbScopes(quotedDoubleRegexpScope, verb)
+        expect(tokens[offset + 2]).toEqual value: label, scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['variable.other.regexp.php']
+        expect(tokens[offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 4
+      expect(tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(tokens[offset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+    it 'should keep incomplete or empty named backtracking verbs plain in quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/(*MARK:)(*SKIP:two words/"'
+
+      expect(tokens.some((token) -> token.scopes.some((scope) -> scope.includes 'keyword.control.backtracking'))).toBe false
+      expect(tokens.some((token) -> token.scopes.includes 'variable.other.regexp.php')).toBe false
+
     it 'should tokenize start directives in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/"'
       singleQuoted = grammar.tokenizeLine "'/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/'"

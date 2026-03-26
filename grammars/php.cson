@@ -4765,6 +4765,9 @@
         'include': '#regex-group-conditional-named-bare-double-quoted'
       }
       {
+        'include': '#regex-backtracking-verb-mark-short-explicit'
+      }
+      {
         'include': '#regex-backtracking-verb-named-explicit'
       }
       {
@@ -4829,6 +4832,9 @@
       }
       {
         'include': '#regex-group-conditional-named-bare-single-quoted'
+      }
+      {
+        'include': '#regex-backtracking-verb-mark-short-explicit'
       }
       {
         'include': '#regex-backtracking-verb-named-explicit'
@@ -9126,7 +9132,7 @@
         'name': 'variable.other.regexp.php'
       '4':
         'name': 'punctuation.definition.group.regexp.php'
-    'match': '(\\()(\\*:)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'match': '(\\()(\\*:)([^)]+)(\\))'
     'name': 'meta.embedded.group.regexp.php'
   'regex-backtracking-verb-named-explicit':
     'captures':
@@ -9138,7 +9144,7 @@
         'name': 'variable.other.regexp.php'
       '5':
         'name': 'punctuation.definition.group.regexp.php'
-    'match': '(\\()(\\*(ACCEPT|FAIL|F|MARK|COMMIT|PRUNE|SKIP|THEN):)([A-Za-z_\\x{7f}-\\x{10ffff}][A-Za-z0-9_\\x{7f}-\\x{10ffff}]*)(\\))'
+    'match': '(\\()(\\*(ACCEPT|FAIL|F|MARK|COMMIT|PRUNE|SKIP|THEN):)([^)]+)(\\))'
     'name': 'meta.embedded.group.regexp.php'
   'regex-backtracking-verb-explicit':
     'captures':
