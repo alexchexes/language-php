@@ -7160,7 +7160,7 @@
       }
     ]
   'regex-group-conditional-named-angle-double-quoted':
-    'begin': '(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
+    'begin': '(\\()(\\?)(\\()((<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -7169,12 +7169,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.regexp.php'
       '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
@@ -7188,7 +7192,7 @@
       }
     ]
   'regex-group-conditional-named-single-quoted-double-quoted':
-    'begin': "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))"
+    'begin': "(\\()(\\?)(\\()((\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\'))(\\))"
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -7197,12 +7201,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
       '7':
+        'name': 'punctuation.definition.group.regexp.php'
+      '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*")|(?=")'
     'endCaptures':
@@ -7388,7 +7396,7 @@
       }
     ]
   'regex-group-conditional-named-angle-single-quoted':
-    'begin': '(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
+    'begin': '(\\()(\\?)(\\()((<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -7397,12 +7405,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.regexp.php'
       '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
@@ -7416,7 +7428,7 @@
       }
     ]
   'regex-group-conditional-named-single-quoted-escaped':
-    'begin': "(\\()(\\?)(\\()((\\\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\\\'))(\\))"
+    'begin': "(\\()(\\?)(\\()(((\\\\')))([_\\p{L}][_\\p{L}\\p{Nd}]*)(((\\\\')))(\\))"
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -7427,14 +7439,18 @@
       '4':
         'name': 'constant.character.escape.php'
       '5':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '6':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '7':
-        'name': 'constant.character.escape.php'
+        'name': 'variable.other.regexp.php'
       '8':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'constant.character.escape.php'
       '9':
+        'name': 'punctuation.definition.group.regexp.php'
+      '10':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '11':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=/[imsxeADSUXu]*\')|(?=\')'
     'endCaptures':
@@ -8157,7 +8173,7 @@
       }
     ]
   'regex-group-conditional-named-angle-heredoc':
-    'begin': '(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
+    'begin': '(\\()(\\?)(\\()((<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8166,12 +8182,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.regexp.php'
       '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
@@ -8185,7 +8205,7 @@
       }
     ]
   'regex-group-conditional-named-single-quoted-heredoc':
-    'begin': "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))"
+    'begin': "(\\()(\\?)(\\()((\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\'))(\\))"
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8194,12 +8214,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
       '7':
+        'name': 'punctuation.definition.group.regexp.php'
+      '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
@@ -8385,7 +8409,7 @@
       }
     ]
   'regex-group-conditional-named-angle-nowdoc':
-    'begin': '(\\()(\\?)(\\()(<)([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
+    'begin': '(\\()(\\?)(\\()((<))([_\\p{L}][_\\p{L}\\p{Nd}]*)((>))(\\))'
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8394,12 +8418,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
+      '7':
+        'name': 'punctuation.definition.group.regexp.php'
       '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
@@ -8413,7 +8441,7 @@
       }
     ]
   'regex-group-conditional-named-single-quoted-nowdoc':
-    'begin': "(\\()(\\?)(\\()(')([_\\p{L}][_\\p{L}\\p{Nd}]*)(\\')(\\))"
+    'begin': "(\\()(\\?)(\\()((\\'))([_\\p{L}][_\\p{L}\\p{Nd}]*)((\\'))(\\))"
     'beginCaptures':
       '1':
         'name': 'punctuation.definition.group.regexp.php'
@@ -8422,12 +8450,16 @@
       '3':
         'name': 'punctuation.definition.group.conditional.regexp.php'
       '4':
-        'name': 'punctuation.definition.group.capture.begin.regexp.php'
+        'name': 'punctuation.definition.group.regexp.php'
       '5':
-        'name': 'variable.other.regexp.php'
+        'name': 'punctuation.definition.group.capture.begin.regexp.php'
       '6':
-        'name': 'punctuation.definition.group.capture.end.regexp.php'
+        'name': 'variable.other.regexp.php'
       '7':
+        'name': 'punctuation.definition.group.regexp.php'
+      '8':
+        'name': 'punctuation.definition.group.capture.end.regexp.php'
+      '9':
         'name': 'punctuation.definition.group.conditional.regexp.php'
     'end': '\\)|(?=^\\s*(?:REGEXP?)(?![A-Za-z0-9_\\x{7f}-\\x{10ffff}]))'
     'endCaptures':
