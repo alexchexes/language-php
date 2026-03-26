@@ -403,6 +403,38 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should keep operator-looking punctuation literal inside character classes in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /[.?+*^$|(){}]/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          for value, i in ['.', '?', '+', '*', '^', '$', '|', '(', ')', '{', '}']
+            expect(lines[1][i + 2]).toEqual value: value, scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][13]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][14]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should keep braced quantifier-like text literal inside character classes in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /[{1}]/
+            #{label};
+          """
+
+          expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][2]).toEqual value: '{', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][3]).toEqual value: '1', scopes: regexpCharacterClassScopes(regexScope).concat ['constant.numeric.regexp.php']
+          expect(lines[1][4]).toEqual value: '}', scopes: regexpCharacterClassLiteralScopes(regexScope)
+          expect(lines[1][5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+          expect(lines[1][6]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should treat a leading closing bracket as literal class content in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -2563,6 +2595,21 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should keep operator-looking punctuation literal inside quoted literals in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /\\Q.?+*^$|(){}[]\\E/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '\\Q', scopes: regexpQuotedLiteralBoundaryScopes(regexScope).concat ['constant.character.escape.regexp.php']
+          expect(lines[1][2]).toEqual value: '.?+*^$|(){}[]', scopes: regexpQuotedLiteralContentScopes(regexScope)
+          expect(lines[1][3]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(regexScope).concat ['constant.character.escape.regexp.php']
+          expect(lines[1][4]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
         it "should tokenize standalone quoted-literal end markers in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -2806,6 +2853,19 @@ describe 'PHP explicit regexp grammar', ->
       expect(rawStartLines[1][3]).toEqual value: "[']", scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
       expect(rawStartLines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(heredocRegexpScope)
       expect(rawStartLines[1][5]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+
+    it 'should keep operator-looking punctuation literal inside REGEXP heredoc character-class quoted literals', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[\\Q.?+*^$|(){}[]\\E]/
+        REGEXP;
+      '''
+
+      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\Q', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[1][3]).toEqual value: '.?+*^$|(){}[]', scopes: regexpCharacterClassQuotedLiteralContentScopes(heredocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+      expect(lines[1][5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
 
     it 'should keep interpolation after interpreted backslash transport in REGEXP heredoc character classes', ->
       [2, 4, 6, 8].forEach (slashes) ->
