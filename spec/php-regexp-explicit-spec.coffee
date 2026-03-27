@@ -672,11 +672,6 @@ describe 'PHP explicit regexp grammar', ->
           expectPlainAssignment(lines[3])
 
         it "should tokenize verb-style assertion groups in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/
-            #{label};
-          """
           expectedAssertions = [
             ['*pla:', 'ab', 'meta.assertion.look-ahead.regexp.php']
             ['*positive_lookahead:', 'cd', 'meta.assertion.look-ahead.regexp.php']
@@ -687,6 +682,12 @@ describe 'PHP explicit regexp grammar', ->
             ['*nlb:', 'mn', 'meta.assertion.negative-look-behind.regexp.php']
             ['*negative_lookbehind:', 'op', 'meta.assertion.negative-look-behind.regexp.php']
           ]
+          assertionSource = expectedAssertions.map(([assertionOpener, content]) -> "(#{assertionOpener}#{content})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{assertionSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
@@ -701,11 +702,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize non-atomic assertion groups in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/
-            #{label};
-          """
           expectedAssertions = [
             ['?*', 'ab', 'meta.assertion.look-ahead.regexp.php']
             ['?<*', 'cd', 'meta.assertion.look-behind.regexp.php']
@@ -714,6 +710,12 @@ describe 'PHP explicit regexp grammar', ->
             ['*naplb:', 'ij', 'meta.assertion.look-behind.regexp.php']
             ['*non_atomic_positive_lookbehind:', 'kl', 'meta.assertion.look-behind.regexp.php']
           ]
+          assertionSource = expectedAssertions.map(([assertionOpener, content]) -> "(#{assertionOpener}#{content})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{assertionSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
@@ -1105,17 +1107,18 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize script-run groups in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(*sr:ab)(*script_run:cd)(*asr:ef)(*atomic_script_run:gh)/
-            #{label};
-          """
           expectedGroups = [
             ['*sr:', 'ab', 'punctuation.definition.group.script-run.regexp.php']
             ['*script_run:', 'cd', 'punctuation.definition.group.script-run.regexp.php']
             ['*asr:', 'ef', 'punctuation.definition.group.atomic-script-run.regexp.php']
             ['*atomic_script_run:', 'gh', 'punctuation.definition.group.atomic-script-run.regexp.php']
           ]
+          groupSource = expectedGroups.map(([openerText, content]) -> "(#{openerText}#{content})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{groupSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
@@ -1264,12 +1267,6 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
 
         it "should tokenize recursion and subroutine calls in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/
-            #{label};
-          """
-
           groupExpectations = [
             ['recursion', '?R']
             ['recursion', '?0']
@@ -1279,6 +1276,23 @@ describe 'PHP explicit regexp grammar', ->
             ['named', '?&', 'word']
             ['named', '?P>', 'word']
           ]
+          groupSource = groupExpectations.map(([kind, head, payload]) ->
+            switch kind
+              when 'recursion' then "(#{head})"
+              else "(#{head}#{payload})"
+          ).join ''
+          gSource = [
+            ['named', '<', 'word', '>']
+            ['named', '\'', 'word', '\'']
+            ['numeric', '<', '1', '>']
+            ['numeric', '<', '+1', '>']
+            ['numeric', '\'', '-1', '\'']
+          ].map(([, beginPunctuation, payload, endPunctuation]) -> "\\g#{beginPunctuation}#{payload}#{endPunctuation}").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{groupSource}#{gSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
@@ -1352,9 +1366,20 @@ describe 'PHP explicit regexp grammar', ->
 
           it 'should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc', ->
             unicodeName = 'Ж١'
+            patternSource = [
+              "\\k<#{unicodeName}>"
+              "\\k'#{unicodeName}'"
+              "\\k{#{unicodeName}}"
+              "\\g<#{unicodeName}>"
+              "\\g'#{unicodeName}'"
+              "\\g{#{unicodeName}}"
+              "(?&#{unicodeName})"
+              "(?P=#{unicodeName})"
+              "(?P>#{unicodeName})"
+            ].join ''
             lines = grammar.tokenizeLines [
               "$r = <<<'REGEXP'"
-              "/\\k<#{unicodeName}>\\k'#{unicodeName}'\\k{#{unicodeName}}\\g<#{unicodeName}>\\g'#{unicodeName}'\\g{#{unicodeName}}(?&#{unicodeName})(?P=#{unicodeName})(?P>#{unicodeName})/"
+              "/#{patternSource}/"
               'REGEXP;'
             ].join "\n"
 
@@ -1394,9 +1419,25 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
 
           it 'should tokenize the full raw \\g numeric backreference and subroutine surface in REGEXP nowdoc', ->
+            patternSource = [
+              '\\g1'
+              '\\g+1'
+              '\\g-1'
+              '\\g{1}'
+              '\\g{+1}'
+              '\\g{-1}'
+              '\\g<word>'
+              "\\g'word'"
+              '\\g<1>'
+              '\\g<+1>'
+              '\\g<-1>'
+              "\\g'1'"
+              "\\g'+1'"
+              "\\g'-1'"
+            ].join ''
             lines = grammar.tokenizeLines [
               "$r = <<<'REGEXP'"
-              "/\\g1\\g+1\\g-1\\g{1}\\g{+1}\\g{-1}\\g<word>\\g'word'\\g<1>\\g<+1>\\g<-1>\\g'1'\\g'+1'\\g'-1'/"
+              "/#{patternSource}/"
               'REGEXP;'
             ].join "\n"
 

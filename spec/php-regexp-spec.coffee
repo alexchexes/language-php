@@ -2314,8 +2314,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[9]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize verb-style assertion groups in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/"'
-      singleQuoted = grammar.tokenizeLine "'/(*pla:ab)(*positive_lookahead:cd)(*nla:ef)(*negative_lookahead:gh)(*plb:ij)(*positive_lookbehind:kl)(*nlb:mn)(*negative_lookbehind:op)/'"
       expectedAssertions = [
         ['*pla:', 'ab', 'meta.assertion.look-ahead.regexp.php']
         ['*positive_lookahead:', 'cd', 'meta.assertion.look-ahead.regexp.php']
@@ -2326,6 +2324,9 @@ describe 'PHP quoted regexp grammar', ->
         ['*nlb:', 'mn', 'meta.assertion.negative-look-behind.regexp.php']
         ['*negative_lookbehind:', 'op', 'meta.assertion.negative-look-behind.regexp.php']
       ]
+      assertionSource = expectedAssertions.map(([assertionOpener, content]) -> "(#{assertionOpener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{assertionSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{assertionSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2352,8 +2353,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize non-atomic assertion groups in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/"'
-      singleQuoted = grammar.tokenizeLine "'/(?*ab)(?<*cd)(*napla:ef)(*non_atomic_positive_lookahead:gh)(*naplb:ij)(*non_atomic_positive_lookbehind:kl)/'"
       expectedAssertions = [
         ['?*', 'ab', 'meta.assertion.look-ahead.regexp.php']
         ['?<*', 'cd', 'meta.assertion.look-behind.regexp.php']
@@ -2362,6 +2361,9 @@ describe 'PHP quoted regexp grammar', ->
         ['*naplb:', 'ij', 'meta.assertion.look-behind.regexp.php']
         ['*non_atomic_positive_lookbehind:', 'kl', 'meta.assertion.look-behind.regexp.php']
       ]
+      assertionSource = expectedAssertions.map(([assertionOpener, content]) -> "(#{assertionOpener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{assertionSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{assertionSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2388,14 +2390,15 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize script-run groups in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(*sr:ab)(*script_run:cd)(*asr:ef)(*atomic_script_run:gh)/"'
-      singleQuoted = grammar.tokenizeLine "'/(*sr:ab)(*script_run:cd)(*asr:ef)(*atomic_script_run:gh)/'"
       expectedGroups = [
         ['*sr:', 'ab', 'punctuation.definition.group.script-run.regexp.php']
         ['*script_run:', 'cd', 'punctuation.definition.group.script-run.regexp.php']
         ['*asr:', 'ef', 'punctuation.definition.group.atomic-script-run.regexp.php']
         ['*atomic_script_run:', 'gh', 'punctuation.definition.group.atomic-script-run.regexp.php']
       ]
+      groupSource = expectedGroups.map(([opener, content]) -> "(#{opener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{groupSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{groupSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2422,13 +2425,14 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize atomic and branch-reset groups in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(?>ab)(*atomic:cd)(?|ef)/"'
-      singleQuoted = grammar.tokenizeLine "'/(?>ab)(*atomic:cd)(?|ef)/'"
       expectedGroups = [
         ['?>', 'ab', 'punctuation.definition.group.atomic.regexp.php']
         ['*atomic:', 'cd', 'punctuation.definition.group.atomic.regexp.php']
         ['?|', 'ef', 'punctuation.definition.group.branch-reset.regexp.php']
       ]
+      groupSource = expectedGroups.map(([opener, content]) -> "(#{opener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{groupSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{groupSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2803,9 +2807,10 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens.some((token) -> token.scopes.includes 'variable.other.regexp.php')).toBe false
 
     it 'should tokenize start directives in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/"'
-      singleQuoted = grammar.tokenizeLine "'/(*UTF)(*UCP)(*NO_START_OPT)(*LIMIT_MATCH=10)(*CRLF)(*BSR_UNICODE)/'"
       expectedDirectives = ['*UTF', '*UCP', '*NO_START_OPT', '*LIMIT_MATCH=10', '*CRLF', '*BSR_UNICODE']
+      directiveSource = expectedDirectives.map((directive) -> "(#{directive})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{directiveSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{directiveSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2932,7 +2937,14 @@ describe 'PHP quoted regexp grammar', ->
 
     it 'should accept Unicode letters and decimal digits in quoted named groups and conditionals', ->
       unicodeName = 'Ж١'
-      tokens = grammar.tokenizeLine("\"/(?<#{unicodeName}>a)(?P<#{unicodeName}>a)(?(<#{unicodeName}>)a|b)(?(R&#{unicodeName})a|b)(?(#{unicodeName})a|b)/\"").tokens
+      patternSource = [
+        "(?<#{unicodeName}>a)"
+        "(?P<#{unicodeName}>a)"
+        "(?(<#{unicodeName}>)a|b)"
+        "(?(R&#{unicodeName})a|b)"
+        "(?(#{unicodeName})a|b)"
+      ].join ''
+      tokens = grammar.tokenizeLine("\"/#{patternSource}/\"").tokens
 
       namedTokens = tokens.filter (token) ->
         token.value is unicodeName and token.scopes.includes 'variable.other.regexp.php'
@@ -2942,7 +2954,14 @@ describe 'PHP quoted regexp grammar', ->
     it 'should keep invalid Unicode-start quoted named groups and conditionals out of name scopes', ->
       startDigitName = '١foo'
       emojiName = '💩'
-      tokens = grammar.tokenizeLine("\"/(?<#{startDigitName}>a)(?P<#{emojiName}>a)(?(#{startDigitName})a|b)(?(<#{emojiName}>)a|b)(?(R&#{startDigitName})a|b)/\"").tokens
+      patternSource = [
+        "(?<#{startDigitName}>a)"
+        "(?P<#{emojiName}>a)"
+        "(?(#{startDigitName})a|b)"
+        "(?(<#{emojiName}>)a|b)"
+        "(?(R&#{startDigitName})a|b)"
+      ].join ''
+      tokens = grammar.tokenizeLine("\"/#{patternSource}/\"").tokens
 
       expect(tokens.some((token) -> token.value.includes(startDigitName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
       expect(tokens.some((token) -> token.value.includes(emojiName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
@@ -3092,9 +3111,6 @@ describe 'PHP quoted regexp grammar', ->
         expect(tokens[16]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(baseScope)
 
     it 'should tokenize recursion and subroutine calls in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine "\"/(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/\""
-      singleQuoted = grammar.tokenizeLine "'/(?R)(?0)(?1)(?+1)(?-1)(?&word)(?P>word)\\g<word>\\g<1>\\g<+1>\\g<-1>/'"
-
       groupExpectations = [
         ['recursion', '?R']
         ['recursion', '?0']
@@ -3104,7 +3120,11 @@ describe 'PHP quoted regexp grammar', ->
         ['named', '?&', 'word']
         ['named', '?P>', 'word']
       ]
-
+      groupSource = groupExpectations.map(([kind, head, payload]) ->
+        switch kind
+          when 'recursion' then "(#{head})"
+          else "(#{head}#{payload})"
+      ).join ''
       gExpectations = [
         ['named', '<', 'word', '>']
         ['named', '\'', 'word', '\'']
@@ -3112,6 +3132,15 @@ describe 'PHP quoted regexp grammar', ->
         ['numeric', '<', '+1', '>']
         ['numeric', '\'', '-1', '\'']
       ]
+      doubleGSource = gExpectations.map(([, beginPunctuation, payload, endPunctuation]) -> "\\g#{beginPunctuation}#{payload}#{endPunctuation}").join ''
+      singleGSource = [
+        ['named', '<', 'word', '>']
+        ['numeric', '<', '1', '>']
+        ['numeric', '<', '+1', '>']
+        ['numeric', '<', '-1', '>']
+      ].map(([, beginPunctuation, payload, endPunctuation]) -> "\\g#{beginPunctuation}#{payload}#{endPunctuation}").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{groupSource}#{doubleGSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{groupSource}#{singleGSource}/'"
 
       for [tokens, baseScope, useSingleQuotedGForms] in [
         [doubleQuoted.tokens, quotedDoubleRegexpScope, true]
@@ -3167,7 +3196,16 @@ describe 'PHP quoted regexp grammar', ->
 
     it 'should accept Unicode letters and decimal digits in quoted named refs and subroutines', ->
       unicodeName = 'Ж١'
-      tokens = grammar.tokenizeLine("\"/\\\\k<#{unicodeName}>\\\\k{#{unicodeName}}\\\\g<#{unicodeName}>\\\\g{#{unicodeName}}(?&#{unicodeName})(?P=#{unicodeName})(?P>#{unicodeName})/\"").tokens
+      patternSource = [
+        "\\\\k<#{unicodeName}>"
+        "\\\\k{#{unicodeName}}"
+        "\\\\g<#{unicodeName}>"
+        "\\\\g{#{unicodeName}}"
+        "(?&#{unicodeName})"
+        "(?P=#{unicodeName})"
+        "(?P>#{unicodeName})"
+      ].join ''
+      tokens = grammar.tokenizeLine("\"/#{patternSource}/\"").tokens
 
       expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -3211,8 +3249,19 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[offset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
     it 'should tokenize decoded Oniguruma subroutine calls in interpreted quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine "\"/\\\\g<word>\\\\g'word'\\\\g<1>\\\\g<+1>\\\\g'-1'/\""
-      singleQuoted = grammar.tokenizeLine "'/\\\\g<word>\\\\g<1>\\\\g<+1>\\\\g<-1>/'"
+      doubleQuoted = grammar.tokenizeLine "\"/#{[
+        "\\\\g<word>"
+        "\\\\g'word'"
+        "\\\\g<1>"
+        "\\\\g<+1>"
+        "\\\\g'-1'"
+      ].join ''}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{[
+        "\\\\g<word>"
+        "\\\\g<1>"
+        "\\\\g<+1>"
+        "\\\\g<-1>"
+      ].join ''}/'"
 
       for [tokens, baseScope, useSingleQuotedGForms] in [
         [doubleQuoted.tokens, quotedDoubleRegexpScope, true]
