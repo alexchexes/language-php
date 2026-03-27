@@ -2455,8 +2455,29 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize the supported non-assertion conditional families in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine "\"/(?(1)ab|cd)(?(<word>)ef|gh)(?('word')ij|kl)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/\""
-      singleQuoted = grammar.tokenizeLine "'/(?(1)ab|cd)(?(<word>)ef|gh)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/'"
+      doubleConditionalSources = [
+        '(?(1)ab|cd)'
+        '(?(<word>)ef|gh)'
+        "(?('word')ij|kl)"
+        '(?(word)mn|op)'
+        '(?(R)qr|st)'
+        '(?(R1)uv|wx)'
+        '(?(R&word)yz|za)'
+        '(?(DEFINE)(?<word>ab))'
+        '(?(VERSION>=10.4)bc|de)'
+      ]
+      singleConditionalSources = [
+        '(?(1)ab|cd)'
+        '(?(<word>)ef|gh)'
+        '(?(word)mn|op)'
+        '(?(R)qr|st)'
+        '(?(R1)uv|wx)'
+        '(?(R&word)yz|za)'
+        '(?(DEFINE)(?<word>ab))'
+        '(?(VERSION>=10.4)bc|de)'
+      ]
+      doubleQuoted = grammar.tokenizeLine "\"/#{doubleConditionalSources.join ''}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{singleConditionalSources.join ''}/'"
       doubleConditionalSpecs = [
         [
           ['?', regexpConditionalBeginKeywordScopes(quotedDoubleRegexpScope)]
@@ -2705,8 +2726,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[offset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize backtracking verbs in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/(*ACCEPT)(*FAIL)(*F)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/"'
-      singleQuoted = grammar.tokenizeLine "'/(*ACCEPT)(*FAIL)(*F)(*MARK:label)(*COMMIT)(*PRUNE)(*SKIP)(*SKIP:label)(*THEN)/'"
       expectedVerbs = [
         ['*ACCEPT', null]
         ['*FAIL', null]
@@ -2718,6 +2737,9 @@ describe 'PHP quoted regexp grammar', ->
         ['*SKIP:', 'label']
         ['*THEN', null]
       ]
+      verbSource = expectedVerbs.map(([verb, label]) -> "(#{verb}#{if label? then label else ''})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{verbSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{verbSource}/'"
 
       expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
@@ -2752,7 +2774,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should allow default-PCRE2 punctuation-heavy backtracking verb labels in quoted regexes', ->
-      {tokens} = grammar.tokenizeLine '"/(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/"'
       expectedVerbs = [
         ['*:', 'foo-bar']
         ['*MARK:', 'two words']
@@ -2760,6 +2781,8 @@ describe 'PHP quoted regexp grammar', ->
         ['*SKIP:', '!done']
         ['*THEN:', '💩']
       ]
+      verbSource = expectedVerbs.map(([verb, label]) -> "(#{verb}#{label})").join ''
+      {tokens} = grammar.tokenizeLine "\"/#{verbSource}/\""
 
       expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
       expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)

@@ -728,9 +728,20 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize the supported non-assertion conditional families in #{description}", ->
+          conditionalSources = [
+            '(?(1)ab|cd)'
+            '(?(<word>)ef|gh)'
+            "(?('word')ij|kl)"
+            '(?(word)mn|op)'
+            '(?(R)qr|st)'
+            '(?(R1)uv|wx)'
+            '(?(R&word)yz|za)'
+            '(?(DEFINE)(?<word>ab))'
+            '(?(VERSION>=10.4)bc|de)'
+          ]
           lines = grammar.tokenizeLines """
             $r = #{opener}
-            /(?(1)ab|cd)(?(<word>)ef|gh)(?('word')ij|kl)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/
+            /#{conditionalSources.join ''}/
             #{label};
           """
           conditionalSpecs = [
@@ -877,11 +888,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should tokenize backtracking verbs in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(*ACCEPT)(*FAIL)(*F)(*:label)(*ACCEPT:label)(*FAIL:label)(*F:label)(*MARK:label)(*COMMIT:label)(*PRUNE:label)(*SKIP:label)(*THEN:label)(*COMMIT)(*PRUNE)(*SKIP)(*THEN)/
-            #{label};
-          """
           expectedVerbs = [
             ['*ACCEPT', null]
             ['*FAIL', null]
@@ -900,6 +906,12 @@ describe 'PHP explicit regexp grammar', ->
             ['*SKIP', null]
             ['*THEN', null]
           ]
+          verbSource = expectedVerbs.map(([verb, markLabel]) -> "(#{verb}#{if markLabel? then markLabel else ''})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{verbSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
@@ -918,11 +930,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
         it "should allow default-PCRE2 punctuation-heavy verb labels in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/
-            #{label};
-          """
           expectedVerbs = [
             ['*:', 'foo-bar']
             ['*MARK:', 'two words']
@@ -930,6 +937,12 @@ describe 'PHP explicit regexp grammar', ->
             ['*SKIP:', '!done']
             ['*THEN:', '💩']
           ]
+          verbSource = expectedVerbs.map(([verb, markLabel]) -> "(#{verb}#{markLabel})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{verbSource}/
+            #{label};
+          """
 
           expect(lines[1][0]).toEqual value: '/', scopes: regexScope
           offset = 1
