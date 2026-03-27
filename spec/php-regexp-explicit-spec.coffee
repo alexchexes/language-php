@@ -727,7 +727,7 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should tokenize non-assertion conditional groups in #{description}", ->
+        it "should tokenize the supported non-assertion conditional families in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
             /(?(1)ab|cd)(?(<word>)ef|gh)(?('word')ij|kl)(?(word)mn|op)(?(R)qr|st)(?(R1)uv|wx)(?(R&word)yz|za)(?(DEFINE)(?<word>ab))(?(VERSION>=10.4)bc|de)/
@@ -834,7 +834,7 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should tokenize assertion conditional groups in #{description}", ->
+        it "should tokenize the supported assertion-conditional families in #{description}", ->
           expectedConditions = [
             ['?=', 'aa', 'ab', 'ac', 'meta.assertion.look-ahead.regexp.php']
             ['?!', 'ba', 'bb', 'bc', 'meta.assertion.negative-look-ahead.regexp.php']
