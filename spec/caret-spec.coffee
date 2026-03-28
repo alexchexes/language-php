@@ -44,6 +44,7 @@ describe 'PHP caret tests', ->
           fixture = parseFixtureFile item.path, item.specRelativePath
           tokenModel = null
           replacementBySourceLine = new Map()
+          updatedBlocks = []
 
           before ->
             grammar = grammars.get scopeName
@@ -54,6 +55,8 @@ describe 'PHP caret tests', ->
           after ->
             return unless updateMode
             return unless replacementBySourceLine.size > 0
+            for {lineNumber, sourceLine} in updatedBlocks
+              console.warn "[caret update] #{item.specRelativePath}:#{lineNumber} #{sourceLine}"
             writeUpdatedFixture fixture, replacementBySourceLine
 
           for block in fixture.blocks
@@ -67,6 +70,9 @@ describe 'PHP caret tests', ->
                   catch error
                     dumpedLines = dumpBlockActual block, lineModel, {startScope}
                     replacementBySourceLine.set block.sourceLineNumber, dumpedLines.map (line) -> line.line
+                    updatedBlocks.push
+                      lineNumber: block.sourceLineNumber
+                      sourceLine: block.sourceLine
                   return
 
                 assertBlock block, lineModel, {startScope, relativePath: item.specRelativePath}
