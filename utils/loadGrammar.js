@@ -1,4 +1,4 @@
-const { existsSync, mkdirSync } = require("fs");
+const { existsSync, mkdirSync, readFileSync } = require("fs");
 const { writeFile, readFile } = require("fs/promises");
 const path = require("path");
 const textmate = require("vscode-textmate");
@@ -63,39 +63,68 @@ const parseRawGrammar = (data, grammarPath) => {
   return textmate.parseRawGrammar(data, grammarPath);
 };
 
+const rawGrammarCache = new Map();
+
+const loadLocalRawGrammar = (scopeName) => {
+  if (rawGrammarCache.has(scopeName)) return rawGrammarCache.get(scopeName);
+
+  const grammarPath = grammarPaths[scopeName];
+  if (typeof grammarPath !== "string") {
+    throw new Error(`Raw grammar is not available for scope: ${scopeName}`);
+  }
+
+  const grammar = parseRawGrammar(readFileSync(grammarPath), grammarPath);
+  rawGrammarCache.set(scopeName, grammar);
+  return grammar;
+};
+
+const ensureGrammarFile = async (scopeName) => {
+  const localPath = grammarPaths[scopeName];
+  if (typeof localPath === "string") {
+    return localPath;
+  }
+
+  const importedPath = grammarImported[scopeName];
+  if (typeof importedPath === "string") {
+    const cachePath = path.join(grammarCachePath, path.basename(importedPath));
+    if (existsSync(cachePath)) {
+      return cachePath;
+    }
+
+    const response = await axios(importedPath, { responseType: "text" });
+    if (response.status !== 200) {
+      throw new Error("Unable to load grammar file for " + importedPath);
+    }
+
+    const grammar = parseRawGrammar(response.data, importedPath);
+    if (grammar) {
+      await writeFile(cachePath, response.data);
+    }
+    return cachePath;
+  }
+
+  if (importedPath === null) {
+    return null;
+  }
+
+  return undefined;
+};
+
 // Create a registry that can create a grammar from a scope name.
 const registry = new textmate.Registry({
   onigLib: vscodeOnigurumaLib,
-  loadGrammar: (scopeName) => {
-    let grammarPath = grammarPaths[scopeName];
-    if (typeof grammarPath === "string") {
-      return readFile(grammarPath).then((data) =>
-        parseRawGrammar(data, grammarPath)
-      );
+  loadGrammar: async (scopeName) => {
+    if (typeof grammarPaths[scopeName] === "string") {
+      return loadLocalRawGrammar(scopeName);
     }
 
-    grammarPath = grammarImported[scopeName];
+    const grammarPath = await ensureGrammarFile(scopeName);
     if (typeof grammarPath === "string") {
-      const fileName = path.basename(grammarPath);
-      const cachePath = path.join(grammarCachePath, fileName);
-      if (existsSync(cachePath)) {
-        // console.info(`Using cached grammar for: ${scopeName}`);
-        return readFile(cachePath).then((data) =>
-          parseRawGrammar(data, cachePath)
-        );
-      } else {
-        // console.info(`Downloading grammar for: ${scopeName}`);
-        return axios(grammarPath, { responseType: "text" }).then((res) => {
-          if (res.status === 200) {
-            const grammar = parseRawGrammar(res.data, grammarPath);
-            if (grammar) writeFile(cachePath, res.data);
-            return grammar;
-          }
+      const data = await readFile(grammarPath);
+      return parseRawGrammar(data, grammarPath);
+    }
 
-          throw new Error("Unable to load grammar file for" + grammarPath);
-        });
-      }
-    } else if (grammarPath === null) {
+    if (grammarPath === null) {
       // console.info(`Skipping grammar for: ${scopeName}`);
       return null;
     }
@@ -155,4 +184,8 @@ const loadGrammar = (scopeName) => {
   });
 };
 
-module.exports = { loadGrammar };
+module.exports = {
+  ensureGrammarFile,
+  loadGrammar,
+  parseRawGrammar,
+};
