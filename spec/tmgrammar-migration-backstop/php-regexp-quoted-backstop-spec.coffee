@@ -13,6 +13,8 @@ require('../../utils/compatibleExpect')
   regexpCharacterClassScopes
   regexpCharacterClassEscapeScopes
   regexpCharacterClassClassEscapeScopes
+  regexpCharacterClassPhpEscapeScopes
+  regexpCharacterClassPosixScopes
   regexpCharacterClassInvalidEscapeScopes
   regexpCharacterClassDecodedEscapeTransportScopes
   regexpCharacterClassDecodedInvalidTransportScopes
@@ -397,6 +399,176 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(rawStartSingleQuoted.tokens[6]).toEqual value: ']', scopes: regexpCharacterClassQuotedLiteralContentScopes(quotedSingleRegexpScope)
       expect(rawStartSingleQuoted.tokens[7]).toEqual value: '\\\\', scopes: regexpCharacterClassDecodedQuotedLiteralTransportScopes(quotedSingleRegexpScope)
       expect(rawStartSingleQuoted.tokens[8]).toEqual value: 'E', scopes: regexpCharacterClassQuotedLiteralBoundaryScopes(quotedSingleRegexpScope).concat ['constant.character.escape.regexp.php']
+
+  describe 'quoted character-class backslash parity before letter ranges', ->
+    it 'should keep interpreted escaped backslashes separate from following letter ranges in quoted regex character classes', ->
+      threeBackslashes = '\\'.repeat 3
+      doubleQuoted = grammar.tokenizeLine '"/[' + threeBackslashes + 'a-z]/"'
+      singleQuoted = grammar.tokenizeLine "'/[" + threeBackslashes + "a-z]/'"
+
+      expect(doubleQuoted.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[6]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[7]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[6]).toEqual value: '-', scopes: regexpCharacterClassRangeOperatorScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[7]).toEqual value: 'z', scopes: regexpCharacterClassLetterRangeScopes(quotedSingleRegexpScope)
+
+    it 'should keep interpreted backslash parity consistent before letter ranges in quoted regex character classes', ->
+      doubleQuotedOne = grammar.tokenizeLine '"/[\\a-z]/"'
+      doubleQuotedTwo = grammar.tokenizeLine '"/[\\\\a-z]/"'
+      singleQuotedOne = grammar.tokenizeLine "'/[\\a-z]/'"
+      singleQuotedTwo = grammar.tokenizeLine "'/[\\\\a-z]/'"
+
+      expect(doubleQuotedOne.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuotedOne.tokens[3]).toEqual value: '\\a', scopes: regexpCharacterClassEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuotedOne.tokens[4]).toEqual value: '-', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(doubleQuotedOne.tokens[5]).toEqual value: 'z', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+
+      expect(doubleQuotedTwo.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
+      expect(doubleQuotedTwo.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(doubleQuotedTwo.tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassEscapeScopes(quotedDoubleRegexpScope)
+      expect(doubleQuotedTwo.tokens[5]).toEqual value: '-', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(doubleQuotedTwo.tokens[6]).toEqual value: 'z', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuotedOne.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuotedOne.tokens[3]).toEqual value: '\\a', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuotedOne.tokens[4]).toEqual value: '-', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(singleQuotedOne.tokens[5]).toEqual value: 'z', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+
+      expect(singleQuotedTwo.tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(quotedSingleRegexpScope)
+      expect(singleQuotedTwo.tokens[3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(singleQuotedTwo.tokens[4]).toEqual value: 'a', scopes: regexpCharacterClassEscapeScopes(quotedSingleRegexpScope)
+      expect(singleQuotedTwo.tokens[5]).toEqual value: '-', scopes: regexpCharacterClassScopes(quotedSingleRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(singleQuotedTwo.tokens[6]).toEqual value: 'z', scopes: regexpCharacterClassLiteralScopes(quotedSingleRegexpScope)
+
+  describe 'quoted character-class backslash parity for structural payloads', ->
+    it 'should keep interpreted backslash parity consistent before POSIX character classes in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/[' + body + '/"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/[" + body + "/'"
+        }
+      ]
+
+      for {regexScope, wrap} in quotedHosts
+        decodedClassEscapeScopes = regexpCharacterClassPhpEscapeScopes(regexScope).concat ['constant.character.escape.regexp.php']
+        phpClassEscapeScopes = regexpCharacterClassPhpEscapeScopes(regexScope)
+
+        oneBackslash = grammar.tokenizeLine(wrap '\\[:digit:]]').tokens
+        twoBackslashes = grammar.tokenizeLine(wrap '\\'.repeat(2) + '[:digit:]]').tokens
+        threeBackslashes = grammar.tokenizeLine(wrap '\\'.repeat(3) + '[:digit:]]').tokens
+        fourBackslashes = grammar.tokenizeLine(wrap '\\'.repeat(4) + '[:digit:]]').tokens
+
+        expect(oneBackslash[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(oneBackslash[3]).toEqual value: '\\[', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(oneBackslash[4]).toEqual value: ':', scopes: regexpCharacterClassLiteralScopes(regexScope)
+        expect(oneBackslash[11]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(twoBackslashes[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(twoBackslashes[3]).toEqual value: '\\\\', scopes: decodedClassEscapeScopes
+        expect(twoBackslashes[4]).toEqual value: '[', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(twoBackslashes[5]).toEqual value: ':', scopes: regexpCharacterClassLiteralScopes(regexScope)
+        expect(twoBackslashes[12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(threeBackslashes[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(threeBackslashes[3]).toEqual value: '\\\\', scopes: phpClassEscapeScopes
+        expect(threeBackslashes[4]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(threeBackslashes[5]).toEqual value: '[:', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.begin.regexp.php']
+        expect(threeBackslashes[7]).toEqual value: ':]', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.end.regexp.php']
+        expect(threeBackslashes[8]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(fourBackslashes[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(fourBackslashes[3]).toEqual value: '\\\\', scopes: phpClassEscapeScopes
+        expect(fourBackslashes[4]).toEqual value: '\\\\', scopes: decodedClassEscapeScopes
+        expect(fourBackslashes[5]).toEqual value: '[:', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.begin.regexp.php']
+        expect(fourBackslashes[7]).toEqual value: ':]', scopes: regexpCharacterClassPosixScopes(regexScope).concat ['punctuation.definition.character-class.set.end.regexp.php']
+        expect(fourBackslashes[8]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+    it 'should keep direct closing-bracket backslash parity consistent in interpreted quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/[' + body + '/"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/[" + body + "/'"
+        }
+      ]
+
+      for {regexScope, wrap} in quotedHosts
+        decodedClassEscapeScopes = regexpCharacterClassPhpEscapeScopes(regexScope).concat ['constant.character.escape.regexp.php']
+        phpClassEscapeScopes = regexpCharacterClassPhpEscapeScopes(regexScope)
+
+        rawEscaped = grammar.tokenizeLine(wrap '\\]a]').tokens
+        decodedEscaped = grammar.tokenizeLine(wrap '\\'.repeat(2) + ']a]').tokens
+        threeBackslashes = grammar.tokenizeLine(wrap '\\'.repeat(3) + ']a]').tokens
+        fourBackslashes = grammar.tokenizeLine(wrap '\\'.repeat(4) + ']a]').tokens
+
+        expect(rawEscaped[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(rawEscaped[3]).toEqual value: '\\]', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(rawEscaped[4]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(regexScope)
+        expect(rawEscaped[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(decodedEscaped[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(decodedEscaped[3]).toEqual value: '\\\\', scopes: decodedClassEscapeScopes
+        expect(decodedEscaped[4]).toEqual value: ']', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(decodedEscaped[5]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(regexScope)
+        expect(decodedEscaped[6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+
+        expect(threeBackslashes[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(threeBackslashes[3]).toEqual value: '\\\\', scopes: phpClassEscapeScopes
+        expect(threeBackslashes[4]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(regexScope)
+        expect(threeBackslashes[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(threeBackslashes[6]).toEqual value: 'a]', scopes: regexScope
+
+        expect(fourBackslashes[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(fourBackslashes[3]).toEqual value: '\\\\', scopes: phpClassEscapeScopes
+        expect(fourBackslashes[4]).toEqual value: '\\\\', scopes: decodedClassEscapeScopes
+        expect(fourBackslashes[5]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+        expect(fourBackslashes[6]).toEqual value: 'a]', scopes: regexScope
+
+  describe 'quoted character-class odd-parity literalized payloads', ->
+    it 'should literalize non-PHP-owned class payloads after odd interpreted backslash parity in quoted regex character classes', ->
+      quotedHosts = [
+        {
+          regexScope: quotedDoubleRegexpScope
+          wrap: (slashes, payload) -> '"/[a' + '\\'.repeat(slashes) + payload + ']/"'
+          quoteValue: '"'
+        }
+        {
+          regexScope: quotedSingleRegexpScope
+          wrap: (slashes, payload) -> "'/[a" + '\\'.repeat(slashes) + payload + "]/'"
+          quoteValue: '\''
+        }
+      ]
+      payloads = ['h', 'i', 'd', 'p', ';', 'c']
+
+      for {regexScope, wrap, quoteValue} in quotedHosts
+        for slashCount in [3, 7]
+          for payload in payloads
+            {tokens} = grammar.tokenizeLine wrap slashCount, payload
+            payloadIndex = tokens.findIndex (token) -> token.value is payload
+
+            expect(tokens[2]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+            expect(tokens.some((token) -> token.value is '\\' + payload)).toBe false
+            expect(payloadIndex).to.be.greaterThan 3
+            expect(tokens[payloadIndex - 1]).toEqual value: '\\', scopes: regexpCharacterClassEscapeScopes(regexScope)
+            expect(tokens[payloadIndex]).toEqual value: payload, scopes: regexpCharacterClassLiteralScopes(regexScope)
+            expect(tokens[payloadIndex + 1]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(regexScope)
+            expect(tokens[tokens.length - 2]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
+            expect(tokens[tokens.length - 1]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
 
   describe 'quoted invalid escapes', ->
     it 'tokenizes closed malformed raw braced hex and octal escapes as invalid in double quoted regexes and classes', ->
