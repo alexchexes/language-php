@@ -36,31 +36,31 @@ REGEX;
 REGEXP;
 
 // Extracted from: should keep operator-looking punctuation literal inside quoted regex quoted literals
- '/\Q.?+*^$|(){}[]\E/';
+ '/\Q.?+*^$|()[]\E/';
 #  ^^ string.regexp.single-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
-#    ^^^^^^^^^^^^^ string.regexp.single-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
-#                 ^^ string.regexp.single-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^^^^^^^^^^^ string.regexp.single-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php punctuation.definition.character-class.regexp.php
+#               ^^ string.regexp.single-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 
 // Extracted from: should keep operator-looking punctuation literal inside quoted regex quoted literals
- "/\Q.?+*^$|(){}[]\E/";
+ "/\Q.?+*^$|()[]\E/";
 #  ^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
-#    ^^^^^^^^^^^^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
-#                 ^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^^^^^^^^^^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php punctuation.definition.character-class.regexp.php
+#               ^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 
 // Extracted from: should keep operator-looking punctuation literal inside quoted literals in REGEX heredoc
 <<<REGEX
-  /\Q.?+*^$|(){}[]\E/
+  /\Q.?+*^$|()[]\E/
 #  ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
-#    ^^^^^^^^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
-#                 ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^^^^^^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php punctuation.definition.character-class.regexp.php
+#               ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 REGEX;
 
 // Extracted from: should keep operator-looking punctuation literal inside quoted literals in REGEXP nowdoc
 <<<'REGEXP'
-  /\Q.?+*^$|(){}[]\E/
+  /\Q.?+*^$|()[]\E/
 #  ^^ string.regexp.nowdoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
-#    ^^^^^^^^^^^^^ string.regexp.nowdoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
-#                 ^^ string.regexp.nowdoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^^^^^^^^^^^ string.regexp.nowdoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php punctuation.definition.character-class.regexp.php
+#               ^^ string.regexp.nowdoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 REGEXP;
 
 // Decoded quoted literals

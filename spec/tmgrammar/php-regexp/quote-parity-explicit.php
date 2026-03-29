@@ -62,7 +62,7 @@ REGEX;
   /[\\\\'a-z]/
 #   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
 #     ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - constant.character.escape.regexp.php constant.other.character-class.range.regexp.php variable.other.constant.range.regexp.php
 REGEX;
 
 // Extracted from: should decompose repeated interpreted backslashes before quotes in REGEX heredoc character classes
@@ -70,7 +70,7 @@ REGEX;
   /[\\\\\"a-z]/
 #   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
 #     ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php constant.character.escape.regexp.php
 REGEX;
 
 // Extracted from: should keep longer quote parity consistent in REGEX heredoc character classes
@@ -112,19 +112,19 @@ REGEXP;
 <<<'REGEXP'
   /[\\\"a-z]/
 #   ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#     ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#     ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php constant.character.escape.regexp.php
 REGEXP;
 
 // Extracted from: should keep longer quote parity consistent in REGEXP nowdoc character classes
 <<<'REGEXP'
   /[\\\\\\'a-z]/
 #   ^^^^^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#         ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#         ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - constant.character.escape.regexp.php constant.other.character-class.range.regexp.php variable.other.constant.range.regexp.php
 REGEXP;
 
 // Extracted from: should keep longer quote parity consistent in REGEXP nowdoc character classes
 <<<'REGEXP'
   /[\\\\\\\"a-z]/
 #   ^^^^^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#         ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#         ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php constant.character.escape.regexp.php
 REGEXP;
