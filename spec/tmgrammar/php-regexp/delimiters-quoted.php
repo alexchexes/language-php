@@ -13,9 +13,9 @@
 // Extracted from: should tokenize quoted regex with slash inside character class
 // Slash inside a class stays class content, not wrapper terminator.
  "/[a/b]/";
-#  ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
-#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - punctuation.definition.string.end.regexp.php punctuation.definition.string.end.php
-#      ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#  ^   ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#    ^ - punctuation.definition.string.end.regexp.php punctuation.definition.string.end.php
 #       ^ string.regexp.double-quoted.php punctuation.definition.string.end.regexp.php
 #        ^ string.regexp.double-quoted.php punctuation.definition.string.end.php
 
@@ -33,13 +33,13 @@
 // Extracted from: should treat a leading closing bracket as literal class content in quoted regexes
 // A leading ] inside a class stays literal, including after negation.
  "/[]a-z]/";
-#  ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
-#   ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - punctuation.definition.character-class.regexp.php
-#       ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#  ^    ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#   ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#   ^ - punctuation.definition.character-class.regexp.php
 
 // Extracted from: should treat a leading closing bracket as literal class content in quoted regexes
  '/[^]a-z]/';
-#  ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#  ^     ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^ meta.embedded.character-class.regexp.php keyword.operator.negation.regexp.php
-#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - punctuation.definition.character-class.regexp.php
-#        ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
+#    ^ - punctuation.definition.character-class.regexp.php

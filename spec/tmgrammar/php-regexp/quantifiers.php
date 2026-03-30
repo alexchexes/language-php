@@ -6,16 +6,14 @@
 // Extracted from: should tokenize quoted regex range quantifiers without string-only legacy scopes
  '/a{3,4}+/';
 #   ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.begin.regexp.php
-#    ^^^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+#    ^^^ ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 #       ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.end.regexp.php
-#        ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 
 // Extracted from: should tokenize quoted regex range quantifiers without string-only legacy scopes
  "/a{,4}?/";
 #   ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.begin.regexp.php
-#    ^^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+#    ^^ ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 #      ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.end.regexp.php
-#       ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 
 // Mixed body operators and quantifiers in quoted regex wrappers.
 
@@ -44,9 +42,8 @@
   /^\A.a+?|b{2,4}+$/
 #       ^^ string.regexp.heredoc.php keyword.operator.quantifier.regexp.php
 #           ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.begin.regexp.php
-#            ^^^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+#            ^^^ ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 #               ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.end.regexp.php
-#                ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 REGEX;
 
 // Extracted from: should tokenize anchors, dots, alternation, and quantifiers in REGEXP nowdoc
@@ -54,9 +51,8 @@ REGEX;
   /^\A.a+?|b{2,4}+$/
 #       ^^ string.regexp.nowdoc.php keyword.operator.quantifier.regexp.php
 #           ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.begin.regexp.php
-#            ^^^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+#            ^^^ ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 #               ^ meta.embedded.quantifier.range.regexp.php punctuation.definition.quantifier.end.regexp.php
-#                ^ meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
 REGEXP;
 
 // Extracted from: should tokenize simple quantifier variants in REGEX heredoc

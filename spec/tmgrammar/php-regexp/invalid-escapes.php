@@ -76,12 +76,8 @@ REGEXP;
 
 // Extracted from: tokenizes closed malformed decoded \k/\g forms as invalid in quoted regexes
  "/\\g{}\\g{1x}\\g{١foo}/";
-#  ^^ constant.character.escape.php invalid.illegal.escape.regexp.php
-#    ^^^ string.regexp.double-quoted.php invalid.illegal.escape.regexp.php
-#       ^^ constant.character.escape.php invalid.illegal.escape.regexp.php
-#         ^^^^^ string.regexp.double-quoted.php invalid.illegal.escape.regexp.php
-#              ^^ constant.character.escape.php invalid.illegal.escape.regexp.php
-#                ^^^^^^^ string.regexp.double-quoted.php invalid.illegal.escape.regexp.php
+#  ^^   ^^     ^^ constant.character.escape.php invalid.illegal.escape.regexp.php
+#    ^^^  ^^^^^  ^^^^^^^ string.regexp.double-quoted.php invalid.illegal.escape.regexp.php
 
 // Extracted from: tokenizes every closed malformed decoded \k form as invalid in REGEX heredoc
 <<<REGEXP

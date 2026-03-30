@@ -12,9 +12,8 @@ REGEX;
 // Doubled class backslashes in REGEX nowdoc.
 <<<'REGEX'
   /[\\\\]/
-#  ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#  ^    ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^ string.regexp.character-class.php constant.character.escape.regexp.php
-#       ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 REGEX;
 
 // Extracted from: should tokenize escaped `[` in REGEX nowdoc
@@ -35,9 +34,8 @@ REGEXP;
 // Doubled class backslashes in REGEXP nowdoc.
 <<<'REGEXP'
   /[\\\\]/
-#  ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
+#  ^    ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^ string.regexp.character-class.php constant.character.escape.regexp.php
-#       ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 REGEXP;
 
 // Extracted from: should tokenize escaped `[` in REGEXP nowdoc

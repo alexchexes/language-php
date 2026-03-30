@@ -63,5 +63,6 @@ REGEXP;
 <<<'REGEXP'
   /\\;/
 #  ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
-#    ^ string.regexp.nowdoc.php - constant.character.escape.regexp.php
+#    ^ string.regexp.nowdoc.php
+#    ^ - constant.character.escape.regexp.php
 REGEXP;

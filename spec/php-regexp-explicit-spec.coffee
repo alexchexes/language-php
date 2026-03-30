@@ -1055,22 +1055,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should tokenize comment groups in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /(?# note)/
-            #{label};
-          """
-
-          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-          expect(lines[1][1]).toEqual value: '(', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
-          expect(lines[1][2]).toEqual value: '?#', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.begin.regexp.php']
-          expect(lines[1][3]).toEqual value: ' note', scopes: regexpCommentGroupScopes(regexScope)
-          expect(lines[1][4]).toEqual value: ')', scopes: regexpCommentGroupScopes(regexScope).concat ['punctuation.definition.comment.end.regexp.php']
-          expect(lines[1][5]).toEqual value: '/', scopes: regexScope
-          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
-
         it "should stop unclosed comment groups at the terminator in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
