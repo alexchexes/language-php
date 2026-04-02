@@ -1739,6 +1739,86 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
       expect(lines[1][6]).toEqual value: '123', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
       expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
 
+  describe 'explicit special groups', ->
+    for {description, opener, label, regexScope, terminatorScope} in [
+      {
+        description: 'REGEX heredoc'
+        opener: '<<<REGEX'
+        label: 'REGEX'
+        regexScope: heredocRegexpScope
+        terminatorScope: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      }
+      {
+        description: 'REGEXP nowdoc'
+        opener: "<<<'REGEXP'"
+        label: 'REGEXP'
+        regexScope: nowdocRegexpScope
+        terminatorScope: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      }
+    ]
+      do (description, opener, label, regexScope, terminatorScope) ->
+        it "should tokenize atomic groups in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?>ab)(*atomic:cd)/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][2]).toEqual value: '?>', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), 'punctuation.definition.group.atomic.regexp.php')
+          expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupContentScopes(regexScope)
+          expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][5]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][6]).toEqual value: '*atomic:', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), 'punctuation.definition.group.atomic.regexp.php')
+          expect(lines[1][7]).toEqual value: 'cd', scopes: regexpGroupContentScopes(regexScope)
+          expect(lines[1][8]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][9]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize script-run groups in #{description}", ->
+          expectedGroups = [
+            ['*sr:', 'ab', 'punctuation.definition.group.script-run.regexp.php']
+            ['*script_run:', 'cd', 'punctuation.definition.group.script-run.regexp.php']
+            ['*asr:', 'ef', 'punctuation.definition.group.atomic-script-run.regexp.php']
+            ['*atomic_script_run:', 'gh', 'punctuation.definition.group.atomic-script-run.regexp.php']
+          ]
+          groupSource = expectedGroups.map(([openerText, content]) -> "(#{openerText}#{content})").join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{groupSource}/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for [openerText, content, specificScope] in expectedGroups
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: openerText, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), specificScope)
+            expect(lines[1][offset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(regexScope)
+            expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 4
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize branch-reset groups in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?|ab)/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][2]).toEqual value: '?|', scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(regexScope), 'punctuation.definition.group.branch-reset.regexp.php')
+          expect(lines[1][3]).toEqual value: 'ab', scopes: regexpGroupContentScopes(regexScope)
+          expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+          expect(lines[1][5]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
   describe 'explicit comment groups', ->
     for {description, opener, label, regexScope, terminatorScope} in [
       {

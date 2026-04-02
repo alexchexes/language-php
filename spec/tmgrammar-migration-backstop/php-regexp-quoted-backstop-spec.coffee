@@ -1556,6 +1556,76 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(singleQuoted.tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[7]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+  describe 'quoted special groups', ->
+    it 'should tokenize script-run groups in quoted regexes', ->
+      expectedGroups = [
+        ['*sr:', 'ab', 'punctuation.definition.group.script-run.regexp.php']
+        ['*script_run:', 'cd', 'punctuation.definition.group.script-run.regexp.php']
+        ['*asr:', 'ef', 'punctuation.definition.group.atomic-script-run.regexp.php']
+        ['*atomic_script_run:', 'gh', 'punctuation.definition.group.atomic-script-run.regexp.php']
+      ]
+      groupSource = expectedGroups.map(([opener, content]) -> "(#{opener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{groupSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{groupSource}/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      doubleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), specificScope)
+        expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        doubleOffset += 4
+      expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      singleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), specificScope)
+        expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        singleOffset += 4
+      expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+    it 'should tokenize atomic and branch-reset groups in quoted regexes', ->
+      expectedGroups = [
+        ['?>', 'ab', 'punctuation.definition.group.atomic.regexp.php']
+        ['*atomic:', 'cd', 'punctuation.definition.group.atomic.regexp.php']
+        ['?|', 'ef', 'punctuation.definition.group.branch-reset.regexp.php']
+      ]
+      groupSource = expectedGroups.map(([opener, content]) -> "(#{opener}#{content})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{groupSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{groupSource}/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      doubleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedDoubleRegexpScope), specificScope)
+        expect(doubleQuoted.tokens[doubleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[doubleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        doubleOffset += 4
+      expect(doubleQuoted.tokens[doubleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[doubleOffset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      singleOffset = 2
+      for [opener, content, specificScope] in expectedGroups
+        expect(singleQuoted.tokens[singleOffset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: opener, scopes: regexpSpecificGroupPunctuationScopes(regexpGroupScopes(quotedSingleRegexpScope), specificScope)
+        expect(singleQuoted.tokens[singleOffset + 2]).toEqual value: content, scopes: regexpGroupContentScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[singleOffset + 3]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        singleOffset += 4
+      expect(singleQuoted.tokens[singleOffset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
 describe 'PHP regexp single-quoted source apostrophe forms', ->
   grammar = null
   before(-> grammar = await loadGrammar('source.php'))
