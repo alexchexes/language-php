@@ -1068,23 +1068,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        if sourceSurface is 'raw'
-          it 'should tokenize raw numeric backreferences in REGEXP nowdoc', ->
-            lines = grammar.tokenizeLines [
-              "$r = <<<'REGEXP'"
-              '/\\1\\12\\123/'
-              'REGEXP;'
-            ].join "\n"
-
-            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][2]).toEqual value: '1', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][3]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][4]).toEqual value: '12', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][5]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][6]).toEqual value: '123', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
-
         it "should tokenize recursion and subroutine calls in #{description}", ->
           groupExpectations = [
             ['recursion', '?R']
@@ -1730,27 +1713,6 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
             expect(lines[1][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
 
-          it 'should tokenize decoded named backreferences in REGEX heredoc', ->
-            lines = grammar.tokenizeLines """
-              $r = <<<REGEX
-              /\\\\k<word>\\\\k'word'/
-              REGEX;
-            """
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
-            expect(lines[1][2]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
-            expect(lines[1][3]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][4]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
-            expect(lines[1][5]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][6]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
-            expect(lines[1][7]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
-            expect(lines[1][8]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][9]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
-            expect(lines[1][10]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
-
           it 'should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc', ->
             unicodeName = 'Ж١'
             lines = grammar.tokenizeLines """
@@ -1798,40 +1760,6 @@ describe 'PHP explicit regexp grammar', ->
               offset += 4
 
             expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
-
-          it 'should tokenize decoded braced and g-style backreferences in REGEX heredoc', ->
-            lines = grammar.tokenizeLines """
-              $r = <<<REGEX
-              /\\\\k{word}\\\\g{word}\\\\g1\\\\g{1}\\\\g{-1}/
-              REGEX;
-            """
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
-            expect(lines[1][2]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
-            expect(lines[1][3]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][4]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
-            expect(lines[1][5]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][6]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
-            expect(lines[1][7]).toEqual value: 'g', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
-            expect(lines[1][8]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][9]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
-            expect(lines[1][10]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][11]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.regexp.php']
-            expect(lines[1][12]).toEqual value: 'g', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][13]).toEqual value: '1', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][14]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.regexp.php']
-            expect(lines[1][15]).toEqual value: 'g', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][16]).toEqual value: '{', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][17]).toEqual value: '1', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][18]).toEqual value: '}', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][19]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.regexp.php']
-            expect(lines[1][20]).toEqual value: 'g', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
-            expect(lines[1][21]).toEqual value: '{', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.begin.regexp.php']
-            expect(lines[1][22]).toEqual value: '-1', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-            expect(lines[1][23]).toEqual value: '}', scopes: heredocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'punctuation.definition.group.capture.end.regexp.php']
-            expect(lines[1][24]).toEqual value: '/', scopes: heredocRegexpScope
             expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
 
           it 'should tokenize decoded Oniguruma subroutine calls in REGEX heredoc', ->
