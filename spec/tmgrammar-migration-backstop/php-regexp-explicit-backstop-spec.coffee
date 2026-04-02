@@ -1388,6 +1388,152 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
     expect(pcre[1][6]).toEqual value: ')', scopes: regexpGroupScopes(nowdocRegexpScope).concat ['punctuation.definition.group.regexp.php']
     expect(pcre[1][7]).toEqual value: '/', scopes: nowdocRegexpScope
 
+  describe 'explicit Unicode named constructs', ->
+    for {description, opener, label, regexScope, terminatorScope} in [
+      {
+        description: 'REGEX heredoc'
+        opener: '<<<REGEX'
+        label: 'REGEX'
+        regexScope: heredocRegexpScope
+        terminatorScope: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      }
+      {
+        description: 'REGEXP nowdoc'
+        opener: "<<<'REGEXP'"
+        label: 'REGEXP'
+        regexScope: nowdocRegexpScope
+        terminatorScope: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      }
+    ]
+      do (description, opener, label, regexScope, terminatorScope) ->
+        it "should accept Unicode letters and decimal digits in named groups and conditionals in #{description}", ->
+          unicodeName = 'Ж١'
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?<#{unicodeName}>a)(?'#{unicodeName}'a)(?P<#{unicodeName}>a)(?(<#{unicodeName}>)a|b)(?('#{unicodeName}')a|b)(?(R&#{unicodeName})a|b)(?(#{unicodeName})a|b)/
+            #{label};
+          """
+
+          namedTokens = lines[1].filter (token) ->
+            token.value is unicodeName and token.scopes.includes 'variable.other.regexp.php'
+
+          expect(namedTokens.length).toBe 7
+
+        it "should keep invalid Unicode-start named groups and conditionals out of name scopes in #{description}", ->
+          startDigitName = '١foo'
+          emojiName = '💩'
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /(?<#{startDigitName}>a)(?'#{emojiName}'a)(?(#{startDigitName})a|b)(?(<#{emojiName}>)a|b)(?(R&#{startDigitName})a|b)/
+            #{label};
+          """
+
+          expect(lines[1].some((token) -> token.value.includes(startDigitName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
+          expect(lines[1].some((token) -> token.value.includes(emojiName) and token.scopes.includes 'variable.other.regexp.php')).toBe false
+
+    it 'should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc', ->
+      unicodeName = 'Ж١'
+      patternSource = [
+        "\\k<#{unicodeName}>"
+        "\\k'#{unicodeName}'"
+        "\\k{#{unicodeName}}"
+        "\\g<#{unicodeName}>"
+        "\\g'#{unicodeName}'"
+        "\\g{#{unicodeName}}"
+        "(?&#{unicodeName})"
+        "(?P=#{unicodeName})"
+        "(?P>#{unicodeName})"
+      ].join ''
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        "/#{patternSource}/"
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+
+      offset = 1
+      for [beginPunctuation, endPunctuation] in [['<', '>'], ['\'', '\''], ['{', '}']]
+        expect(lines[1][offset]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+        expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+        offset += 4
+
+      for [beginPunctuation, endPunctuation] in [['<', '>'], ['\'', '\'']]
+        expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedSubroutineScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 1]).toEqual value: beginPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+        expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedSubroutineNameScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 3]).toEqual value: endPunctuation, scopes: regexpNamedSubroutineScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+        offset += 4
+
+      expect(lines[1][offset]).toEqual value: '\\g', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+      expect(lines[1][offset + 1]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+      expect(lines[1][offset + 3]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+      offset += 4
+
+      for head in ['?&', '?P=', '?P>']
+        expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(nowdocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        if head is '?P='
+          expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupScopes(nowdocRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+        else
+          expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(nowdocRegexpScope)
+        expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: (if head is '?P=' then regexpGroupScopes(nowdocRegexpScope) else regexpGroupNamedSubroutineScopes(nowdocRegexpScope)).concat ['variable.other.regexp.php']
+        expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(nowdocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 4
+
+      expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc', ->
+      unicodeName = 'Ж١'
+      lines = grammar.tokenizeLines """
+        $r = <<<REGEX
+        /\\\\k<#{unicodeName}>\\\\k{#{unicodeName}}\\\\g<#{unicodeName}>\\\\g{#{unicodeName}}(?&#{unicodeName})(?P=#{unicodeName})(?P>#{unicodeName})/
+        REGEX;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+      expect(lines[1][6]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+      expect(lines[1][11]).toEqual value: '\\\\', scopes: regexpDecodedNamedSubroutineTransportScopes(heredocRegexpScope)
+      expect(lines[1][16]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.named.regexp.php']
+
+      expect(lines[1][2]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+      expect(lines[1][3]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(lines[1][4]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+      expect(lines[1][5]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+      expect(lines[1][7]).toEqual value: 'k', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+      expect(lines[1][8]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(lines[1][9]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+      expect(lines[1][10]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+      expect(lines[1][12]).toEqual value: 'g', scopes: regexpNamedSubroutineScopes(heredocRegexpScope)
+      expect(lines[1][13]).toEqual value: '<', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(lines[1][14]).toEqual value: unicodeName, scopes: regexpNamedSubroutineNameScopes(heredocRegexpScope)
+      expect(lines[1][15]).toEqual value: '>', scopes: regexpNamedSubroutineScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+      expect(lines[1][17]).toEqual value: 'g', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope)
+      expect(lines[1][18]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+      expect(lines[1][19]).toEqual value: unicodeName, scopes: regexpNamedBackreferenceNameScopes(heredocRegexpScope)
+      expect(lines[1][20]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(heredocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+      offset = 21
+      for head in ['?&', '?P=', '?P>']
+        expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        if head is '?P='
+          expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupScopes(heredocRegexpScope).concat ['keyword.other.back-reference.named.regexp.php']
+        else
+          expect(lines[1][offset + 1]).toEqual value: head, scopes: regexpGroupNamedSubroutineScopes(heredocRegexpScope)
+        expect(lines[1][offset + 2]).toEqual value: unicodeName, scopes: (if head is '?P=' then regexpGroupScopes(heredocRegexpScope) else regexpGroupNamedSubroutineScopes(heredocRegexpScope)).concat ['variable.other.regexp.php']
+        expect(lines[1][offset + 3]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 4
+
+      expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+
   describe 'explicit subroutines and recursion', ->
     for {description, opener, label, regexScope, terminatorScope} in [
       {

@@ -202,3 +202,75 @@ REGEX;
 #         ^ string.regexp.heredoc.php keyword.other.back-reference.named.regexp.php punctuation.definition.group.capture.end.regexp.php
 #     ^^^^ string.regexp.heredoc.php keyword.other.back-reference.named.regexp.php variable.other.regexp.php
 REGEX;
+
+// Unicode named backreferences
+
+// Extracted from: should accept Unicode letters and decimal digits in quoted named refs and subroutines
+ "/\\k<Ж١>/";
+#      ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+
+// Extracted from: should accept Unicode letters and decimal digits in quoted named refs and subroutines
+ "/\\k{Ж١}/";
+#      ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+
+// Extracted from: should accept Unicode letters and decimal digits in quoted named refs and subroutines
+ "/\\g{Ж١}/";
+#      ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+
+// Extracted from: should accept Unicode letters and decimal digits in quoted named refs and subroutines
+ "/(?P=Ж١)/";
+#      ^^ meta.embedded.group.regexp.php variable.other.regexp.php
+
+// Extracted from: should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc
+<<<'REGEXP'
+ /\k<Ж١>/
+#    ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEXP;
+
+// Extracted from: should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc
+<<<'REGEXP'
+ /\k'Ж١'/
+#    ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEXP;
+
+// Extracted from: should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc
+<<<'REGEXP'
+ /\k{Ж١}/
+#    ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEXP;
+
+// Extracted from: should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc
+<<<'REGEXP'
+ /\g{Ж١}/
+#    ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEXP;
+
+// Extracted from: should accept Unicode letters and decimal digits in raw named refs and subroutines in REGEXP nowdoc
+<<<'REGEXP'
+ /(?P=Ж١)/
+#     ^^ meta.embedded.group.regexp.php variable.other.regexp.php
+REGEXP;
+
+// Extracted from: should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc
+<<<REGEX
+ /\\k<Ж١>/
+#     ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEX;
+
+// Extracted from: should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc
+<<<REGEX
+ /\\k{Ж١}/
+#     ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEX;
+
+// Extracted from: should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc
+<<<REGEX
+ /\\g{Ж١}/
+#     ^^ keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+REGEX;
+
+// Extracted from: should accept Unicode letters and decimal digits in decoded named refs and subroutines in REGEX heredoc
+<<<REGEX
+ /(?P=Ж١)/
+#     ^^ meta.embedded.group.regexp.php variable.other.regexp.php
+REGEX;
