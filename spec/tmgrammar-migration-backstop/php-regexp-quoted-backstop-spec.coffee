@@ -45,6 +45,7 @@ require('../../utils/compatibleExpect')
   regexpDecodedSubroutineTransportScopes
   regexpDecodedNamedSubroutineTransportScopes
   regexpCommentGroupScopes
+  regexpDirectiveScopes
   regexpGroupContentScopes
   regexpWildcardScopes
   regexpRangeQuantifierBeginScopes
@@ -1417,6 +1418,35 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(singleQuoted.tokens[7]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
       expect(singleQuoted.tokens[8]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[9]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
+
+  describe 'quoted start directives', ->
+    it 'should tokenize start directives in quoted regexes', ->
+      expectedDirectives = ['*UTF', '*UCP', '*NO_START_OPT', '*LIMIT_MATCH=10', '*CRLF', '*BSR_UNICODE']
+      directiveSource = expectedDirectives.map((directive) -> "(#{directive})").join ''
+      doubleQuoted = grammar.tokenizeLine "\"/#{directiveSource}/\""
+      singleQuoted = grammar.tokenizeLine "'/#{directiveSource}/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      offset = 2
+      for directive in expectedDirectives
+        expect(doubleQuoted.tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(doubleQuoted.tokens[offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(quotedDoubleRegexpScope)
+        expect(doubleQuoted.tokens[offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 3
+      expect(doubleQuoted.tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[offset + 1]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      offset = 2
+      for directive in expectedDirectives
+        expect(singleQuoted.tokens[offset]).toEqual value: '(', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        expect(singleQuoted.tokens[offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(quotedSingleRegexpScope)
+        expect(singleQuoted.tokens[offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(quotedSingleRegexpScope).concat ['punctuation.definition.group.regexp.php']
+        offset += 3
+      expect(singleQuoted.tokens[offset]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[offset + 1]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
   describe 'quoted subroutines and recursion', ->
     it 'should tokenize recursion and subroutine calls in quoted regexes', ->

@@ -41,6 +41,7 @@ require('../../utils/compatibleExpect')
   regexpDecodedSubroutineTransportScopes
   regexpDecodedNamedSubroutineTransportScopes
   regexpCommentGroupScopes
+  regexpDirectiveScopes
   regexpGroupContentScopes
   regexpRangeQuantifierBeginScopes
   regexpRangeQuantifierScopes
@@ -1788,6 +1789,66 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
           expect(lines[1][2]).toEqual value: '?imsxADJUXunr-', scopes: regexpGroupScopes(regexScope).concat ['keyword.other.option-toggle.regexp.php']
           expect(lines[1][3]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
           expect(lines[1][4]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+  describe 'explicit start directives', ->
+    for {description, opener, label, regexScope, terminatorScope} in [
+      {
+        description: 'REGEX heredoc'
+        opener: '<<<REGEX'
+        label: 'REGEX'
+        regexScope: heredocRegexpScope
+        terminatorScope: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      }
+      {
+        description: 'REGEXP nowdoc'
+        opener: "<<<'REGEXP'"
+        label: 'REGEXP'
+        regexScope: nowdocRegexpScope
+        terminatorScope: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      }
+    ]
+      do (description, opener, label, regexScope, terminatorScope) ->
+        it "should tokenize start directives in #{description}", ->
+          expectedDirectives = [
+            '*LIMIT_DEPTH=10'
+            '*LIMIT_HEAP=11'
+            '*LIMIT_MATCH=12'
+            '*CASELESS_RESTRICT'
+            '*NOTEMPTY_ATSTART'
+            '*NOTEMPTY'
+            '*NO_AUTO_POSSESS'
+            '*NO_DOTSTAR_ANCHOR'
+            '*NO_START_OPT'
+            '*NO_JIT'
+            '*TURKISH_CASING'
+            '*BSR_ANYCRLF'
+            '*BSR_UNICODE'
+            '*ANYCRLF'
+            '*CRLF'
+            '*UTF'
+            '*UCP'
+            '*ANY'
+            '*NUL'
+            '*CR'
+            '*LF'
+          ]
+          directiveSource = expectedDirectives.map((directive) -> '(' + directive + ')').join ''
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /#{directiveSource}/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          offset = 1
+          for directive in expectedDirectives
+            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            expect(lines[1][offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(regexScope)
+            expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
+            offset += 3
+          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 

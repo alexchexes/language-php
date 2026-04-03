@@ -873,48 +873,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[1].some((token) -> token.scopes.some((scope) -> scope.includes 'keyword.control.backtracking'))).toBe false
           expect(lines[1].some((token) -> token.scopes.includes 'variable.other.regexp.php')).toBe false
 
-        it "should tokenize start directives in #{description}", ->
-          expectedDirectives = [
-            '*LIMIT_DEPTH=10'
-            '*LIMIT_HEAP=11'
-            '*LIMIT_MATCH=12'
-            '*CASELESS_RESTRICT'
-            '*NOTEMPTY_ATSTART'
-            '*NOTEMPTY'
-            '*NO_AUTO_POSSESS'
-            '*NO_DOTSTAR_ANCHOR'
-            '*NO_START_OPT'
-            '*NO_JIT'
-            '*TURKISH_CASING'
-            '*BSR_ANYCRLF'
-            '*BSR_UNICODE'
-            '*ANYCRLF'
-            '*CRLF'
-            '*UTF'
-            '*UCP'
-            '*ANY'
-            '*NUL'
-            '*CR'
-            '*LF'
-          ]
-          directiveSource = expectedDirectives.map((directive) -> '(' + directive + ')').join ''
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /#{directiveSource}/
-            #{label};
-          """
-
-          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-          offset = 1
-          for directive in expectedDirectives
-            expect(lines[1][offset]).toEqual value: '(', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-            expect(lines[1][offset + 1]).toEqual value: directive, scopes: regexpDirectiveScopes(regexScope)
-            expect(lines[1][offset + 2]).toEqual value: ')', scopes: regexpGroupScopes(regexScope).concat ['punctuation.definition.group.regexp.php']
-            offset += 3
-          expect(lines[1][offset]).toEqual value: '/', scopes: regexScope
-          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
-
         it "should tokenize non-capturing groups in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
