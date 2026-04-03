@@ -10,23 +10,20 @@
  '/[.?+*^$|()]/';
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php
-#   ^^^^^^^^^ - punctuation.definition.group.regexp.php
+#   ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php
 
 // Extracted from: should keep operator-looking punctuation literal inside quoted regex character classes
  "/[.?+*^$|()]/";
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php
-#   ^^^^^^^^^ - punctuation.definition.group.regexp.php
+#   ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php
 
 // Extracted from: should keep operator-looking punctuation literal inside character classes in REGEX heredoc
 <<<REGEX
  /[.?+*^$|()]/
 # ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #  ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#  ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php
-#  ^^^^^^^^^ - punctuation.definition.group.regexp.php
+#  ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php
 REGEX;
 
 // Extracted from: should keep operator-looking punctuation literal inside character classes in REGEXP nowdoc
@@ -34,8 +31,7 @@ REGEX;
  /[.?+*^$|()]/
 # ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #  ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#  ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php
-#  ^^^^^^^^^ - punctuation.definition.group.regexp.php
+#  ^^^^^^^^^ - keyword.operator.quantifier.regexp.php keyword.control.anchor.regexp.php keyword.operator.or.regexp.php punctuation.definition.group.regexp.php
 REGEXP;
 
 // Parenthesized compound starters
@@ -95,55 +91,47 @@ REGEXP;
  '/[(*MARK:x)]/';
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.control.backtracking.mark.regexp.php variable.other.regexp.php
 
 <<<'REGEXP'
   /[(*MARK:x)]/
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.control.backtracking.mark.regexp.php variable.other.regexp.php
 REGEXP;
 
  '/[(?P=word)]/';
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.back-reference.named.regexp.php variable.other.regexp.php
 
 <<<'REGEXP'
   /[(?P=word)]/
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.other.back-reference.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.back-reference.named.regexp.php variable.other.regexp.php
 REGEXP;
 
  '/[(?P>word)]/';
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 
 <<<'REGEXP'
   /[(?P>word)]/
 #  ^         ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 REGEXP;
 
  '/[(?&word)]/';
 #  ^        ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 
 <<<'REGEXP'
   /[(?&word)]/
 #  ^        ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^^^^^^^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
+#   ^^^^^^^^ - meta.embedded.group.regexp.php punctuation.definition.group.regexp.php keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 REGEXP;

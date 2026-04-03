@@ -119,8 +119,7 @@ REGEX;
 #  ^   ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^ string.regexp.character-class.php constant.character.escape.regexp.php
 #     ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#     ^ - constant.character.escape.regexp.php
-#     ^ - punctuation.definition.character-class.regexp.php
+#     ^ - constant.character.escape.regexp.php punctuation.definition.character-class.regexp.php
 
 // Extracted from: should keep direct closing-bracket backslash parity consistent in interpreted quoted regex character classes
  "/[\\]a]/";
@@ -128,8 +127,7 @@ REGEX;
 #   ^^ string.regexp.character-class.php constant.character.escape.php constant.character.escape.regexp.php
 #     ^ string.regexp.character-class.php constant.character.escape.regexp.php
 #      ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#      ^ - constant.character.escape.regexp.php
-#      ^ - punctuation.definition.character-class.regexp.php
+#      ^ - constant.character.escape.regexp.php punctuation.definition.character-class.regexp.php
 
 // Extracted from: should keep direct closing-bracket backslash parity consistent in interpreted quoted regex character classes
  "/[\\\]a]/";
@@ -152,8 +150,7 @@ REGEX;
 #  ^   ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^^ string.regexp.character-class.php constant.character.escape.regexp.php
 #     ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#     ^ - constant.character.escape.regexp.php
-#     ^ - punctuation.definition.character-class.regexp.php
+#     ^ - constant.character.escape.regexp.php punctuation.definition.character-class.regexp.php
 
 // Extracted from: should keep direct closing-bracket backslash parity consistent in interpreted quoted regex character classes
  '/[\\]a]/';
@@ -161,8 +158,7 @@ REGEX;
 #   ^^ string.regexp.character-class.php constant.character.escape.php constant.character.escape.regexp.php
 #     ^ string.regexp.character-class.php constant.character.escape.regexp.php
 #      ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#      ^ - constant.character.escape.regexp.php
-#      ^ - punctuation.definition.character-class.regexp.php
+#      ^ - constant.character.escape.regexp.php punctuation.definition.character-class.regexp.php
 
 // Extracted from: should keep direct closing-bracket backslash parity consistent in interpreted quoted regex character classes
  '/[\\\]a]/';

@@ -122,11 +122,9 @@ REGEXP;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.no-capture.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - comment.block.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php comment.block.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.comment.begin.regexp.php punctuation.definition.comment.end.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.back-reference.named.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php keyword.other.back-reference.named.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 #                                                           ^^ meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 
@@ -137,11 +135,9 @@ REGEXP;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.no-capture.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - comment.block.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php comment.block.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.comment.begin.regexp.php punctuation.definition.comment.end.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.back-reference.named.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php keyword.other.back-reference.named.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 #                                                           ^^ meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 
@@ -153,11 +149,9 @@ REGEXP;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.no-capture.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - comment.block.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php comment.block.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.comment.begin.regexp.php punctuation.definition.comment.end.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.back-reference.named.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php keyword.other.back-reference.named.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 #                                                           ^^ meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 REGEXP;
@@ -170,11 +164,9 @@ REGEXP;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.no-capture.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - comment.block.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.conditional.regexp.php comment.block.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.comment.begin.regexp.php punctuation.definition.comment.end.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.back-reference.named.regexp.php
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.control.backtracking.mark.regexp.php keyword.other.back-reference.named.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 #                                                           ^^ meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
 REGEXP;
