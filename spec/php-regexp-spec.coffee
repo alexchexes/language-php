@@ -1470,17 +1470,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
       expect(tokens[7]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
-    it 'should not treat escaped parentheses as groups in double quoted regexes', ->
-      {tokens} = grammar.tokenizeLine '"/\\(ab\\)/"'
-
-      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[2]).toEqual value: '\\(', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[3]).toEqual value: 'ab', scopes: quotedDoubleRegexpScope
-      expect(tokens[4]).toEqual value: '\\)', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[5]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-
     it 'should keep closing-delimiter slash parity consistent in quoted regex wrappers', ->
       quotedHosts = [
         {

@@ -1740,6 +1740,34 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+        it "should not treat escaped parentheses as groups in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /\\(ab\\)/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '\\(', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][2]).toEqual value: 'ab', scopes: regexScope
+          expect(lines[1][3]).toEqual value: '\\)', scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(lines[1][4]).toEqual value: '/', scopes: regexScope
+          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+  describe 'explicit escaped parentheses', ->
+    it 'should tokenize raw escaped parentheses in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/\\(\\)/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\(', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(lines[1][2]).toEqual value: '\\)', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
+
   describe 'explicit conditionals', ->
     for {description, opener, label, regexScope, terminatorScope} in [
       {

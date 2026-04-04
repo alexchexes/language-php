@@ -2268,6 +2268,18 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(optionsSingleQuoted.tokens[8]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(optionsSingleQuoted.tokens[9]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
+  describe 'quoted escaped parentheses', ->
+    it 'should not treat escaped parentheses as groups in double quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/\\(ab\\)/"'
+
+      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(tokens[2]).toEqual value: '\\(', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(tokens[3]).toEqual value: 'ab', scopes: quotedDoubleRegexpScope
+      expect(tokens[4]).toEqual value: '\\)', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(tokens[5]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
 describe 'PHP regexp single-quoted source apostrophe forms', ->
   grammar = null
   before(-> grammar = await loadGrammar('source.php'))

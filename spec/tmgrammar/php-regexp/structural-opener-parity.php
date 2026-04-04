@@ -101,6 +101,24 @@ REGEXP;
 #     ^ meta.embedded.group.regexp.php string.regexp.nowdoc.php
 REGEXP;
 
+// Extracted from: should not treat escaped parentheses as groups in double quoted regexes
+ "/\\(ab\\)/";
+#  ^^   ^^ constant.character.escape.php constant.character.escape.regexp.php
+#    ^    ^ constant.character.escape.regexp.php - punctuation.definition.group.regexp.php
+
+// Extracted from: should not treat escaped parentheses as groups in REGEX heredoc
+<<<REGEX
+  /\\(ab\\)/
+#  ^^   ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^    ^ string.regexp.heredoc.php constant.character.escape.regexp.php - punctuation.definition.group.regexp.php
+REGEX;
+
+// Extracted from: should tokenize raw escaped parentheses in REGEXP nowdoc
+<<<'REGEXP'
+  /\(\)/
+#  ^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php - punctuation.definition.group.regexp.php
+REGEXP;
+
 // Quantifiers
 
 // Extracted from: should tokenize supported structural opener parity in interpreted quoted regexes from fixtures

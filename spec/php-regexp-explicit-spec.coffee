@@ -485,21 +485,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should not treat escaped parentheses as groups in #{description}", ->
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            /\\(ab\\)/
-            #{label};
-          """
-
-          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-          expect(lines[1][1]).toEqual value: '\\(', scopes: regexScope.concat ['constant.character.escape.regexp.php']
-          expect(lines[1][2]).toEqual value: 'ab', scopes: regexScope
-          expect(lines[1][3]).toEqual value: '\\)', scopes: regexScope.concat ['constant.character.escape.regexp.php']
-          expect(lines[1][4]).toEqual value: '/', scopes: regexScope
-          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
-
         it "should stop unclosed comment groups at the terminator in #{description}", ->
           lines = grammar.tokenizeLines """
             $r = #{opener}
@@ -1212,18 +1197,6 @@ describe 'PHP explicit regexp grammar', ->
               expect(lines[1][offset]).toEqual value: escape, scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
               offset += 1
             expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
-
-          it 'should tokenize raw escaped parentheses in REGEXP nowdoc', ->
-            lines = grammar.tokenizeLines [
-              "$r = <<<'REGEXP'"
-              '/\\(\\)/'
-              'REGEXP;'
-            ].join "\n"
-
-            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\(', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
-            expect(lines[1][2]).toEqual value: '\\)', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
-            expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
 
           it 'should tokenize decoded property, braced hex, and braced octal escapes in REGEX heredoc', ->
             lines = grammar.tokenizeLines """
