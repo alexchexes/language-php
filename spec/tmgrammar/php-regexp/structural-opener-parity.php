@@ -119,6 +119,12 @@ REGEX;
 #  ^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php - punctuation.definition.group.regexp.php
 REGEXP;
 
+// Extracted from: should tokenize the full raw structural-escape surface in REGEXP nowdoc
+<<<'REGEXP'
+  /\[\]\{\}/
+#  ^^^^^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+REGEXP;
+
 // Quantifiers
 
 // Extracted from: should tokenize supported structural opener parity in interpreted quoted regexes from fixtures

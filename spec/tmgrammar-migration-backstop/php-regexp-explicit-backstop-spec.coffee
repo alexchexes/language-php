@@ -1768,6 +1768,38 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
       expect(lines[1][2]).toEqual value: '\\)', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
 
+  describe 'explicit anchors', ->
+    it 'should tokenize the full raw anchor surface in REGEXP nowdoc', ->
+      rawAnchors = ['\\b', '\\B', '\\A', '\\Z', '\\z', '\\G', '^', '$']
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/' + rawAnchors.join('') + '/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      offset = 1
+      for anchor in rawAnchors
+        expect(lines[1][offset]).toEqual value: anchor, scopes: nowdocRegexpScope.concat ['keyword.control.anchor.regexp.php']
+        offset += 1
+      expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
+  describe 'explicit structural escapes', ->
+    it 'should tokenize the full raw structural-escape surface in REGEXP nowdoc', ->
+      rawEscapes = ['\\.', '\\$', '\\^', '\\[', '\\]', '\\{', '\\}']
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/' + rawEscapes.join('') + '/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      offset = 1
+      for escape in rawEscapes
+        expect(lines[1][offset]).toEqual value: escape, scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+        offset += 1
+      expect(lines[1][offset]).toEqual value: '/', scopes: nowdocRegexpScope
+
   describe 'explicit conditionals', ->
     for {description, opener, label, regexScope, terminatorScope} in [
       {
@@ -2471,3 +2503,67 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
           expect(lines[1][5]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should tokenize line comments in #{description}", ->
+          lines = grammar.tokenizeLines """
+            $r = #{opener}
+            /a # note
+            b/
+            #{label};
+          """
+
+          expect(lines[1][0]).toEqual value: '/a ', scopes: regexScope
+          expect(lines[1][1]).toEqual value: '#', scopes: regexScope.concat ['comment.line.number-sign.php', 'punctuation.definition.comment.php']
+          expect(lines[1][2]).toEqual value: ' ', scopes: regexScope.concat ['comment.line.number-sign.php']
+          expect(lines[1][3]).toEqual value: 'note', scopes: regexScope.concat ['comment.line.number-sign.php']
+          expect(lines[2][0]).toEqual value: 'b/', scopes: regexScope
+          expect(lines[3][0]).toEqual value: label, scopes: terminatorScope
+          expect(lines[3][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        it "should allow only the conservative explicit # comment starters in #{description}", ->
+          allowedLines = [
+            'a # note'
+            'b # 1'
+            'c # _'
+            'd # .'
+            'e # ,'
+            'f # ?'
+            'g # !'
+            'h # -'
+            'i # é'
+            "j # \tnote"
+            'k #'
+          ]
+
+          for commentLine in allowedLines
+            lines = grammar.tokenizeLines """
+              $r = #{opener}
+              #{commentLine}
+              z
+              #{label};
+            """
+
+            expect(lines[1].some((token) -> token.scopes.includes 'comment.line.number-sign.php')).toBe true
+            expect(lines[2][0]).toEqual value: 'z', scopes: regexScope
+
+        it "should keep disallowed explicit # starters plain in #{description}", ->
+          disallowedLines = [
+            'a# note'
+            'b #note'
+            'c # :'
+            'd # /'
+            'e # ='
+            'f # "'
+            "g # '"
+          ]
+
+          for commentLine in disallowedLines
+            lines = grammar.tokenizeLines """
+              $r = #{opener}
+              #{commentLine}
+              z
+              #{label};
+            """
+
+            expect(lines[1].some((token) -> token.scopes.includes 'comment.line.number-sign.php')).toBe false
+            expect(lines[2][0]).toEqual value: 'z', scopes: regexScope

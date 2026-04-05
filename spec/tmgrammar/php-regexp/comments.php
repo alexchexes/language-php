@@ -1,4 +1,4 @@
-# SYNTAX TEST "source.php" "regex comment groups"
+# SYNTAX TEST "source.php" "regex comments"
 <?php
 
 // Extracted from: should tokenize comment groups in quoted regex strings
@@ -213,4 +213,88 @@ REGEX;
   /(?#\Q)/
 #     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
 #     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
+REGEXP;
+
+// Explicit line comments
+
+// Extracted from: should tokenize line comments in REGEX heredoc
+<<<REGEX
+ /a # note
+#   ^ punctuation.definition.comment.php
+#   ^^^^^^ string.regexp.heredoc.php comment.line.number-sign.php
+ b/
+REGEX;
+
+// Extracted from: should tokenize line comments in REGEXP nowdoc
+<<<'REGEXP'
+ /a # note
+#   ^ punctuation.definition.comment.php
+#   ^^^^^^ string.regexp.nowdoc.php comment.line.number-sign.php
+ b/
+REGEXP;
+
+// Extracted from: should allow only the conservative explicit # comment starters in REGEX heredoc
+<<<REGEX
+ a # note
+#  ^ punctuation.definition.comment.php
+#  ^^^^^^ string.regexp.heredoc.php comment.line.number-sign.php
+ b # 1
+#  ^ punctuation.definition.comment.php
+#  ^^^ string.regexp.heredoc.php comment.line.number-sign.php
+ c # _
+#  ^ punctuation.definition.comment.php
+#  ^^^ string.regexp.heredoc.php comment.line.number-sign.php
+ d # ?
+#  ^ punctuation.definition.comment.php
+#  ^ string.regexp.heredoc.php comment.line.number-sign.php punctuation.definition.comment.php
+ e #	note
+#  ^ punctuation.definition.comment.php
+#  ^^^^^^ string.regexp.heredoc.php comment.line.number-sign.php
+ f #
+#  ^ string.regexp.heredoc.php comment.line.number-sign.php punctuation.definition.comment.php
+ z
+REGEX;
+
+// Extracted from: should allow only the conservative explicit # comment starters in REGEXP nowdoc
+<<<'REGEXP'
+ a # note
+#  ^ punctuation.definition.comment.php
+#  ^^^^^^ string.regexp.nowdoc.php comment.line.number-sign.php
+ b # 1
+#  ^ punctuation.definition.comment.php
+#  ^^^ string.regexp.nowdoc.php comment.line.number-sign.php
+ c # _
+#  ^ punctuation.definition.comment.php
+#  ^^^ string.regexp.nowdoc.php comment.line.number-sign.php
+ d # ?
+#  ^ punctuation.definition.comment.php
+#  ^ string.regexp.nowdoc.php comment.line.number-sign.php punctuation.definition.comment.php
+ e #	note
+#  ^ punctuation.definition.comment.php
+#  ^^^^^^ string.regexp.nowdoc.php comment.line.number-sign.php
+ f #
+#  ^ string.regexp.nowdoc.php comment.line.number-sign.php punctuation.definition.comment.php
+ z
+REGEXP;
+
+// Extracted from: should keep disallowed explicit # starters plain in REGEX heredoc
+<<<REGEX
+ a# note
+# ^^^^^^^ string.regexp.heredoc.php - comment.line.number-sign.php
+ b #note
+# ^^^^^^^ string.regexp.heredoc.php - comment.line.number-sign.php
+ c # :
+# ^^^^^^ string.regexp.heredoc.php - comment.line.number-sign.php
+ z
+REGEX;
+
+// Extracted from: should keep disallowed explicit # starters plain in REGEXP nowdoc
+<<<'REGEXP'
+ a# note
+# ^^^^^^^ string.regexp.nowdoc.php - comment.line.number-sign.php
+ b #note
+# ^^^^^^^ string.regexp.nowdoc.php - comment.line.number-sign.php
+ c # :
+# ^^^^^^ string.regexp.nowdoc.php - comment.line.number-sign.php
+ z
 REGEXP;

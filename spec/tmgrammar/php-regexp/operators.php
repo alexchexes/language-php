@@ -50,3 +50,29 @@ REGEX;
 #  ^ ^ string.regexp.nowdoc.php keyword.control.anchor.regexp.php
 #     ^^ string.regexp.nowdoc.php keyword.operator.quantifier.regexp.php
 REGEXP;
+
+// Extracted from: should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures
+ "/\.\*\+\?\^\|/";
+#  ^^^^^^^^^^^^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+
+// Extracted from: should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures
+ '/\.\*\+\?\^\|/';
+#  ^^^^^^^^^^^^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+
+// Extracted from: should keep escaped dots and anchors distinct after interpreted backslash transport in double quoted regexes
+ "/\\.$/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^ string.regexp.double-quoted.php keyword.control.anchor.regexp.php
+
+// Extracted from: should tokenize the full raw anchor surface in REGEXP nowdoc
+<<<'REGEXP'
+  /\b\B\A\Z\z\G^$/
+#  ^^^^^^^^^^^^^^ string.regexp.nowdoc.php keyword.control.anchor.regexp.php
+REGEXP;
+
+// Extracted from: should tokenize the full raw structural-escape surface in REGEXP nowdoc
+<<<'REGEXP'
+  /\.\$\^/
+#  ^^^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+REGEXP;

@@ -2280,6 +2280,47 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(tokens[5]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
       expect(tokens[6]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
+  describe 'quoted operator and anchor escapes', ->
+    it 'should keep escaped dots and anchors distinct after interpreted backslash transport in double quoted regexes', ->
+      {tokens} = grammar.tokenizeLine '"/\\\\.$/"'
+
+      expect(tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+      expect(tokens[3]).toEqual value: '.', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(tokens[4]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+
+    it 'should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures', ->
+      supportedEscapedOperators = ['.', '*', '+', '?', '^', '|']
+      quotedHosts = [
+        {
+          quoteValue: '"'
+          regexScope: quotedDoubleRegexpScope
+          wrap: (body) -> '"/' + body + '/"'
+        }
+        {
+          quoteValue: '\''
+          regexScope: quotedSingleRegexpScope
+          wrap: (body) -> "'/" + body + "/'"
+        }
+      ]
+
+      for {quoteValue, regexScope, wrap} in quotedHosts
+        for symbol in supportedEscapedOperators
+          raw = grammar.tokenizeLine wrap '\\' + symbol
+          decoded = grammar.tokenizeLine wrap '\\'.repeat(2) + symbol
+
+          expect(raw.tokens[0]).toEqual value: quoteValue, scopes: regexpWrapperBeginQuoteScopes(regexScope)
+          expect(raw.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(regexScope)
+          expect(raw.tokens[2]).toEqual value: '\\' + symbol, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(raw.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
+          expect(raw.tokens[4]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
+
+          expect(decoded.tokens[0]).toEqual value: quoteValue, scopes: regexpWrapperBeginQuoteScopes(regexScope)
+          expect(decoded.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(regexScope)
+          expect(decoded.tokens[2]).toEqual value: '\\\\', scopes: regexScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
+          expect(decoded.tokens[3]).toEqual value: symbol, scopes: regexScope.concat ['constant.character.escape.regexp.php']
+          expect(decoded.tokens[4]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(regexScope)
+          expect(decoded.tokens[5]).toEqual value: quoteValue, scopes: regexpWrapperEndQuoteScopes(regexScope)
+
 describe 'PHP regexp single-quoted source apostrophe forms', ->
   grammar = null
   before(-> grammar = await loadGrammar('source.php'))
