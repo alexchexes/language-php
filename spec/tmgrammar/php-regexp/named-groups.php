@@ -10,12 +10,21 @@
 #          ^^ meta.embedded.group.regexp.php string.regexp.double-quoted.php
 
 // Extracted from: should tokenize angle named groups and classic named backreferences in quoted regexes
- '/(?<name>ab)/';
-#  ^^^    ^  ^ meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
-#   ^^ punctuation.definition.group.capture.begin.regexp.php
+'/(?<name>ab)/';
+# ^^^    ^  ^ meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
+#  ^^ punctuation.definition.group.capture.begin.regexp.php
+#    ^^^^ meta.embedded.group.regexp.php variable.other.regexp.php
+#        ^ punctuation.definition.group.capture.end.regexp.php
+#         ^^ meta.embedded.group.regexp.php string.regexp.single-quoted.php
+
+// Extracted from: tokenizes apostrophe-delimited named groups and conditionals in single quoted regex source
+'/(?\'name\'foo)/';
+# ^^           ^ meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
+#  ^ punctuation.definition.group.capture.begin.regexp.php
+#   ^^ meta.embedded.group.regexp.php constant.character.escape.php punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^ meta.embedded.group.regexp.php variable.other.regexp.php
-#         ^ punctuation.definition.group.capture.end.regexp.php
-#          ^^ meta.embedded.group.regexp.php string.regexp.single-quoted.php
+#         ^^ meta.embedded.group.regexp.php constant.character.escape.php punctuation.definition.group.capture.end.regexp.php
+#           ^^^ meta.embedded.group.regexp.php string.regexp.single-quoted.php
 
 // Extracted from: should tokenize angle-bracket named groups in REGEX heredoc
 <<<REGEX

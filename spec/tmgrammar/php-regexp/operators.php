@@ -52,12 +52,24 @@ REGEX;
 REGEXP;
 
 // Extracted from: should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures
- "/\.\*\+\?\^\|/";
-#  ^^^^^^^^^^^^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+"/\.\*\+\?\^\|/";
+# ^^^^^^^^^^^^ string.regexp.double-quoted.php constant.character.escape.regexp.php
 
 // Extracted from: should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures
- '/\.\*\+\?\^\|/';
-#  ^^^^^^^^^^^^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+'/\.\*\+\?\^\|/';
+# ^^^^^^^^^^^^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+
+// Added to keep the operator-escape family aligned across hosts.
+<<<REGEX
+ /\.\*\+\?\^\|/
+# ^^^^^^^^^^^^ string.regexp.heredoc.php constant.character.escape.regexp.php
+REGEX;
+
+// Added to keep the operator-escape family aligned across hosts.
+<<<'REGEXP'
+ /\.\*\+\?\^\|/
+# ^^^^^^^^^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+REGEXP;
 
 // Extracted from: should keep escaped dots and anchors distinct after interpreted backslash transport in double quoted regexes
  "/\\.$/";

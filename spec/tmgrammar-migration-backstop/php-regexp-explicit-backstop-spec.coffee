@@ -281,6 +281,20 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
         expect(lines[1][5]).toEqual value: 'E', scopes: regexpQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
         expect(lines[1][6]).toEqual value: '/', scopes: heredocRegexpScope
 
+      it 'should tokenize interpolation inside REGEXP heredoc quoted literals', ->
+        lines = grammar.tokenizeLines '''
+          $r = <<<REGEXP
+          /\\Q$value\\E/
+          REGEXP;
+        '''
+
+        expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+        expect(lines[1][1]).toEqual value: '\\Q', scopes: regexpQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+        expect(lines[1][2]).toEqual value: '$', scopes: regexpQuotedLiteralContentScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+        expect(lines[1][3]).toEqual value: 'value', scopes: regexpQuotedLiteralContentScopes(heredocRegexpScope).concat ['variable.other.php']
+        expect(lines[1][4]).toEqual value: '\\E', scopes: regexpQuotedLiteralBoundaryScopes(heredocRegexpScope).concat ['constant.character.escape.regexp.php']
+        expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+
       it 'should tokenize asymmetric quoted-literal boundaries in REGEXP heredoc', ->
         decodedStartLines = grammar.tokenizeLines '''
           $r = <<<REGEXP
@@ -1287,6 +1301,34 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
           expect(lines[1][19]).toEqual value: '/', scopes: regexScope
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+        if description is 'REGEXP nowdoc'
+          it 'should tokenize the full raw named backreference surface in REGEXP nowdoc', ->
+            lines = grammar.tokenizeLines [
+              "$r = <<<'REGEXP'"
+              "/\\k<word>\\k'word'\\k{word}\\g{word}/"
+              'REGEXP;'
+            ].join "\n"
+
+            expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+
+            expect(lines[1][1]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+            expect(lines[1][2]).toEqual value: '<', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][3]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+            expect(lines[1][4]).toEqual value: '>', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][5]).toEqual value: '\\k', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+            expect(lines[1][6]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+            expect(lines[1][7]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+            expect(lines[1][8]).toEqual value: '\'', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            for [offset, leader] in [[9, '\\k'], [13, '\\g']]
+              expect(lines[1][offset]).toEqual value: leader, scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 1]).toEqual value: '{', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.begin.regexp.php']
+              expect(lines[1][offset + 2]).toEqual value: 'word', scopes: regexpNamedBackreferenceNameScopes(nowdocRegexpScope)
+              expect(lines[1][offset + 3]).toEqual value: '}', scopes: regexpNamedBackreferenceScopes(nowdocRegexpScope).concat ['punctuation.definition.group.capture.end.regexp.php']
+
+            expect(lines[1][17]).toEqual value: '/', scopes: nowdocRegexpScope
 
   describe 'explicit decoded named backreferences', ->
     it 'should tokenize decoded named backreferences in REGEX heredoc', ->

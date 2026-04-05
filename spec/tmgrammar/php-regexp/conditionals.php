@@ -35,13 +35,24 @@
 #              ^ keyword.operator.or.regexp.php
 
 // Extracted from: should tokenize the supported non-assertion conditional families in quoted regexes
- '/(?(word)mn|op)/';
-#  ^            ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.regexp.php
-#   ^ meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
-#    ^    ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.conditional.regexp.php
-#     ^^^^ meta.embedded.group.conditional.regexp.php variable.other.regexp.php
-#          ^^^^^ meta.embedded.group.conditional.regexp.php string.regexp.single-quoted.php
-#            ^ keyword.operator.or.regexp.php
+'/(?(word)mn|op)/';
+# ^            ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.regexp.php
+#  ^ meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
+#   ^    ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.conditional.regexp.php
+#    ^^^^ meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#         ^^ ^^ meta.embedded.group.conditional.regexp.php string.regexp.single-quoted.php
+#           ^ keyword.operator.or.regexp.php
+
+// Extracted from: tokenizes apostrophe-delimited named groups and conditionals in single quoted regex source
+'/(?(\'word\')yes|no)/';
+# ^                 ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.regexp.php
+#  ^ meta.embedded.group.conditional.regexp.php keyword.control.conditional.begin.regexp.php
+#   ^        ^ meta.embedded.group.conditional.regexp.php punctuation.definition.group.conditional.regexp.php
+#    ^^ meta.embedded.group.conditional.regexp.php constant.character.escape.php punctuation.definition.group.regexp.php punctuation.definition.group.capture.begin.regexp.php
+#      ^^^^ meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#          ^^ meta.embedded.group.conditional.regexp.php constant.character.escape.php punctuation.definition.group.regexp.php punctuation.definition.group.capture.end.regexp.php
+#             ^^^ ^^ meta.embedded.group.conditional.regexp.php string.regexp.single-quoted.php
+#                ^ keyword.operator.or.regexp.php
 
 // Extracted from: should tokenize the supported non-assertion conditional families in quoted regexes
  "/(?(R)qr|st)/";

@@ -15,6 +15,12 @@
 #    ^^^^^^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
 #             ^^ string.regexp.double-quoted.php constant.character.class.regexp.php
 
+// Extracted from: should tokenize interpolation inside double quoted regex quoted literals
+ "/\Q$foo\E/";
+#  ^^    ^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^ punctuation.definition.variable.php
+#    ^^^^ string.regexp.double-quoted.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php variable.other.php
+
 // Extracted from: should tokenize quoted literals in REGEX heredoc
 <<<REGEX
   /\Qfoo/bar\E\d/
@@ -22,6 +28,15 @@
 #    ^^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
 #             ^^ string.regexp.heredoc.php constant.character.class.regexp.php
 REGEX;
+
+// Extracted from: should tokenize interpolation inside REGEXP heredoc quoted literals
+<<<REGEXP
+ /\\Q$value\\E/
+# ^^       ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.php
+#   ^        ^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#    ^ punctuation.definition.variable.php
+#    ^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php variable.other.php
+REGEXP;
 
 // Extracted from: should tokenize quoted literals in REGEXP nowdoc
 <<<'REGEXP'
