@@ -61,6 +61,48 @@ REGEX;
 #   ^  ^  ^  ^  ^  ^ string.regexp.heredoc.php keyword.control.anchor.regexp.php
 REGEX;
 
+// Additional tmgrammar coverage: one-more-backslash transport spot checks.
+
+ "/\\\b\\\z/";
+#  ^^  ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^   ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^   ^ string.regexp.double-quoted.php - keyword.control.anchor.regexp.php
+
+ "/\\\\b\\\\z/";
+#  ^^   ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^   ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^    ^ string.regexp.double-quoted.php - keyword.control.anchor.regexp.php
+
+ '/\\\b\\\z/';
+#  ^^  ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^   ^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+#     ^   ^ string.regexp.single-quoted.php - keyword.control.anchor.regexp.php
+
+ '/\\\\b\\\\z/';
+#  ^^   ^^ string.regexp.single-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^   ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^    ^ string.regexp.single-quoted.php - keyword.control.anchor.regexp.php
+
+<<<REGEX
+ /\\\b\\\z/
+# ^^  ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#   ^   ^ string.regexp.heredoc.php constant.character.escape.regexp.php
+#    ^   ^ string.regexp.heredoc.php - keyword.control.anchor.regexp.php
+REGEX;
+
+<<<REGEX
+ /\\\\b\\\\z/
+# ^^   ^^ string.regexp.heredoc.php constant.character.escape.php - constant.character.escape.regexp.php
+#   ^^   ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#     ^    ^ string.regexp.heredoc.php - keyword.control.anchor.regexp.php
+REGEX;
+
+<<<'REGEXP'
+ /\\b\\z/
+# ^^ ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+#   ^  ^ string.regexp.nowdoc.php - keyword.control.anchor.regexp.php
+REGEXP;
+
 // Extracted from: should tokenize the full raw anchor surface in REGEXP nowdoc
 <<<'REGEXP'
   /\b\B\A\Z\z\G^$/

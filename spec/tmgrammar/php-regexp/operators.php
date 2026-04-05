@@ -46,6 +46,48 @@ REGEX;
 # ^^^^^^^^^^^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
 REGEXP;
 
+// Additional tmgrammar coverage: one-more-backslash transport spot checks.
+
+ "/\\\|/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^ string.regexp.double-quoted.php keyword.operator.or.regexp.php
+
+ "/\\\\|/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^ string.regexp.double-quoted.php keyword.operator.or.regexp.php
+
+ '/\\\|/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+#     ^ string.regexp.single-quoted.php keyword.operator.or.regexp.php
+
+ '/\\\\|/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php
+#    ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^ string.regexp.single-quoted.php keyword.operator.or.regexp.php
+
+<<<REGEX
+ /\\\|/
+# ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#   ^ string.regexp.heredoc.php constant.character.escape.regexp.php
+#    ^ string.regexp.heredoc.php keyword.operator.or.regexp.php
+REGEX;
+
+<<<REGEX
+ /\\\\|/
+# ^^ string.regexp.heredoc.php constant.character.escape.php
+#   ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#     ^ string.regexp.heredoc.php keyword.operator.or.regexp.php
+REGEX;
+
+<<<'REGEXP'
+ /\\|/
+# ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+#   ^ string.regexp.nowdoc.php keyword.operator.or.regexp.php
+REGEXP;
+
 // Extracted from: should tokenize the full raw structural-escape surface in REGEXP nowdoc
 <<<'REGEXP'
   /\.\$\^/

@@ -158,6 +158,48 @@ REGEXP;
 #     ^^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php
 REGEXP;
 
+// Additional tmgrammar coverage: one-more-backslash transport spot checks.
+
+ "/\\\Qabc\\\E/";
+#  ^^     ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^      ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^^^^   ^ string.regexp.double-quoted.php - meta.embedded.quoted-literal.regexp.php
+
+ "/\\\\Qabc\\\\E/";
+#  ^^      ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^      ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^^^^    ^ string.regexp.double-quoted.php - meta.embedded.quoted-literal.regexp.php
+
+ '/\\\Qabc\\\E/';
+#  ^^     ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^      ^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+#     ^^^^   ^ string.regexp.single-quoted.php - meta.embedded.quoted-literal.regexp.php
+
+ '/\\\\Qabc\\\\E/';
+#  ^^      ^^ string.regexp.single-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^      ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^^^^    ^ string.regexp.single-quoted.php - meta.embedded.quoted-literal.regexp.php
+
+<<<REGEX
+  /\\\Qabc\\\E/
+#  ^^     ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^      ^ string.regexp.heredoc.php constant.character.escape.regexp.php
+#     ^^^^   ^ string.regexp.heredoc.php - meta.embedded.quoted-literal.regexp.php
+REGEX;
+
+<<<REGEX
+  /\\\\Qabc\\\\E/
+#  ^^      ^^ string.regexp.heredoc.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^      ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^^^^    ^ string.regexp.heredoc.php - meta.embedded.quoted-literal.regexp.php
+REGEX;
+
+<<<'REGEXP'
+  /\\Qabc\\E/
+#  ^^    ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+#    ^^^^  ^ string.regexp.nowdoc.php - meta.embedded.quoted-literal.regexp.php
+REGEXP;
+
 // Asymmetric quoted-literal boundaries
 
 // Extracted from: should tokenize asymmetric quoted-literal boundaries in quoted regex strings

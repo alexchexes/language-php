@@ -34,12 +34,10 @@
 // A leading ] inside a class stays literal, including after negation.
  "/[]a-z]/";
 #  ^    ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
-#   ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^ - punctuation.definition.character-class.regexp.php
+#   ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - punctuation.definition.character-class.regexp.php
 
 // Extracted from: should treat a leading closing bracket as literal class content in quoted regexes
  '/[^]a-z]/';
 #  ^     ^ meta.embedded.character-class.regexp.php punctuation.definition.character-class.regexp.php
 #   ^ meta.embedded.character-class.regexp.php keyword.operator.negation.regexp.php
-#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#    ^ - punctuation.definition.character-class.regexp.php
+#    ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php - punctuation.definition.character-class.regexp.php

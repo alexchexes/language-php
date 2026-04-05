@@ -132,6 +132,55 @@ REGEX;
 #     ^^ string.regexp.heredoc.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php
 REGEX;
 
+// Additional tmgrammar coverage: one-more-backslash transport spot checks.
+
+ "/\\\g{1}/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^ string.regexp.double-quoted.php - keyword.other.back-reference.regexp.php
+#      ^^^ string.regexp.double-quoted.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+
+ "/\\\\g{1}/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^ string.regexp.double-quoted.php - keyword.other.back-reference.regexp.php
+#       ^^^ string.regexp.double-quoted.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+
+ '/\\\g{1}/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+#     ^ string.regexp.single-quoted.php - keyword.other.back-reference.regexp.php
+#      ^^^ string.regexp.single-quoted.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+
+ '/\\\\g{1}/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^ string.regexp.single-quoted.php - keyword.other.back-reference.regexp.php
+#       ^^^ string.regexp.single-quoted.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+
+<<<REGEX
+ /\\\g{1}/
+# ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#   ^ string.regexp.heredoc.php constant.character.escape.regexp.php
+#    ^ string.regexp.heredoc.php - keyword.other.back-reference.regexp.php
+#     ^^^ string.regexp.heredoc.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+REGEX;
+
+<<<REGEX
+ /\\\\g{1}/
+# ^^ string.regexp.heredoc.php constant.character.escape.php - constant.character.escape.regexp.php
+#   ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#     ^ string.regexp.heredoc.php - keyword.other.back-reference.regexp.php
+#      ^^^ string.regexp.heredoc.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+REGEX;
+
+<<<'REGEXP'
+ /\\g{1}/
+# ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+#   ^ string.regexp.nowdoc.php - keyword.other.back-reference.regexp.php
+#    ^^^ string.regexp.nowdoc.php meta.embedded.quantifier.range.regexp.php keyword.operator.quantifier.regexp.php
+REGEXP;
+
 // Raw explicit-host numeric backreferences
 
 // Extracted from: should tokenize raw numeric backreferences in REGEXP nowdoc

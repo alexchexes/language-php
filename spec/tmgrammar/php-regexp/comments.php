@@ -77,52 +77,44 @@ REGEXP;
 
 // Group introducers should stay suppressed inside comment groups
 
- "/(?#(?:(?<(?P<)/";
+"/(?#(?:(?<(?P<)/";
 #     ^^^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
+#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
 
- '/(?#(?:(?<(?P<)/';
+'/(?#(?:(?<(?P<)/';
 #     ^^^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
+#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
 
 <<<REGEX
   /(?#(?:(?<(?P<)/
 #     ^^^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
+#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
 REGEX;
 
 <<<'REGEXP'
   /(?#(?:(?<(?P<)/
 #     ^^^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
+#     ^^^^^^^^^^ - punctuation.definition.group.regexp.php punctuation.definition.group.capture.begin.regexp.php variable.other.regexp.php
 REGEXP;
 
- "/(?#(?(word)/";
+"/(?#(?(word)/";
 #     ^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^ - meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#     ^^^^^^^ - punctuation.definition.group.regexp.php meta.embedded.group.conditional.regexp.php variable.other.regexp.php
 
- '/(?#(?(word)/';
+'/(?#(?(word)/';
 #     ^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^ - meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#     ^^^^^^^ - punctuation.definition.group.regexp.php meta.embedded.group.conditional.regexp.php variable.other.regexp.php
 
 <<<REGEX
   /(?#(?(word)/
 #     ^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^ - meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#     ^^^^^^^ - punctuation.definition.group.regexp.php meta.embedded.group.conditional.regexp.php variable.other.regexp.php
 REGEX;
 
 <<<'REGEXP'
   /(?#(?(word)/
 #     ^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^ - punctuation.definition.group.regexp.php
-#     ^^^^^^^ - meta.embedded.group.conditional.regexp.php variable.other.regexp.php
+#     ^^^^^^^ - punctuation.definition.group.regexp.php meta.embedded.group.conditional.regexp.php variable.other.regexp.php
 REGEXP;
 
  "/(?#(?|(?>)/";
@@ -171,48 +163,40 @@ REGEX;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 REGEXP;
 
- "/(?#\g<word>)/";
+"/(?#\g<word>)/";
 #     ^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
-#     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 
- '/(?#\g<word>)/';
+'/(?#\g<word>)/';
 #     ^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
-#     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 
 <<<REGEX
   /(?#\g<word>)/
 #     ^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
-#     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 REGEX;
 
 <<<'REGEXP'
   /(?#\g<word>)/
 #     ^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
-#     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 REGEXP;
 
- "/(?#\Q)/";
-#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
+"/(?#\Q)/";
+#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
 
- '/(?#\Q)/';
-#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
+'/(?#\Q)/';
+#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
 
 <<<REGEX
   /(?#\Q)/
-#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
+#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
 REGEX;
 
 <<<'REGEXP'
   /(?#\Q)/
-#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
-#     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
+#     ^^ meta.embedded.group.regexp.php comment.block.regexp.php - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
 REGEXP;
 
 // Explicit line comments

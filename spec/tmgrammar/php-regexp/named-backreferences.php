@@ -203,6 +203,48 @@ REGEX;
 #     ^^^^ string.regexp.heredoc.php keyword.other.back-reference.named.regexp.php variable.other.regexp.php
 REGEX;
 
+// Additional tmgrammar coverage: one-more-backslash transport spot checks.
+
+ "/\\\k{name}/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#     ^^^^^^^ string.regexp.double-quoted.php - keyword.other.back-reference.named.regexp.php
+
+ "/\\\\k{name}/";
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^^^^^^^ string.regexp.double-quoted.php - keyword.other.back-reference.named.regexp.php
+
+ '/\\\k{name}/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#    ^ string.regexp.single-quoted.php constant.character.escape.regexp.php
+#     ^^^^^^^ string.regexp.single-quoted.php - keyword.other.back-reference.named.regexp.php
+
+ '/\\\\k{name}/';
+#  ^^ string.regexp.single-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.single-quoted.php constant.character.escape.php constant.character.escape.regexp.php
+#      ^^^^^^^ string.regexp.single-quoted.php - keyword.other.back-reference.named.regexp.php
+
+<<<REGEX
+ /\\\k{name}/
+# ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#   ^ string.regexp.heredoc.php constant.character.escape.regexp.php
+#    ^^^^^^^ string.regexp.heredoc.php - keyword.other.back-reference.named.regexp.php
+REGEX;
+
+<<<REGEX
+ /\\\\k{name}/
+# ^^ string.regexp.heredoc.php constant.character.escape.php - constant.character.escape.regexp.php
+#   ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.escape.regexp.php
+#     ^^^^^^^ string.regexp.heredoc.php - keyword.other.back-reference.named.regexp.php
+REGEX;
+
+<<<'REGEXP'
+ /\\k{name}/
+# ^^ string.regexp.nowdoc.php constant.character.escape.regexp.php
+#   ^^^^^^^ string.regexp.nowdoc.php - keyword.other.back-reference.named.regexp.php
+REGEXP;
+
 // Unicode named backreferences
 
 // Extracted from: should accept Unicode letters and decimal digits in quoted named refs and subroutines
