@@ -48,13 +48,11 @@ REGEXP;
 // Extracted from: should tokenize recursion and subroutine calls in quoted regexes
  "/\g<word>\g'word'\g<1>\g<+1>\g'-1'/";
 #  ^^      ^^ keyword.other.subroutine.named.regexp.php
-#    ^       ^ punctuation.definition.group.capture.begin.regexp.php
+#    ^       ^       ^    ^     ^ punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^    ^^^^ variable.other.regexp.php
-#         ^       ^ punctuation.definition.group.capture.end.regexp.php
+#         ^       ^    ^     ^     ^ punctuation.definition.group.capture.end.regexp.php
 #                  ^^   ^^    ^^ keyword.other.subroutine.regexp.php
-#                    ^    ^     ^ punctuation.definition.group.capture.begin.regexp.php
 #                     ^    ^^    ^^ constant.numeric.regexp.php
-#                      ^     ^     ^ punctuation.definition.group.capture.end.regexp.php
 
 // Extracted from: should tokenize recursion and subroutine calls in quoted regexes
  '/\g<word>\g<1>\g<+1>\g<-1>/';
@@ -69,27 +67,23 @@ REGEXP;
  "/\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/";
 #  ^^       ^^ constant.character.escape.php keyword.other.subroutine.named.regexp.php
 #    ^        ^ keyword.other.subroutine.named.regexp.php
-#     ^        ^ punctuation.definition.group.capture.begin.regexp.php
+#     ^        ^        ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #      ^^^^     ^^^^ variable.other.regexp.php
-#          ^        ^ punctuation.definition.group.capture.end.regexp.php
+#          ^        ^     ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 #                    ^^    ^^     ^^ constant.character.escape.php keyword.other.subroutine.regexp.php
 #                      ^     ^      ^ keyword.other.subroutine.regexp.php
-#                       ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #                        ^     ^^     ^^ constant.numeric.regexp.php
-#                         ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 
 // Extracted from: should tokenize decoded Oniguruma subroutine calls in interpreted quoted regexes
  '/\\g<word>\\g<1>\\g<+1>\\g<-1>/';
 #  ^^ constant.character.escape.php keyword.other.subroutine.named.regexp.php
 #    ^ keyword.other.subroutine.named.regexp.php
-#     ^ punctuation.definition.group.capture.begin.regexp.php
+#     ^        ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #      ^^^^ variable.other.regexp.php
-#          ^ punctuation.definition.group.capture.end.regexp.php
+#          ^     ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 #           ^^    ^^     ^^ constant.character.escape.php keyword.other.subroutine.regexp.php
 #             ^     ^      ^ keyword.other.subroutine.regexp.php
-#              ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #               ^     ^^     ^^ constant.numeric.regexp.php
-#                ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 
 // Extracted from: tokenizes apostrophe-delimited backreferences and subroutine calls in single quoted regex source
  '/\g\'word\'\g\'+1\'\g\'-1\'/';
@@ -116,27 +110,23 @@ REGEXP;
  /\\g<word>\\g'word'\\g<1>\\g<+1>\\g'-1'/
 # ^^       ^^ constant.character.escape.php keyword.other.subroutine.named.regexp.php
 #   ^        ^ keyword.other.subroutine.named.regexp.php
-#    ^        ^ punctuation.definition.group.capture.begin.regexp.php
+#    ^        ^        ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #     ^^^^     ^^^^ variable.other.regexp.php
-#         ^        ^ punctuation.definition.group.capture.end.regexp.php
+#         ^        ^     ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 #                   ^^    ^^     ^^ constant.character.escape.php keyword.other.subroutine.regexp.php
 #                     ^     ^      ^ keyword.other.subroutine.regexp.php
-#                      ^     ^      ^ punctuation.definition.group.capture.begin.regexp.php
 #                       ^     ^^     ^^ constant.numeric.regexp.php
-#                        ^      ^      ^ punctuation.definition.group.capture.end.regexp.php
 REGEX;
 
 // Extracted from: should tokenize the full raw \g numeric backreference and subroutine surface in REGEXP nowdoc
 <<<'REGEXP'
  /\g<word>\g'word'\g<1>\g<+1>\g'-1'/
 # ^^      ^^ keyword.other.subroutine.named.regexp.php
-#   ^       ^ punctuation.definition.group.capture.begin.regexp.php
+#   ^       ^       ^    ^     ^ punctuation.definition.group.capture.begin.regexp.php
 #    ^^^^    ^^^^ variable.other.regexp.php
-#        ^       ^ punctuation.definition.group.capture.end.regexp.php
+#        ^       ^    ^     ^     ^ punctuation.definition.group.capture.end.regexp.php
 #                 ^^   ^^    ^^ keyword.other.subroutine.regexp.php
-#                   ^    ^     ^ punctuation.definition.group.capture.begin.regexp.php
 #                    ^    ^^    ^^ constant.numeric.regexp.php
-#                     ^     ^     ^ punctuation.definition.group.capture.end.regexp.php
 REGEXP;
 
 // Unicode named subroutines
