@@ -31,11 +31,10 @@ REGEX;
 
 // Extracted from: should tokenize interpolation inside REGEXP heredoc quoted literals
 <<<REGEXP
- /\\Q$value\\E/
-# ^^       ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.php
-#   ^        ^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
-#    ^ punctuation.definition.variable.php
-#    ^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php variable.other.php
+ /\Q$value\E/
+# ^^      ^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php constant.character.escape.regexp.php
+#   ^ punctuation.definition.variable.php
+#   ^^^^^^ string.regexp.heredoc.php meta.embedded.quoted-literal.regexp.php string.regexp.quoted-literal.php variable.other.php
 REGEXP;
 
 // Extracted from: should tokenize quoted literals in REGEXP nowdoc

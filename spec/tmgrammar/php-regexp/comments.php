@@ -147,7 +147,7 @@ REGEXP;
 
 // Backslash-led named constructs should stay suppressed inside comment groups
 
- "/(?#\\k<word>\\k{word}\\g{word})/";
+ "/(?#\k<word>\k{word}\g{word})/";
 #     ^^^^^^^^^^^^^^^^^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^ - keyword.other.back-reference.named.regexp.php variable.other.regexp.php
 #     ^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
@@ -171,7 +171,7 @@ REGEX;
 #     ^^^^^^^^^^^^^^^^^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 REGEXP;
 
- "/(?#\\g<word>)/";
+ "/(?#\g<word>)/";
 #     ^^^^^^^^ meta.embedded.group.regexp.php comment.block.regexp.php
 #     ^^^^^^^^ - keyword.other.subroutine.named.regexp.php variable.other.regexp.php
 #     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
@@ -195,7 +195,7 @@ REGEX;
 #     ^^^^^^^^ - punctuation.definition.group.capture.begin.regexp.php punctuation.definition.group.capture.end.regexp.php
 REGEXP;
 
- "/(?#\\Q)/";
+ "/(?#\Q)/";
 #     ^^ meta.embedded.group.regexp.php comment.block.regexp.php
 #     ^^ - constant.character.escape.regexp.php meta.embedded.quoted-literal.regexp.php
 
