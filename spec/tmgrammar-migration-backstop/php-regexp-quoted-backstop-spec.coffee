@@ -31,6 +31,8 @@ require('../../utils/compatibleExpect')
   regexpQuotedLiteralContentScopes
   regexpInvalidEscapeScopes
   regexpDecodedInvalidTransportScopes
+  regexpDecodedNumericTransportScopes
+  regexpDecodedAnchorTransportScopes
   regexpGroupScopes
   regexpGroupRecursionScopes
   regexpGroupSubroutineScopes
@@ -2496,6 +2498,36 @@ describe 'PHP quoted regexp tmgrammar migration backstop', ->
       expect(tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
       expect(tokens[3]).toEqual value: '.', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[4]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+
+    it 'should tokenize decoded anchors and short hex escapes in quoted regexes', ->
+      doubleQuoted = grammar.tokenizeLine '"/\\\\b\\\\x\\\\z/"'
+      singleQuoted = grammar.tokenizeLine "'/\\\\A\\\\B\\\\G\\\\Z\\\\x/'"
+
+      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[3]).toEqual value: 'b', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[5]).toEqual value: 'x', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(doubleQuoted.tokens[6]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[7]).toEqual value: 'z', scopes: quotedDoubleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(doubleQuoted.tokens[8]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
+      expect(doubleQuoted.tokens[9]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[2]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[3]).toEqual value: 'A', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[4]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[5]).toEqual value: 'B', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[6]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[7]).toEqual value: 'G', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[8]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[9]).toEqual value: 'Z', scopes: quotedSingleRegexpScope.concat ['keyword.control.anchor.regexp.php']
+      expect(singleQuoted.tokens[10]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[11]).toEqual value: 'x', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(singleQuoted.tokens[12]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
+      expect(singleQuoted.tokens[13]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
     it 'should tokenize supported non-state-changing operator escapes in quoted regexes from fixtures', ->
       supportedEscapedOperators = ['.', '*', '+', '?', '^', '|']

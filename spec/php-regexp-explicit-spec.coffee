@@ -941,37 +941,6 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][1]).toEqual value: '\\x', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
             expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
 
-          it 'should tokenize decoded anchors and short hex escapes in REGEX heredoc', ->
-            lines = grammar.tokenizeLines '''
-              $r = <<<REGEX
-              /\\\\b\\\\x\\\\z/
-              REGEX;
-            '''
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(heredocRegexpScope)
-            expect(lines[1][2]).toEqual value: 'b', scopes: heredocRegexpScope.concat ['keyword.control.anchor.regexp.php']
-            expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(heredocRegexpScope)
-            expect(lines[1][4]).toEqual value: 'x', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][5]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(heredocRegexpScope)
-            expect(lines[1][6]).toEqual value: 'z', scopes: heredocRegexpScope.concat ['keyword.control.anchor.regexp.php']
-            expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
-
-          it 'should tokenize the full decoded anchor surface in REGEX heredoc', ->
-            lines = grammar.tokenizeLines '''
-              $r = <<<REGEX
-              /\\\\b\\\\B\\\\A\\\\Z\\\\z\\\\G/
-              REGEX;
-            '''
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            offset = 1
-            for anchor in ['b', 'B', 'A', 'Z', 'z', 'G']
-              expect(lines[1][offset]).toEqual value: '\\\\', scopes: regexpDecodedAnchorTransportScopes(heredocRegexpScope)
-              expect(lines[1][offset + 1]).toEqual value: anchor, scopes: heredocRegexpScope.concat ['keyword.control.anchor.regexp.php']
-              offset += 2
-            expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
-
           it 'should treat decoded \\c before end-of-line as invalid in REGEX heredoc', ->
             lines = grammar.tokenizeLines '''
               $r = <<<REGEX
