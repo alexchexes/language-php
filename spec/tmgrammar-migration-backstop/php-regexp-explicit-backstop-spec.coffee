@@ -1812,6 +1812,50 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
       expect(lines[1][2]).toEqual value: '\\)', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
 
+  describe 'explicit short hex escapes', ->
+    it 'should tokenize raw short hex escapes in REGEX heredoc', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEX
+        /\\x/
+        REGEX;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\x', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should tokenize one-digit hex escapes in REGEX heredoc', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEX
+        /\\\\x1Q600\\\\x4Q/
+        REGEX;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: 'x1', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][3]).toEqual value: 'Q600', scopes: heredocRegexpScope
+      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(heredocRegexpScope)
+      expect(lines[1][5]).toEqual value: 'x4', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][6]).toEqual value: 'Q/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize one-digit hex escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/\\x1Q600\\x4Q/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\x1', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: 'Q600', scopes: nowdocRegexpScope
+      expect(lines[1][3]).toEqual value: '\\x4', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][4]).toEqual value: 'Q/', scopes: nowdocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
   describe 'explicit anchors', ->
     it 'should tokenize decoded anchors and short hex escapes in REGEX heredoc', ->
       lines = grammar.tokenizeLines '''

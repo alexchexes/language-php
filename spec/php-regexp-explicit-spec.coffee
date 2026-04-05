@@ -799,30 +799,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
-        it "should tokenize one-digit hex escapes in #{description}", ->
-          body = if sourceSurface is 'raw' then '/\\x1Q600\\x4Q/' else '/\\\\x1Q600\\\\x4Q/'
-          lines = grammar.tokenizeLines """
-            $r = #{opener}
-            #{body}
-            #{label};
-          """
-
-          expect(lines[1][0]).toEqual value: '/', scopes: regexScope
-          if sourceSurface is 'raw'
-            expect(lines[1][1]).toEqual value: '\\x1', scopes: regexScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][2]).toEqual value: 'Q600', scopes: regexScope
-            expect(lines[1][3]).toEqual value: '\\x4', scopes: regexScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][4]).toEqual value: 'Q/', scopes: regexScope
-          else
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(regexScope)
-            expect(lines[1][2]).toEqual value: 'x1', scopes: regexScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][3]).toEqual value: 'Q600', scopes: regexScope
-            expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpDecodedNumericTransportScopes(regexScope)
-            expect(lines[1][5]).toEqual value: 'x4', scopes: regexScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][6]).toEqual value: 'Q/', scopes: regexScope
-          expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
-          expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
-
         if sourceSurface is 'raw'
           it 'should tokenize raw two-digit hex escapes in REGEXP nowdoc', ->
             lines = grammar.tokenizeLines [
@@ -929,17 +905,6 @@ describe 'PHP explicit regexp grammar', ->
             expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
             expect(lines[1][3]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
             expect(lines[1][4]).toEqual value: 'a', scopes: regexpCharacterClassLetterRangeScopes(heredocRegexpScope)
-
-          it 'should tokenize raw short hex escapes in REGEX heredoc', ->
-            lines = grammar.tokenizeLines '''
-              $r = <<<REGEX
-              /\\x/
-              REGEX;
-            '''
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\x', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
-            expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
 
           it 'should treat decoded \\c before end-of-line as invalid in REGEX heredoc', ->
             lines = grammar.tokenizeLines '''
