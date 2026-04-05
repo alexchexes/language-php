@@ -26,6 +26,7 @@ require('../../utils/compatibleExpect')
   regexpDecodedQuotedLiteralTransportScopes
   regexpQuotedLiteralContentScopes
   regexpDecodedNumericTransportScopes
+  regexpOctalScopes
   regexpDecodedAnchorTransportScopes
   regexpCharacterClassQuotedLiteralBoundaryScopes
   regexpCharacterClassDecodedQuotedLiteralTransportScopes
@@ -2686,3 +2687,183 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
 
             expect(lines[1].some((token) -> token.scopes.includes 'comment.line.number-sign.php')).toBe false
             expect(lines[2][0]).toEqual value: 'z', scopes: regexScope
+
+  describe 'explicit body numeric escapes', ->
+    it 'should tokenize decoded octal zero in REGEX heredoc bodies', ->
+      lines = grammar.tokenizeLines [
+        '$r = <<<REGEX'
+        '/\\\\0/'
+        'REGEX;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
+      expect(lines[1][2]).toEqual value: '0', scopes: regexpOctalScopes(heredocRegexpScope)
+      expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should keep single-backslash overlapping escapes PHP-first in REGEX heredoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<REGEX
+        /\\1\\x41\\n\\v\\$\\d\\x{41}/
+        REGEX;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\1', scopes: heredocRegexpScope.concat ['constant.character.escape.octal.php']
+      expect(lines[1][2]).toEqual value: '\\x41', scopes: heredocRegexpScope.concat ['constant.character.escape.hex.php']
+      expect(lines[1][3]).toEqual value: '\\n', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+      expect(lines[1][4]).toEqual value: '\\v', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
+      expect(lines[1][5]).toEqual value: '\\$', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'keyword.control.anchor.regexp.php']
+      expect(lines[1][6]).toEqual value: '\\d', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][7]).toEqual value: '\\x{41}', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][8]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize braced octal escapes in REGEX heredoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<REGEX
+        /\\o{141}/
+        REGEX;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(heredocRegexpScope)
+      expect(lines[1][2]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize Unicode code point escapes in REGEX heredoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<REGEX
+        /\\\\N{U+41}/
+        REGEX;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: 'N{U+41}', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][3]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize decoded property, braced hex, and braced octal escapes in REGEX heredoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<REGEX
+        /\\\\pL\\\\PL\\\\p{L}\\\\P{N}\\\\x{41}\\\\o{141}/
+        REGEX;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(lines[1][2]).toEqual value: 'pL', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(lines[1][4]).toEqual value: 'PL', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][5]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(lines[1][6]).toEqual value: 'p{L}', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][7]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
+      expect(lines[1][8]).toEqual value: 'P{N}', scopes: heredocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][9]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
+      expect(lines[1][10]).toEqual value: 'x{41}', scopes: heredocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][11]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
+      expect(lines[1][12]).toEqual value: 'o{141}', scopes: regexpOctalScopes(heredocRegexpScope)
+      expect(lines[1][13]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEX', scopes: heredocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.heredoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize raw octal zero escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        '$r = <<<' + "'REGEXP'"
+        '/\\0\\00\\000/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\0', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\00', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][3]).toEqual value: '\\000', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][4]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should tokenize the full raw octal-escape surface in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        '$r = <<<' + "'REGEXP'"
+        '/\\0\\07\\012\\o{141}/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\0', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '\\07', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][3]).toEqual value: '\\012', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][4]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][5]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should keep overlapping single-backslash escapes regex-first in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<'REGEXP'
+        /\\1\\x41\\n\\v\\$\\d\\x{41}/
+        REGEXP;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php']
+      expect(lines[1][2]).toEqual value: '1', scopes: nowdocRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
+      expect(lines[1][3]).toEqual value: '\\x41', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][4]).toEqual value: '\\n', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(lines[1][5]).toEqual value: '\\v', scopes: nowdocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][6]).toEqual value: '\\$', scopes: nowdocRegexpScope.concat ['constant.character.escape.regexp.php']
+      expect(lines[1][7]).toEqual value: '\\d', scopes: nowdocRegexpScope.concat ['constant.character.class.regexp.php']
+      expect(lines[1][8]).toEqual value: '\\x{41}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][9]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize braced octal escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<'REGEXP'
+        /\\o{141}/
+        REGEXP;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(nowdocRegexpScope)
+      expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize Unicode code point escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines """
+        $r = <<<'REGEXP'
+        /\\N{U+41}/
+        REGEXP;
+      """
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\N{U+41}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[2][0]).toEqual value: 'REGEXP', scopes: nowdocRegexpBoundaryScope.concat ['punctuation.section.embedded.end.php', 'keyword.operator.nowdoc.php']
+      expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
+
+    it 'should tokenize raw two-digit hex escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/\\x41\\xAf/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\x41', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: '\\xAf', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope
+
+    it 'should tokenize raw braced hex escapes in REGEXP nowdoc', ->
+      lines = grammar.tokenizeLines [
+        "$r = <<<'REGEXP'"
+        '/\\x{4A}\\x{1F600}/'
+        'REGEXP;'
+      ].join "\n"
+
+      expect(lines[1][0]).toEqual value: '/', scopes: nowdocRegexpScope
+      expect(lines[1][1]).toEqual value: '\\x{4A}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][2]).toEqual value: '\\x{1F600}', scopes: nowdocRegexpScope.concat ['constant.character.numeric.regexp.php']
+      expect(lines[1][3]).toEqual value: '/', scopes: nowdocRegexpScope

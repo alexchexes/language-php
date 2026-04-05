@@ -694,38 +694,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[5]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[6]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
-    it 'should tokenize raw Unicode code point escapes in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/\\N{U+41}/"'
-      singleQuoted = grammar.tokenizeLine "'/\\N{U+41}/'"
-
-      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[2]).toEqual value: '\\N{U+41}', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(doubleQuoted.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[4]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-
-      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[2]).toEqual value: '\\N{U+41}', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(singleQuoted.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[4]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-
-    it 'should tokenize raw braced octal escapes in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/\\o{141}/"'
-      singleQuoted = grammar.tokenizeLine "'/\\o{141}/'"
-
-      expect(doubleQuoted.tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[2]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[4]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-
-      expect(singleQuoted.tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[2]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[4]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-
     it 'should tokenize raw body escape \\K in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\K/"'
       singleQuoted = grammar.tokenizeLine "'/\\K/'"
@@ -741,24 +709,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(singleQuoted.tokens[2]).toEqual value: '\\K', scopes: regexpControlKeywordScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(singleQuoted.tokens[4]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-
-    it 'should tokenize decoded overlapping escapes in double quoted regexes', ->
-      {tokens} = grammar.tokenizeLine '"/\\\\1\\\\x41\\\\n\\\\v\\\\$/"'
-
-      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.regexp.php']
-      expect(tokens[3]).toEqual value: '1', scopes: quotedDoubleRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-      expect(tokens[4]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(tokens[5]).toEqual value: 'x41', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(tokens[6]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(tokens[7]).toEqual value: 'n', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[8]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(tokens[9]).toEqual value: 'v', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(tokens[10]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(tokens[11]).toEqual value: '$', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[12]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[13]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
     it 'should not let decoded \\\\c consume the regex terminator in quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\c/"'
@@ -850,16 +800,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[10]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
       expect(tokens[11]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
 
-    it 'should tokenize decoded octal zero in double quoted regex bodies', ->
-      {tokens} = grammar.tokenizeLine '"/\\\\0/"'
-
-      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
-      expect(tokens[3]).toEqual value: '0', scopes: regexpOctalScopes(quotedDoubleRegexpScope)
-      expect(tokens[4]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[5]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-
     it 'should tokenize decoded bell escapes in interpreted quoted regexes', ->
       doubleQuoted = grammar.tokenizeLine '"/\\\\a/"'
       singleQuoted = grammar.tokenizeLine "'/\\\\a/'"
@@ -887,58 +827,6 @@ describe 'PHP quoted regexp grammar', ->
         expect(singleQuoted.tokens[singleOffset + 1]).toEqual value: type, scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
         singleOffset += 2
 
-    it 'should tokenize decoded property, braced hex, braced octal, and Unicode code point escapes in quoted regexes', ->
-      doubleQuoted = grammar.tokenizeLine '"/\\\\pL\\\\PL\\\\p{L}\\\\P{N}\\\\x{41}\\\\o{141}\\\\N{U+41}/"'
-      singleQuoted = grammar.tokenizeLine "'/\\\\pL\\\\PL\\\\p{L}\\\\P{N}\\\\x{41}\\\\o{141}\\\\N{U+41}/'"
-
-      expect(doubleQuoted.tokens[2]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[3]).toEqual value: 'pL', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[4]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[5]).toEqual value: 'PL', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[6]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[7]).toEqual value: 'p{L}', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[8]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[9]).toEqual value: 'P{N}', scopes: quotedDoubleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(doubleQuoted.tokens[10]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(doubleQuoted.tokens[11]).toEqual value: 'x{41}', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(doubleQuoted.tokens[12]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
-      expect(doubleQuoted.tokens[13]).toEqual value: 'o{141}', scopes: regexpOctalScopes(quotedDoubleRegexpScope)
-      expect(doubleQuoted.tokens[14]).toEqual value: '\\\\', scopes: quotedDoubleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(doubleQuoted.tokens[15]).toEqual value: 'N{U+41}', scopes: quotedDoubleRegexpScope.concat ['constant.character.numeric.regexp.php']
-
-      expect(singleQuoted.tokens[2]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[3]).toEqual value: 'pL', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[4]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[5]).toEqual value: 'PL', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[6]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[7]).toEqual value: 'p{L}', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[8]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[9]).toEqual value: 'P{N}', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(singleQuoted.tokens[10]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(singleQuoted.tokens[11]).toEqual value: 'x{41}', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(singleQuoted.tokens[12]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
-      expect(singleQuoted.tokens[13]).toEqual value: 'o{141}', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(singleQuoted.tokens[14]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(singleQuoted.tokens[15]).toEqual value: 'N{U+41}', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
-
-    it 'should tokenize decoded overlapping escapes in single quoted regexes', ->
-      {tokens} = grammar.tokenizeLine "'/\\\\1\\\\x41\\\\n\\\\v\\\\$/'"
-
-      expect(tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
-      expect(tokens[2]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'keyword.other.back-reference.regexp.php']
-      expect(tokens[3]).toEqual value: '1', scopes: quotedSingleRegexpScope.concat ['keyword.other.back-reference.regexp.php', 'constant.numeric.regexp.php']
-      expect(tokens[4]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(tokens[5]).toEqual value: 'x41', scopes: quotedSingleRegexpScope.concat ['constant.character.numeric.regexp.php']
-      expect(tokens[6]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(tokens[7]).toEqual value: 'n', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[8]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(tokens[9]).toEqual value: 'v', scopes: quotedSingleRegexpScope.concat ['constant.character.class.regexp.php']
-      expect(tokens[10]).toEqual value: '\\\\', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(tokens[11]).toEqual value: '$', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
-      expect(tokens[12]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
-      expect(tokens[13]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-
     it 'should tokenize raw regex-native escapes in single quoted regexes', ->
       {tokens} = grammar.tokenizeLine "'/\\a\\cA\\c;\\n\\r\\t\\f\\e\\/\\+\\*\\?\\|\\-\\#\\(\\)/'"
 
@@ -963,18 +851,6 @@ describe 'PHP quoted regexp grammar', ->
       expect(tokens[18]).toEqual value: '\\)', scopes: quotedSingleRegexpScope.concat ['constant.character.escape.regexp.php']
       expect(tokens[19]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
       expect(tokens[20]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
-
-    it 'should tokenize raw octal escapes in single quoted regexes', ->
-      {tokens} = grammar.tokenizeLine "'/\\0\\00\\000\\o{141}/'"
-
-      expect(tokens[0]).toEqual value: '\'', scopes: regexpWrapperBeginQuoteScopes(quotedSingleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedSingleRegexpScope)
-      expect(tokens[2]).toEqual value: '\\0', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(tokens[3]).toEqual value: '\\00', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(tokens[4]).toEqual value: '\\000', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(tokens[5]).toEqual value: '\\o{141}', scopes: regexpOctalScopes(quotedSingleRegexpScope)
-      expect(tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedSingleRegexpScope)
-      expect(tokens[7]).toEqual value: '\'', scopes: regexpWrapperEndQuoteScopes(quotedSingleRegexpScope)
 
 
     it 'should decompose repeated interpreted backslashes inside quoted regex character classes', ->
