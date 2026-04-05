@@ -27,13 +27,14 @@
 #             ^^^^^^ string.regexp.double-quoted.php constant.character.numeric.regexp.php
 
 // Extracted from: should tokenize richer body escapes and operators in single quoted regexes
- '/^\d|\pL\p{L}.+\x41\x{4A}$/';
-#  ^                       ^ string.regexp.single-quoted.php keyword.control.anchor.regexp.php
+ '/^\d|\pL\p{L}.+\x41 \x{4A}$/';
+#  ^                        ^ string.regexp.single-quoted.php keyword.control.anchor.regexp.php
 #   ^^ ^^^^^^^^ string.regexp.single-quoted.php constant.character.class.regexp.php
 #     ^ string.regexp.single-quoted.php keyword.operator.or.regexp.php
 #              ^ string.regexp.single-quoted.php constant.character.class.wildcard.regexp.php
 #               ^ string.regexp.single-quoted.php keyword.operator.quantifier.regexp.php
-#                ^^^^^^^^^^ string.regexp.single-quoted.php constant.character.numeric.regexp.php
+#                ^^^^ ^^^^^^ string.regexp.single-quoted.php constant.character.numeric.regexp.php
+#                    ^ string.regexp.single-quoted.php - constant.character.numeric.regexp.php
 
 // Quantifier-heavy explicit hosts.
 

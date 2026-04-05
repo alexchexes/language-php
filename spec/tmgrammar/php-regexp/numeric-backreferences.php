@@ -4,18 +4,20 @@
 // Raw quoted numeric backreferences
 
 // Extracted from: should tokenize numeric g-style backreferences in quoted regexes
- "/\g1\g{1}\g{-1}/";
-#  ^^^^^^^^^^^^^^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php
-#    ^   ^    ^^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php
-#       ^    ^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.begin.regexp.php
-#         ^     ^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.end.regexp.php
+ "/\g1 \g{1} \g{-1}/";
+#  ^^^ ^^^^^ ^^^^^^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php
+#    ^    ^     ^^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php
+#        ^     ^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.begin.regexp.php
+#          ^      ^ string.regexp.double-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^     ^ string.regexp.double-quoted.php - keyword.other.back-reference.regexp.php
 
 // Extracted from: should tokenize numeric g-style backreferences in quoted regexes
- '/\g1\g{1}\g{-1}/';
-#  ^^^^^^^^^^^^^^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php
-#    ^   ^    ^^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php
-#       ^    ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.begin.regexp.php
-#         ^     ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.end.regexp.php
+ '/\g1 \g{1} \g{-1}/';
+#  ^^^ ^^^^^ ^^^^^^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php
+#    ^    ^     ^^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php
+#        ^     ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.begin.regexp.php
+#          ^      ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.end.regexp.php
+#     ^     ^ string.regexp.single-quoted.php - keyword.other.back-reference.regexp.php
 
 // Added to complete the numeric-backreference family; no single extracted Coffee it
  '/\1/';
