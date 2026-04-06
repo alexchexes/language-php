@@ -19,7 +19,7 @@
 #          ^      ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php punctuation.definition.group.capture.end.regexp.php
 #     ^     ^ string.regexp.single-quoted.php - keyword.other.back-reference.regexp.php
 
-// Added to complete the numeric-backreference family; no single extracted Coffee it
+// Raw single-quoted numeric backreference \1.
  '/\1/';
 #  ^^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php
 #   ^ string.regexp.single-quoted.php keyword.other.back-reference.regexp.php constant.numeric.regexp.php

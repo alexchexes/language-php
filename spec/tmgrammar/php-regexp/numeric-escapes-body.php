@@ -24,7 +24,7 @@
 #  ^^ ^^^ ^^^^ ^^^^^^^ string.regexp.single-quoted.php constant.numeric.octal.regexp.php
 #    ^   ^    ^ string.regexp.single-quoted.php - constant.numeric.octal.regexp.php
 
-// Added to keep raw full-hex body forms with the rest of the numeric body family.
+// Raw full-hex body forms in single quoted regexes.
  '/\x41 \x{4A}/';
 #  ^^^^ ^^^^^^ string.regexp.single-quoted.php constant.character.numeric.regexp.php
 #      ^ string.regexp.single-quoted.php - constant.character.numeric.regexp.php

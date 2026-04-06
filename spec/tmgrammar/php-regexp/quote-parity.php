@@ -9,8 +9,8 @@
 
 // Extracted from: should tokenize apostrophe escapes according to quoted PHP host rules
  "/\\\\'/";
-#  ^^^^ string.regexp.double-quoted.php constant.character.escape.php
-#    ^^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#  ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
 
 // Extracted from: should tokenize apostrophe escapes according to quoted PHP host rules
  '/\'/';
@@ -18,8 +18,8 @@
 
 // Extracted from: should keep PHP-escaped quotes after interpreted transport in quoted regex bodies
  "/\\\\\"/";
-#  ^^^^^^ string.regexp.double-quoted.php constant.character.escape.php
-#    ^^ string.regexp.double-quoted.php constant.character.escape.regexp.php
+#  ^^  ^^ string.regexp.double-quoted.php constant.character.escape.php - constant.character.escape.regexp.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.php constant.character.escape.regexp.php
 
 // Extracted from: should keep PHP-escaped quotes after interpreted transport in quoted regex bodies
  '/\\\'/';
@@ -76,8 +76,8 @@ REGEXP;
 // Extracted from: should keep PHP-escaped quotes in quoted regex character classes after interpreted transport
  "/[\\\\'a-z]/";
 #   ^^^^ meta.embedded.character-class.regexp.php string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^ constant.character.escape.php
-#     ^^ constant.character.escape.regexp.php
+#   ^^ constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^ constant.character.escape.php constant.character.escape.regexp.php
 #        ^ ^ string.regexp.character-class.php constant.other.character-class.range.regexp.php variable.other.constant.range.regexp.php
 #         ^ string.regexp.character-class.php constant.other.character-class.range.regexp.php keyword.operator.range.regexp.php
 
@@ -105,8 +105,8 @@ REGEXP;
 // Extracted from: should keep opposite-host quotes inside quoted regex character classes after even interpreted parity
  "/[\\\\'a-z]/";
 #   ^^^^ meta.embedded.character-class.regexp.php string.regexp.character-class.php constant.other.character-class.set.regexp.php
-#   ^^^^ constant.character.escape.php
-#     ^^ constant.character.escape.regexp.php
+#   ^^ constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^ constant.character.escape.php constant.character.escape.regexp.php
 #        ^ ^ string.regexp.character-class.php constant.other.character-class.range.regexp.php variable.other.constant.range.regexp.php
 #         ^ string.regexp.character-class.php constant.other.character-class.range.regexp.php keyword.operator.range.regexp.php
 
@@ -133,8 +133,8 @@ REGEX;
 // Extracted from: should decompose repeated interpreted backslashes before quotes in REGEX heredoc character classes
 <<<REGEX
   /[\\\\'a-z]/
-#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
-#     ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
+#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^ meta.embedded.character-class.regexp.php constant.character.escape.php constant.character.escape.regexp.php
 #       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php
 #       ^ - constant.character.escape.regexp.php constant.other.character-class.range.regexp.php variable.other.constant.range.regexp.php
 REGEX;
@@ -142,23 +142,25 @@ REGEX;
 // Extracted from: should decompose repeated interpreted backslashes before quotes in REGEX heredoc character classes
 <<<REGEX
   /[\\\\\"a-z]/
-#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
-#     ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
-#       ^ string.regexp.character-class.php constant.other.character-class.set.regexp.php constant.character.escape.regexp.php
+#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^ meta.embedded.character-class.regexp.php constant.character.escape.php constant.character.escape.regexp.php
+#       ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
 REGEX;
 
 // Extracted from: should keep longer quote parity consistent in REGEX heredoc character classes
 <<<REGEX
   /[\\\\\\'a-z]/
-#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
-#     ^^^^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
+#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^^^ meta.embedded.character-class.regexp.php constant.character.escape.php constant.character.escape.regexp.php
+#         ^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
 REGEX;
 
 // Extracted from: should keep longer quote parity consistent in REGEX heredoc character classes
 <<<REGEX
   /[\\\\\\\"a-z]/
-#   ^^ meta.embedded.character-class.regexp.php constant.character.escape.php
-#     ^^  ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
+#   ^^  ^^ meta.embedded.character-class.regexp.php constant.character.escape.php - constant.character.escape.regexp.php
+#     ^^ meta.embedded.character-class.regexp.php constant.character.escape.php constant.character.escape.regexp.php
+#         ^^ meta.embedded.character-class.regexp.php constant.character.escape.regexp.php
 REGEX;
 
 // REGEXP nowdoc character-class quote parity
