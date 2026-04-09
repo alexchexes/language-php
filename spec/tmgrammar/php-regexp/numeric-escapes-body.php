@@ -60,6 +60,19 @@
 #          ^^ string.regexp.single-quoted.php constant.character.escape.php constant.numeric.octal.regexp.php
 #            ^^^^^^ string.regexp.single-quoted.php constant.numeric.octal.regexp.php
 
+// PHP-first quoted body transport
+
+// Extracted from: should keep transported PHP code-point escapes PHP-first in double quoted regex bodies
+ "/\\\x21 \\\u{21}/";
+#  ^^     ^^ string.regexp.double-quoted.php constant.character.escape.php
+#    ^^^^    string.regexp.double-quoted.php constant.character.escape.hex.php
+#           ^^^^^^ string.regexp.double-quoted.php constant.character.escape.unicode.php
+
+// Extracted from: should keep transported PHP octal and simple escapes PHP-first in double quoted regex bodies
+ "/\\\1 \\\n \\\r \\\t \\\v \\\e \\\f \\\$/";
+#  ^^   ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ string.regexp.double-quoted.php constant.character.escape.php
+#    ^^ string.regexp.double-quoted.php constant.character.escape.octal.php
+
 // Raw explicit body numeric escapes
 
 // Extracted from: should tokenize braced octal escapes in REGEX heredoc
@@ -138,4 +151,21 @@ REGEX;
  /\\N{U+41}/
 # ^^ string.regexp.heredoc.php constant.character.escape.php constant.character.numeric.regexp.php
 #   ^^^^^^^ string.regexp.heredoc.php constant.character.numeric.regexp.php
+REGEX;
+
+// PHP-first explicit body transport
+
+// Extracted from: should keep transported PHP code-point escapes PHP-first in REGEX heredoc bodies
+<<<REGEX
+ /\\\x21 \\\u{21}/
+# ^^     ^^ string.regexp.heredoc.php constant.character.escape.php
+#   ^^^^    string.regexp.heredoc.php constant.character.escape.hex.php
+#          ^^^^^^ string.regexp.heredoc.php constant.character.escape.unicode.php
+REGEX;
+
+// Extracted from: should keep transported PHP octal and basic escapes PHP-first in REGEX heredoc bodies
+<<<REGEX
+ /\\\1 \\\n \\\r \\\t \\\v \\\e \\\f \\\$/
+# ^^   ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ ^^^^ string.regexp.heredoc.php constant.character.escape.php
+#   ^^ string.regexp.heredoc.php constant.character.escape.octal.php
 REGEX;

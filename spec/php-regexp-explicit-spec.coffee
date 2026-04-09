@@ -501,39 +501,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
           expectPlainAssignment(lines[3])
 
-        if sourceSurface is 'interpreted'
-          it 'should keep transported PHP code-point escapes PHP-first in REGEX heredoc bodies', ->
-            lines = grammar.tokenizeLines [
-              '$r = <<<REGEX'
-              '/' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}/'
-              'REGEX;'
-            ].join "\n"
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][2]).toEqual value: '\\x21', scopes: heredocRegexpScope.concat ['constant.character.escape.hex.php']
-            expect(lines[1][3]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][4]).toEqual value: '\\u{21}', scopes: heredocRegexpScope.concat ['constant.character.escape.unicode.php']
-            expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
-
-          it 'should keep transported PHP octal and basic escapes PHP-first in REGEX heredoc bodies', ->
-            basicEscapes = ['n', 'r', 't', 'v', 'e', 'f', '$']
-            lines = grammar.tokenizeLines [
-              '$r = <<<REGEX'
-              '/' + '\\'.repeat(3) + '1' + basicEscapes.map((char) -> '\\'.repeat(3) + char).join('') + '/'
-              'REGEX;'
-            ].join "\n"
-
-            expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-            expect(lines[1][1]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-            expect(lines[1][2]).toEqual value: '\\1', scopes: heredocRegexpScope.concat ['constant.character.escape.octal.php']
-            offset = 3
-            for char in basicEscapes
-              expect(lines[1][offset]).toEqual value: '\\\\', scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-              expect(lines[1][offset + 1]).toEqual value: '\\' + char, scopes: heredocRegexpScope.concat ['constant.character.escape.php']
-              offset += 2
-            expect(lines[1][offset]).toEqual value: '/', scopes: heredocRegexpScope
-
           it 'should keep interpolation after interpreted backslash transport in REGEX heredoc bodies', ->
             [2, 4, 6, 8].forEach (slashes) ->
               expectedBackslashes = interpretedTransportBackslashScopes heredocRegexpScope, slashes
@@ -1018,64 +985,6 @@ describe 'PHP explicit regexp grammar', ->
         expect(lines[1][variableIndex + 1]).toEqual value: 'a', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php']
         expect(lines[1][variableIndex + 2]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
         expect(lines[1][variableIndex + 3]).toEqual value: '/', scopes: heredocRegexpScope
-
-    it 'should keep single-backslash overlapping escapes PHP-first in REGEXP heredoc character classes', ->
-      lines = grammar.tokenizeLines '''
-        $r = <<<REGEXP
-        /[\\1\\x41\\n\\v\\$\\u{41}\\d\\x{41}]/
-        REGEXP;
-      '''
-
-      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][2]).toEqual value: '\\1', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.octal.php']
-      expect(lines[1][3]).toEqual value: '\\x41', scopes: regexpCharacterClassPhpHexEscapeScopes(heredocRegexpScope)
-      expect(lines[1][4]).toEqual value: '\\n', scopes: regexpCharacterClassPhpEscapeScopes(heredocRegexpScope)
-      expect(lines[1][5]).toEqual value: '\\v', scopes: regexpCharacterClassPhpEscapeScopes(heredocRegexpScope)
-      expect(lines[1][6]).toEqual value: '\\$', scopes: regexpCharacterClassPhpEscapeScopes(heredocRegexpScope)
-      expect(lines[1][7]).toEqual value: '\\u{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.unicode.php']
-      expect(lines[1][8]).toEqual value: '\\d', scopes: regexpCharacterClassClassEscapeScopes(heredocRegexpScope)
-      expect(lines[1][9]).toEqual value: '\\x{41}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
-      expect(lines[1][10]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][11]).toEqual value: '/', scopes: heredocRegexpScope
-
-    it 'should keep transported PHP code-point escapes PHP-first in REGEXP heredoc character classes', ->
-      lines = grammar.tokenizeLines [
-        '$r = <<<REGEXP'
-        '/[' + '\\'.repeat(3) + 'x21' + '\\'.repeat(3) + 'u{21}]/'
-        'REGEXP;'
-      ].join "\n"
-
-      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
-      expect(lines[1][3]).toEqual value: '\\x21', scopes: regexpCharacterClassPhpHexEscapeScopes(heredocRegexpScope)
-      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php']
-      expect(lines[1][5]).toEqual value: '\\u{21}', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.unicode.php']
-      expect(lines[1][6]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][7]).toEqual value: '/', scopes: heredocRegexpScope
-
-    it 'should tokenize decoded overlapping escapes in REGEXP heredoc character classes', ->
-      lines = grammar.tokenizeLines '''
-        $r = <<<REGEXP
-        /[\\\\1\\\\x41\\\\n\\\\v\\\\$]/
-        REGEXP;
-      '''
-
-      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-      expect(lines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][2]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.numeric.octal.regexp.php']
-      expect(lines[1][3]).toEqual value: '1', scopes: regexpCharacterClassOctalScopes(heredocRegexpScope)
-      expect(lines[1][4]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.numeric.regexp.php']
-      expect(lines[1][5]).toEqual value: 'x41', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.numeric.regexp.php']
-      expect(lines[1][6]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(lines[1][7]).toEqual value: 'n', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
-      expect(lines[1][8]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.class.regexp.php']
-      expect(lines[1][9]).toEqual value: 'v', scopes: regexpCharacterClassClassEscapeScopes(heredocRegexpScope)
-      expect(lines[1][10]).toEqual value: '\\\\', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['constant.character.escape.php', 'constant.character.escape.regexp.php']
-      expect(lines[1][11]).toEqual value: '$', scopes: regexpCharacterClassEscapeScopes(heredocRegexpScope)
-      expect(lines[1][12]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
-      expect(lines[1][13]).toEqual value: '/', scopes: heredocRegexpScope
 
     it 'should tokenize decoded backspace and short hex escapes in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines '''
