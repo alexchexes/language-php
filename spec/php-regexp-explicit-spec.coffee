@@ -920,20 +920,6 @@ describe 'PHP explicit regexp grammar', ->
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
           expectPlainAssignment(lines[3])
 
-    it 'should tokenize interpolation inside REGEXP heredoc groups', ->
-      lines = grammar.tokenizeLines '''
-        $r = <<<REGEXP
-        /($value)/
-        REGEXP;
-      '''
-
-      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
-      expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
-      expect(lines[1][2]).toEqual value: '$', scopes: regexpGroupContentScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
-      expect(lines[1][3]).toEqual value: 'value', scopes: regexpGroupContentScopes(heredocRegexpScope).concat ['variable.other.php']
-      expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
-      expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
-
     it 'should tokenize nested quoted regex escapes and operators inside REGEXP heredoc quoted literals', ->
       nestedQuotedRegex = '"/(\\"\\\'[a-z]|\\d+)/ui"'
       # Build the heredoc with interpolation so the nested quoted regex stays readable without over-escaping.
@@ -985,6 +971,41 @@ describe 'PHP explicit regexp grammar', ->
         expect(lines[1][variableIndex + 1]).toEqual value: 'a', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php']
         expect(lines[1][variableIndex + 2]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
         expect(lines[1][variableIndex + 3]).toEqual value: '/', scopes: heredocRegexpScope
+
+    it 'should keep interpolation starters out of generic character-class ranges in REGEXP heredoc', ->
+      simpleLines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /[a-$b]/
+        REGEXP;
+      '''
+
+      expect(simpleLines[1][1]).toEqual value: '[', scopes: regexpCharacterClassPunctuationScopes(heredocRegexpScope)
+      expect(simpleLines[1][2]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(heredocRegexpScope)
+      expect(simpleLines[1][3]).toEqual value: '-', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(simpleLines[1][4]).toEqual value: '$', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(simpleLines[1][5]).toEqual value: 'b', scopes: regexpCharacterClassScopes(heredocRegexpScope).concat ['variable.other.php']
+
+      bracedLines = grammar.tokenizeLines """
+        $r = <<<REGEXP
+        /a([a-{$b(1-2, '[a-b]')}])/
+        REGEXP;
+      """
+      nestedCharacterClassScope = regexpGroupContentScopes heredocRegexpScope
+      nestedCharacterClassScopes = regexpCharacterClassScopes nestedCharacterClassScope
+      arithmeticHyphenIndex = bracedLines[1].findIndex (token, index) ->
+        token.value is '-' and bracedLines[1][index - 1]?.value is '1' and bracedLines[1][index + 1]?.value is '2'
+      classLiteralIndex = bracedLines[1].findIndex (token, index) ->
+        token.value is 'a' and bracedLines[1][index - 1]?.value is '['
+
+      expect(arithmeticHyphenIndex).to.not.equal -1
+      expect(classLiteralIndex).to.not.equal -1
+      expect(bracedLines[1][classLiteralIndex]).toEqual value: 'a', scopes: nestedCharacterClassScopes
+      expect(bracedLines[1][classLiteralIndex + 1]).toEqual value: '-', scopes: nestedCharacterClassScopes.concat ['keyword.operator.range.regexp.php']
+      expect(bracedLines[1][classLiteralIndex + 2]).toEqual value: '{', scopes: nestedCharacterClassScopes.concat ['punctuation.definition.variable.php']
+      expect(bracedLines[1][classLiteralIndex + 3]).toEqual value: '$', scopes: nestedCharacterClassScopes.concat ['meta.function-call.invoke.php', 'variable.other.php', 'punctuation.definition.variable.php']
+      expect(bracedLines[1][classLiteralIndex + 4]).toEqual value: 'b', scopes: nestedCharacterClassScopes.concat ['meta.function-call.invoke.php', 'variable.other.php']
+      expect(bracedLines[1][arithmeticHyphenIndex].scopes).to.not.include 'constant.other.character-class.range.regexp.php'
+      expect(bracedLines[1][arithmeticHyphenIndex].scopes).to.not.include 'keyword.operator.range.regexp.php'
 
     it 'should tokenize decoded backspace and short hex escapes in REGEXP heredoc character classes', ->
       lines = grammar.tokenizeLines '''

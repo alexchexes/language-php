@@ -108,6 +108,15 @@ REGEXP;
 #                                          ^^^^^^ meta.embedded.group.regexp.php keyword.control.backtracking.skip.regexp.php
 #                                                       ^^^^^^ meta.embedded.group.regexp.php keyword.control.backtracking.then.regexp.php
 
+// Extracted from: should allow default-PCRE2 punctuation-heavy backtracking verb labels in quoted regexes
+ '/(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/';
+#  ^         ^^               ^^         ^^           ^^        ^ meta.embedded.group.regexp.php punctuation.definition.group.regexp.php
+#   ^^ meta.embedded.group.regexp.php keyword.control.backtracking.mark.regexp.php
+#     ^^^^^^^        ^^^^^^^^^          ^        ^^^^^        ^^ meta.embedded.group.regexp.php variable.other.regexp.php
+#                               ^^^^^^^^ meta.embedded.group.regexp.php keyword.control.backtracking.commit.regexp.php
+#                                          ^^^^^^ meta.embedded.group.regexp.php keyword.control.backtracking.skip.regexp.php
+#                                                       ^^^^^^ meta.embedded.group.regexp.php keyword.control.backtracking.then.regexp.php
+
 // Extracted from: should allow default-PCRE2 punctuation-heavy verb labels in REGEX heredoc
 <<<REGEX
  /(*:foo-bar)(*MARK:two words)(*COMMIT:1)(*SKIP:!done)(*THEN:💩)/

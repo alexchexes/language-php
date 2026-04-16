@@ -6086,6 +6086,16 @@
         'name': 'support.class.range.regexp.php'
     'match': '([^\\\\\\[\\]0-9-])(-)([^\\\\\\[\\]0-9-])'
     'name': 'constant.other.character-class.range.regexp.php'
+  'regex-character-class-generic-range-interpreted':
+    'captures':
+      '1':
+        'name': 'support.class.range.regexp.php'
+      '2':
+        'name': 'keyword.operator.range.regexp.php'
+      '3':
+        'name': 'support.class.range.regexp.php'
+    'match': '([^\\\\\\[\\]0-9-])(-)([^\\\\\\[\\]0-9${}-])'
+    'name': 'constant.other.character-class.range.regexp.php'
   'regex-character-class-numeric-literal-explicit':
     'match': '[0-9]+'
     'name': 'constant.numeric.regexp.php'
@@ -6631,6 +6641,39 @@
         'include': '#regex-character-class-numeric-literal-explicit'
       }
     ]
+  'regex-character-class-common-explicit-leading-interpreted':
+    'patterns': [
+      {
+        'include': '#regex-character-class-posix-explicit'
+      }
+      {
+        'include': '#regex-character-class-hex-range-explicit'
+      }
+      {
+        'include': '#regex-character-class-octal-range-explicit'
+      }
+      {
+        'include': '#regex-character-class-digit-range-explicit'
+      }
+      {
+        'include': '#regex-character-class-letter-range-explicit'
+      }
+      {
+        'include': '#regex-character-class-generic-range-interpreted'
+      }
+      {
+        'include': '#regex-braced-hex-escape'
+      }
+      {
+        'include': '#regex-unicode-code-point-escape'
+      }
+      {
+        'include': '#regex-hex-escape'
+      }
+      {
+        'include': '#regex-character-class-numeric-literal-explicit'
+      }
+    ]
   'regex-character-class-common-explicit-trailing':
     'patterns': [
       {
@@ -6730,7 +6773,7 @@
         'include': '#interpolation'
       }
       {
-        'include': '#regex-character-class-common-explicit-leading'
+        'include': '#regex-character-class-common-explicit-leading-interpreted'
       }
       {
         'include': '#regex-character-class-common-explicit-trailing'
@@ -6767,7 +6810,7 @@
         'include': '#regex-character-class-quoted-literal-nowdoc'
       }
       {
-        'include': '#regex-character-class-common-explicit-leading'
+        'include': '#regex-character-class-common-explicit-leading-interpreted'
       }
       {
         'include': '#regex-character-class-common-explicit-trailing'
@@ -6835,7 +6878,7 @@
         'include': '#interpolation_double_quoted'
       }
       {
-        'include': '#regex-character-class-common-explicit-leading'
+        'include': '#regex-character-class-common-explicit-leading-interpreted'
       }
       {
         'include': '#regex-character-class-common-explicit-trailing'

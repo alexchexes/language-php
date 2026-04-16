@@ -270,6 +270,20 @@ describe 'PHP explicit regexp tmgrammar migration backstop', ->
           expect(lines[2][0]).toEqual value: label, scopes: terminatorScope
           expect(lines[2][1]).toEqual value: ';', scopes: ['source.php', 'punctuation.terminator.expression.php']
 
+    it 'should tokenize interpolation inside REGEXP heredoc groups', ->
+      lines = grammar.tokenizeLines '''
+        $r = <<<REGEXP
+        /($value)/
+        REGEXP;
+      '''
+
+      expect(lines[1][0]).toEqual value: '/', scopes: heredocRegexpScope
+      expect(lines[1][1]).toEqual value: '(', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(lines[1][2]).toEqual value: '$', scopes: regexpGroupContentScopes(heredocRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(lines[1][3]).toEqual value: 'value', scopes: regexpGroupContentScopes(heredocRegexpScope).concat ['variable.other.php']
+      expect(lines[1][4]).toEqual value: ')', scopes: regexpGroupScopes(heredocRegexpScope).concat ['punctuation.definition.group.regexp.php']
+      expect(lines[1][5]).toEqual value: '/', scopes: heredocRegexpScope
+
     describe 'explicit quoted literals', ->
       it 'should tokenize decoded quoted literals in REGEXP heredoc', ->
         lines = grammar.tokenizeLines '''

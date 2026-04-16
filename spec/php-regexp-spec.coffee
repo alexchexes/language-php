@@ -135,18 +135,6 @@ describe 'PHP quoted regexp grammar', ->
           lines = grammar.tokenizeLines "$r = \"#{regex}\";\n$x = 1;"
           expectPlainAssignment(lines[1])
 
-    it 'should tokenize interpolation inside double quoted regex bodies', ->
-      {tokens} = grammar.tokenizeLine "\"/($value)/\""
-
-      expect(tokens[0]).toEqual value: '"', scopes: regexpWrapperBeginQuoteScopes(quotedDoubleRegexpScope)
-      expect(tokens[1]).toEqual value: '/', scopes: regexpWrapperBeginDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[2]).toEqual value: '(', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
-      expect(tokens[3]).toEqual value: '$', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
-      expect(tokens[4]).toEqual value: 'value', scopes: regexpGroupContentScopes(quotedDoubleRegexpScope).concat ['variable.other.php']
-      expect(tokens[5]).toEqual value: ')', scopes: regexpGroupScopes(quotedDoubleRegexpScope).concat ['punctuation.definition.group.regexp.php']
-      expect(tokens[6]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
-      expect(tokens[7]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
-
     it 'should keep interpolation after interpreted backslash transport in double quoted regex bodies', ->
       [2, 4, 6, 8].forEach (slashes) ->
         expectedBackslashes = interpretedTransportBackslashScopes quotedDoubleRegexpScope, slashes
@@ -193,6 +181,32 @@ describe 'PHP quoted regexp grammar', ->
         expect(tokens[variableIndex + 2]).toEqual value: ']', scopes: regexpCharacterClassPunctuationScopes(quotedDoubleRegexpScope)
         expect(tokens[variableIndex + 3]).toEqual value: '/', scopes: regexpWrapperEndDelimiterScopes(quotedDoubleRegexpScope)
         expect(tokens[variableIndex + 4]).toEqual value: '"', scopes: regexpWrapperEndQuoteScopes(quotedDoubleRegexpScope)
+
+    it 'should keep interpolation starters out of generic character-class ranges in double quoted regexes', ->
+      {tokens: simpleTokens} = grammar.tokenizeLine '"/[a-$b]/"'
+
+      expect(simpleTokens[3]).toEqual value: 'a', scopes: regexpCharacterClassLiteralScopes(quotedDoubleRegexpScope)
+      expect(simpleTokens[4]).toEqual value: '-', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['keyword.operator.range.regexp.php']
+      expect(simpleTokens[5]).toEqual value: '$', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php', 'punctuation.definition.variable.php']
+      expect(simpleTokens[6]).toEqual value: 'b', scopes: regexpCharacterClassScopes(quotedDoubleRegexpScope).concat ['variable.other.php']
+
+      {tokens: bracedTokens} = grammar.tokenizeLine "\"/a([a-{$b(1-2, '[a-b]')}])/\""
+      nestedCharacterClassScope = regexpGroupContentScopes quotedDoubleRegexpScope
+      nestedCharacterClassScopes = regexpCharacterClassScopes nestedCharacterClassScope
+      arithmeticHyphenIndex = bracedTokens.findIndex (token, index) ->
+        token.value is '-' and bracedTokens[index - 1]?.value is '1' and bracedTokens[index + 1]?.value is '2'
+      classLiteralIndex = bracedTokens.findIndex (token, index) ->
+        token.value is 'a' and bracedTokens[index - 1]?.value is '['
+
+      expect(arithmeticHyphenIndex).to.not.equal -1
+      expect(classLiteralIndex).to.not.equal -1
+      expect(bracedTokens[classLiteralIndex]).toEqual value: 'a', scopes: nestedCharacterClassScopes
+      expect(bracedTokens[classLiteralIndex + 1]).toEqual value: '-', scopes: nestedCharacterClassScopes.concat ['keyword.operator.range.regexp.php']
+      expect(bracedTokens[classLiteralIndex + 2]).toEqual value: '{', scopes: nestedCharacterClassScopes.concat ['punctuation.definition.variable.php']
+      expect(bracedTokens[classLiteralIndex + 3]).toEqual value: '$', scopes: nestedCharacterClassScopes.concat ['meta.function-call.invoke.php', 'variable.other.php', 'punctuation.definition.variable.php']
+      expect(bracedTokens[classLiteralIndex + 4]).toEqual value: 'b', scopes: nestedCharacterClassScopes.concat ['meta.function-call.invoke.php', 'variable.other.php']
+      expect(bracedTokens[arithmeticHyphenIndex].scopes).to.not.include 'constant.other.character-class.range.regexp.php'
+      expect(bracedTokens[arithmeticHyphenIndex].scopes).to.not.include 'keyword.operator.range.regexp.php'
 
     it 'should tokenize rich character class constructs in double quoted regexes', ->
       {tokens} = grammar.tokenizeLine '"/[a-z0-9\\x{4A}-\\x{4f}J[:digit:]\\d\\p{L}\\-\\]]/"'
